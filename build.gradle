@@ -1,0 +1,53 @@
+// 编译脚本
+buildscript {
+    ext {
+        // Spring Boot 版本定义
+        springBootVersion = "4.0.3"
+    }
+    // 仓库配置
+    repositories {
+        mavenLocal()
+        maven { url = 'https://maven.aliyun.com/repository/central' }
+        maven { url = 'https://maven.aliyun.com/repository/spring' }
+        maven { url = 'https://maven.aliyun.com/repository/google' }
+        mavenCentral()
+        gradlePluginPortal()
+    }
+
+    dependencies {
+        classpath("org.springframework.boot:org.springframework.boot.gradle.plugin:${springBootVersion}")
+    }
+}
+
+version = '1.0.0-SNAPSHOT'
+
+// 项目配置
+allprojects {
+    group = 'com.ruoyi'
+
+    // 仓库配置
+    repositories {
+        mavenLocal()
+        maven { url = 'https://maven.aliyun.com/repository/central' }
+        maven { url = 'https://maven.aliyun.com/repository/spring' }
+        maven { url = 'https://maven.aliyun.com/repository/google' }
+        mavenCentral()
+    }
+}
+subprojects {
+
+    apply plugin: 'java-library'
+
+    tasks.withType(JavaCompile).configureEach {
+        options.encoding = 'UTF-8'
+        options.warnings = false
+        options.deprecation = true
+        options.compilerArgs += ["-parameters", "-Xlint:unchecked", "-Xlint:-serial"]
+    }
+
+    tasks.withType(GenerateModuleMetadata).configureEach {
+        enabled = false
+    }
+
+}
+
