@@ -1,8 +1,25 @@
 // 编译脚本
 buildscript {
     ext {
-        // Spring Boot 版本定义
-        springBootVersion = "4.0.3"
+        springBootVersion = "4.0.3" // Spring Boot Bom版本定义
+        springFrameworkVersion = "7.0.5" // Spring Framework Bom版本定义
+        druidDBPool = "1.2.28"
+        mybatis = "4.0.1"
+        fastJson2 = "2.0.61"
+        jacksonDataBind = "2.20.2"
+        oshi = "6.10.0"
+        pagehelper = "2.1.1"
+        commonsIO = "2.21.0"
+        jjwt = "0.9.1"
+        servletApi = "6.1.0"
+        jaxbApi = "2.3.1"
+        yauaa = "8.1.0"
+        commonsLang3 = "3.19.0"
+        commonsPool2 = "2.12.1"
+        poiooxml = "4.1.2"
+        velocityEngine = "2.3"
+        springdoc = "3.0.2"
+        kaptcha = "2.3.3"
     }
     // 仓库配置
     repositories {
@@ -15,6 +32,7 @@ buildscript {
     }
 
     dependencies {
+        classpath("io.spring.dependency-management:io.spring.dependency-management.gradle.plugin:1.1.7")
         classpath("org.springframework.boot:org.springframework.boot.gradle.plugin:${springBootVersion}")
     }
 }
@@ -37,6 +55,33 @@ allprojects {
 subprojects {
 
     apply plugin: 'java-library'
+    apply plugin: 'io.spring.dependency-management'
+
+    dependencyManagement {
+        imports {
+            mavenBom "org.springframework.boot:spring-boot-dependencies:${springBootVersion}"
+            mavenBom "org.springframework:spring-framework-bom:${springFrameworkVersion}"
+        }
+        dependencies {
+            dependency "com.alibaba:druid-spring-boot-4-starter:${druidDBPool}"
+            dependency "org.mybatis.spring.boot:mybatis-spring-boot-starter:${mybatis}"
+            dependency "com.alibaba.fastjson2:fastjson2:${fastJson2}"
+            dependency "com.fasterxml.jackson.core:jackson-databind:${jacksonDataBind}"
+            dependency "com.github.oshi:oshi-core:${oshi}"
+            dependency "com.github.pagehelper:pagehelper-spring-boot-starter:${pagehelper}"
+            dependency "commons-io:commons-io:${commonsIO}"
+            dependency "io.jsonwebtoken:jjwt:${jjwt}"
+            dependency "jakarta.servlet:jakarta.servlet-api:${servletApi}"
+            dependency "javax.xml.bind:jaxb-api:${jaxbApi}"
+            dependency "nl.basjes.parse.useragent:yauaa:${yauaa}"
+            dependency "org.apache.commons:commons-lang3:${commonsLang3}"
+            dependency "org.apache.commons:commons-pool2:${commonsPool2}"
+            dependency "org.apache.poi:poi-ooxml:${poiooxml}"
+            dependency "org.apache.velocity:velocity-engine-core:${velocityEngine}"
+            dependency "org.springdoc:springdoc-openapi-starter-webmvc-ui:${springdoc}"
+            dependency "pro.fessional:kaptcha:${kaptcha}"
+        }
+    }
 
     tasks.withType(JavaCompile).configureEach {
         options.encoding = 'UTF-8'

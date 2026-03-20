@@ -4,8 +4,9 @@
 
 
 dependencies {
-    api libs.org.springframework.boot.spring.boot.starter.quartz
     compileOnly project(':ruoyi-common')
+
+    implementation 'org.springframework.boot:spring-boot-starter-quartz' // 定时任务
 }
 
 description = 'ruoyi-quartz'

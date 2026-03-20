@@ -14,13 +14,14 @@ java {
 
 
 dependencies {
-    api libs.org.springframework.boot.spring.boot.devtools
-    api libs.org.springdoc.springdoc.openapi.starter.webmvc.ui
-    api libs.com.mysql.mysql.connector.j
-    api libs.org.springframework.boot.spring.boot.starter.jdbc
     api project(':ruoyi-framework')
     api project(':ruoyi-quartz')
     api project(':ruoyi-generator')
+
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui' // spring-doc
+    runtimeOnly 'com.mysql:mysql-connector-j' // Mysql驱动包
+
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
 }
 
 description = 'ruoyi-admin'

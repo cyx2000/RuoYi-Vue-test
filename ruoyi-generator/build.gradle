@@ -4,9 +4,10 @@
 
 
 dependencies {
-    api libs.org.apache.velocity.velocity.engine.core
     compileOnly project(':ruoyi-common')
-    api libs.com.alibaba.druid.spring.boot.v4.starter
+
+    implementation "com.alibaba:druid-spring-boot-4-starter" // 阿里数据库连接池
+    implementation "org.apache.velocity:velocity-engine-core" // velocity代码生成使用模板
 }
 
 description = 'ruoyi-generator'
