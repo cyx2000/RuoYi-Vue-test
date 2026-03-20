@@ -5,7 +5,7 @@
 
 dependencies {
     api libs.org.apache.velocity.velocity.engine.core
-    api project(':ruoyi-common')
+    compileOnly project(':ruoyi-common')
     api libs.com.alibaba.druid.spring.boot.v4.starter
 }
 
