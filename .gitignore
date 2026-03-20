@@ -30,7 +30,7 @@ rebel.xml
 
 ### NetBeans ###
 nbproject/private/
-build/*
+*/build
 nbbuild/
 dist/
 nbdist/
@@ -41,6 +41,7 @@ nbdist/
 *.log
 *.xml.versionsBackup
 *.swp
+.vscode
 
 !*/build/*.java
 !*/build/*.html
