@@ -8,6 +8,7 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-webmvc' // SpringBoot Web容器
     implementation 'org.springframework.boot:spring-boot-starter-aspectj' // SpringBoot 拦截器
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
     implementation 'com.alibaba:druid-spring-boot-4-starter' // 阿里数据库连接池
     api ('pro.fessional:kaptcha') { exclude group: "javax.servlet" } // 验证码
     implementation 'com.github.oshi:oshi-core' // 获取系统信息
