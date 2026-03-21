@@ -6,10 +6,10 @@ buildscript {
         druidDBPool = "1.2.28"
         mybatis = "4.0.1"
         fastJson2 = "2.0.61"
+        jacksonAnnotations = "2.21"
         oshi = "6.10.0"
         pagehelper = "2.1.1"
         commonsIO = "2.21.0"
-        jjwt = "0.9.1"
         servletApi = "6.1.0"
         jaxbApi = "2.3.1"
         yauaa = "8.1.0"
@@ -65,10 +65,14 @@ subprojects {
             dependency "com.alibaba:druid-spring-boot-4-starter:${druidDBPool}"
             dependency "org.mybatis.spring.boot:mybatis-spring-boot-starter:${mybatis}"
             dependency "com.alibaba.fastjson2:fastjson2:${fastJson2}"
+<<<<<<< HEAD
+=======
+            dependency "com.fasterxml.jackson.core:jackson-databind:${jacksonDataBind}"
+            dependency "com.fasterxml.jackson.core:jackson-annotations:${jacksonAnnotations}"
+>>>>>>> 341c770a (删除jjwt依赖，将jwt实现换成spring security中自带的)
             dependency "com.github.oshi:oshi-core:${oshi}"
             dependency "com.github.pagehelper:pagehelper-spring-boot-starter:${pagehelper}"
             dependency "commons-io:commons-io:${commonsIO}"
-            dependency "io.jsonwebtoken:jjwt:${jjwt}"
             dependency "jakarta.servlet:jakarta.servlet-api:${servletApi}"
             dependency "javax.xml.bind:jaxb-api:${jaxbApi}"
             dependency "nl.basjes.parse.useragent:yauaa:${yauaa}"
