@@ -22,7 +22,6 @@ import com.ruoyi.common.core.domain.model.LoginUser;
 import com.ruoyi.common.core.text.Convert;
 import com.ruoyi.common.enums.BusinessStatus;
 import com.ruoyi.common.enums.HttpMethod;
-import com.ruoyi.common.filter.PropertyPreExcludeFilter;
 import com.ruoyi.common.utils.ExceptionUtil;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.ServletUtils;
@@ -217,14 +216,6 @@ public class LogAspect
             }
         }
         return params.toString();
-    }
-
-    /**
-     * 忽略敏感属性
-     */
-    public PropertyPreExcludeFilter excludePropertyPreFilter(String[] excludeParamNames)
-    {
-        return new PropertyPreExcludeFilter().addExcludes(ArrayUtils.addAll(EXCLUDE_PROPERTIES, excludeParamNames));
     }
 
     /**
