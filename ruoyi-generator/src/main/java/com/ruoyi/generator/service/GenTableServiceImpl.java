@@ -21,14 +21,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONObject;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.constant.GenConstants;
 import com.ruoyi.common.core.text.CharsetKit;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.json.JsonUtils;
+import com.ruoyi.common.utils.json.JsonUtils.JSONObject;
 import com.ruoyi.generator.domain.GenTable;
 import com.ruoyi.generator.domain.GenTableColumn;
 import com.ruoyi.generator.mapper.GenTableColumnMapper;
@@ -413,7 +412,7 @@ public class GenTableServiceImpl implements IGenTableService
         if (GenConstants.TPL_TREE.equals(genTable.getTplCategory()))
         {
             String options = JsonUtils.toJsonStr(genTable.getParams());
-            JSONObject paramsObj = JSON.parseObject(options);
+            JSONObject paramsObj = JsonUtils.getJsonObj(options);
             if (StringUtils.isEmpty(paramsObj.getString(GenConstants.TREE_CODE)))
             {
                 throw new ServiceException("树编码字段不能为空");
@@ -497,7 +496,7 @@ public class GenTableServiceImpl implements IGenTableService
      */
     public void setTableFromOptions(GenTable genTable)
     {
-        JSONObject paramsObj = JSON.parseObject(genTable.getOptions());
+        JSONObject paramsObj = JsonUtils.getJsonObj(genTable.getOptions());
         if (StringUtils.isNotNull(paramsObj))
         {
             String treeCode = paramsObj.getString(GenConstants.TREE_CODE);

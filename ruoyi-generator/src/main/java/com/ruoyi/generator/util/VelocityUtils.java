@@ -5,17 +5,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.apache.velocity.VelocityContext;
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONObject;
 import com.ruoyi.common.constant.GenConstants;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.common.utils.json.JsonUtils;
+import com.ruoyi.common.utils.json.JsonUtils.JSONObject;
 import com.ruoyi.generator.domain.GenTable;
 import com.ruoyi.generator.domain.GenTableColumn;
 
 /**
  * 模板处理工具类
- * 
+ *
  * @author ruoyi
  */
 public class VelocityUtils
@@ -82,7 +82,7 @@ public class VelocityUtils
     public static void setMenuVelocityContext(VelocityContext context, GenTable genTable)
     {
         String options = genTable.getOptions();
-        JSONObject paramsObj = JSON.parseObject(options);
+        JSONObject paramsObj = JsonUtils.getJsonObj(options);
         String parentMenuId = getParentMenuId(paramsObj);
         context.put("parentMenuId", parentMenuId);
     }
@@ -90,7 +90,7 @@ public class VelocityUtils
     public static void setTreeVelocityContext(VelocityContext context, GenTable genTable)
     {
         String options = genTable.getOptions();
-        JSONObject paramsObj = JSON.parseObject(options);
+        JSONObject paramsObj = JsonUtils.getJsonObj(options);
         String treeCode = getTreecode(paramsObj);
         String treeParentCode = getTreeParentCode(paramsObj);
         String treeName = getTreeName(paramsObj);
@@ -269,7 +269,7 @@ public class VelocityUtils
 
     /**
      * 根据列类型获取导入包
-     * 
+     *
      * @param genTable 业务表对象
      * @return 返回需要导入的包列表
      */
@@ -299,7 +299,7 @@ public class VelocityUtils
 
     /**
      * 根据列类型获取字典组
-     * 
+     *
      * @param genTable 业务表对象
      * @return 返回字典组
      */
@@ -318,7 +318,7 @@ public class VelocityUtils
 
     /**
      * 添加字典列表
-     * 
+     *
      * @param dicts 字典列表
      * @param columns 列集合
      */
@@ -417,7 +417,7 @@ public class VelocityUtils
     public static int getExpandColumn(GenTable genTable)
     {
         String options = genTable.getOptions();
-        JSONObject paramsObj = JSON.parseObject(options);
+        JSONObject paramsObj = JsonUtils.getJsonObj(options);
         String treeName = paramsObj.getString(GenConstants.TREE_NAME);
         int num = 0;
         for (GenTableColumn column : genTable.getColumns())
