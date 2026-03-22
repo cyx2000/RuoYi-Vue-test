@@ -16,7 +16,6 @@ import org.springframework.core.NamedThreadLocal;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
-import com.alibaba.fastjson2.JSON;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.core.domain.model.LoginUser;
@@ -29,13 +28,14 @@ import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.ServletUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.ip.IpUtils;
+import com.ruoyi.common.utils.json.JsonUtils;
 import com.ruoyi.framework.manager.AsyncManager;
 import com.ruoyi.framework.manager.factory.AsyncFactory;
 import com.ruoyi.system.domain.SysOperLog;
 
 /**
  * 操作日志记录处理
- * 
+ *
  * @author ruoyi
  */
 @Aspect
@@ -75,7 +75,7 @@ public class LogAspect
 
     /**
      * 拦截异常操作
-     * 
+     *
      * @param joinPoint 切点
      * @param e 异常
      */
@@ -141,7 +141,7 @@ public class LogAspect
 
     /**
      * 获取注解中对方法的描述信息 用于Controller层注解
-     * 
+     *
      * @param log 日志
      * @param operLog 操作日志
      * @throws Exception
@@ -163,13 +163,13 @@ public class LogAspect
         // 是否需要保存response，参数和值
         if (log.isSaveResponseData() && StringUtils.isNotNull(jsonResult))
         {
-            operLog.setJsonResult(StringUtils.substring(JSON.toJSONString(jsonResult), 0, 2000));
+            operLog.setJsonResult(StringUtils.substring(JsonUtils.toJsonStr(jsonResult), 0, 2000));
         }
     }
 
     /**
      * 获取请求的参数，放到log中
-     * 
+     *
      * @param operLog 操作日志
      * @throws Exception 异常
      */
@@ -184,7 +184,7 @@ public class LogAspect
         }
         else
         {
-            operLog.setOperParam(StringUtils.substring(JSON.toJSONString(paramsMap, excludePropertyPreFilter(excludeParamNames)), 0, PARAM_MAX_LENGTH));
+            operLog.setOperParam(StringUtils.substring(JsonUtils.toJsonStr(paramsMap, excludeParamNames), 0, PARAM_MAX_LENGTH));
         }
     }
 
@@ -202,7 +202,7 @@ public class LogAspect
                 {
                     try
                     {
-                        String jsonObj = JSON.toJSONString(o, excludePropertyPreFilter(excludeParamNames));
+                        String jsonObj = JsonUtils.toJsonStr(o, excludeParamNames);
                         params.append(jsonObj).append(" ");
                         if (params.length() >= PARAM_MAX_LENGTH)
                         {
@@ -229,7 +229,7 @@ public class LogAspect
 
     /**
      * 判断是否需要过滤的对象。
-     * 
+     *
      * @param o 对象信息。
      * @return 如果是需要过滤的对象，则返回true；否则返回false。
      */
