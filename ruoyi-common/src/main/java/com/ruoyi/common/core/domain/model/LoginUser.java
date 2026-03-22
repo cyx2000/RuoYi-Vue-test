@@ -8,12 +8,12 @@ import java.util.stream.Collectors;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import com.alibaba.fastjson2.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ruoyi.common.core.domain.entity.SysUser;
 
 /**
  * 登录用户身份权限
- * 
+ *
  * @author ruoyi
  */
 public class LoginUser implements UserDetails
@@ -123,7 +123,7 @@ public class LoginUser implements UserDetails
         this.token = token;
     }
 
-    @JSONField(serialize = false)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Override
     public String getPassword()
     {
@@ -139,7 +139,7 @@ public class LoginUser implements UserDetails
     /**
      * 账户是否未过期,过期无法验证
      */
-    @JSONField(serialize = false)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Override
     public boolean isAccountNonExpired()
     {
@@ -148,10 +148,10 @@ public class LoginUser implements UserDetails
 
     /**
      * 指定用户是否解锁,锁定的用户无法进行身份验证
-     * 
+     *
      * @return
      */
-    @JSONField(serialize = false)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Override
     public boolean isAccountNonLocked()
     {
@@ -160,10 +160,10 @@ public class LoginUser implements UserDetails
 
     /**
      * 指示是否已过期的用户的凭据(密码),过期的凭据防止认证
-     * 
+     *
      * @return
      */
-    @JSONField(serialize = false)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Override
     public boolean isCredentialsNonExpired()
     {
@@ -172,10 +172,10 @@ public class LoginUser implements UserDetails
 
     /**
      * 是否可用 ,禁用的用户不能身份验证
-     * 
+     *
      * @return
      */
-    @JSONField(serialize = false)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Override
     public boolean isEnabled()
     {
@@ -263,7 +263,7 @@ public class LoginUser implements UserDetails
     }
 
     @Override
-    @JSONField(serialize = false)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     public Collection<? extends GrantedAuthority> getAuthorities()
     {
         if (permissions == null || permissions.isEmpty())
