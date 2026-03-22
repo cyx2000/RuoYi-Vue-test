@@ -5,7 +5,6 @@ buildscript {
         springFrameworkVersion = "7.0.5" // Spring Framework Bom版本定义
         druidDBPool = "1.2.28"
         mybatis = "4.0.1"
-        fastJson2 = "2.0.61"
         jacksonAnnotations = "2.21"
         oshi = "6.10.0"
         pagehelper = "2.1.1"
@@ -64,7 +63,6 @@ subprojects {
         dependencies {
             dependency "com.alibaba:druid-spring-boot-4-starter:${druidDBPool}"
             dependency "org.mybatis.spring.boot:mybatis-spring-boot-starter:${mybatis}"
-            dependency "com.alibaba.fastjson2:fastjson2:${fastJson2}"
             dependency "com.fasterxml.jackson.core:jackson-annotations:${jacksonAnnotations}"
             dependency "com.github.oshi:oshi-core:${oshi}"
             dependency "com.github.pagehelper:pagehelper-spring-boot-starter:${pagehelper}"
