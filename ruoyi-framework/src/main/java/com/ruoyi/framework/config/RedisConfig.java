@@ -1,40 +1,36 @@
 package com.ruoyi.framework.config;
 
-import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
+import org.springframework.data.redis.serializer.GenericJacksonJsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 /**
  * redis配置
- * 
+ *
  * @author ruoyi
  */
-@SuppressWarnings("deprecation")
 @Configuration
 @EnableCaching
-public class RedisConfig extends CachingConfigurerSupport
+public class RedisConfig
 {
     @Bean
-    @SuppressWarnings(value = { "unchecked", "rawtypes" })
     public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory connectionFactory)
     {
         RedisTemplate<Object, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
 
-        FastJson2JsonRedisSerializer serializer = new FastJson2JsonRedisSerializer(Object.class);
+        GenericJacksonJsonRedisSerializer serializer = GenericJacksonJsonRedisSerializer.builder().enableUnsafeDefaultTyping().build();
 
-        // 使用StringRedisSerializer来序列化和反序列化redis的key值
-        template.setKeySerializer(new StringRedisSerializer());
-        template.setValueSerializer(serializer);
+        template.setKeySerializer(new StringRedisSerializer()); // 使用StringRedisSerializer序列化和反序列化key值
+        template.setValueSerializer(serializer); // 使用GenericJacksonJsonRedisSerializer序列化和反序列化value值
 
-        // Hash的key也采用StringRedisSerializer的序列化方式
-        template.setHashKeySerializer(new StringRedisSerializer());
-        template.setHashValueSerializer(serializer);
+        template.setHashKeySerializer(new StringRedisSerializer()); // 使用StringRedisSerializer序列化和反序列化Hash的key值
+        template.setHashValueSerializer(serializer); // 使用GenericJacksonJsonRedisSerializer序列化和反序列化Hash的value值
 
         template.afterPropertiesSet();
         return template;
