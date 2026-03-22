@@ -143,6 +143,7 @@ public class JsonUtils {
      * @param elementClass
      * @return T类型的List数组
      */
+    @SuppressWarnings("hiding")
     public static <T> List<T> jsonArrayToList(String jsonStr, Class<T> elementClass) {
         try {
             CollectionType listType = objectMapper.getTypeFactory()
