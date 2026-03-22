@@ -16,6 +16,11 @@ import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import com.ruoyi.framework.config.properties.JwtTokenProperties;
 
+/**
+ * jwt 配置
+ *
+ * @author winter123
+ */
 @Configuration
 public class JwtTokenConfig {
 
