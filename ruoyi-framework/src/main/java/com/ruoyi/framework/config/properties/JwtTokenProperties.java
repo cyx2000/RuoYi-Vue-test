@@ -3,6 +3,11 @@ package com.ruoyi.framework.config.properties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+/**
+ * jwt属性集
+ *
+ * @author winter123
+ */
 @ConfigurationProperties(prefix = "token")
 @Component
 public class JwtTokenProperties {
