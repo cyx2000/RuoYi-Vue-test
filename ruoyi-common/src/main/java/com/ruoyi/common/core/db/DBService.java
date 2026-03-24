@@ -158,6 +158,26 @@ public class DBService {
     }
 
     /**
+     * 返回对象数据集
+	 * @param inSql 传入的sql语句
+	 * @param paramSource 查询参数
+	 * @param targetClass 例如 String，Long ...
+	 * @return 对象list集合
+     */
+    public <K> List<K> queryForList(String inSql, SqlParameterSource paramSource, Class<K> targetClass) {
+    	List<K> list = null;
+    	try {
+			list = namedJdbc.queryForList(inSql, paramSource, targetClass);
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage());
+		}
+		if (list == null) {
+			list = new ArrayList<K>();
+		}
+        return list;
+    }
+
+    /**
      * 返回数据集
 	 * @param inSql 传入的sql语句
 	 * @param paramSource 查询参数
