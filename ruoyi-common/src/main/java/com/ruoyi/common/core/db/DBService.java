@@ -197,6 +197,22 @@ public class DBService {
     }
 
     /**
+	 * 执行操作，没有参数
+	 * @param sql 传入的语句 sql="insert into tables values(?,?)";
+	 * @return 0:失败 1:成功
+	 */
+	public int execute(String sql) {
+		int exc = 1;
+		try {
+			namedJdbc.getJdbcTemplate().execute(sql);
+		} catch (Exception e) {
+			exc = 0;
+			LOGGER.error(e.getMessage());
+		}
+		return exc;
+	}
+
+    /**
 	 * 批量insert,update,delete操作
 	 * @param sql sql语句必须固定
 	 * @param paramSourceList 参数数组
