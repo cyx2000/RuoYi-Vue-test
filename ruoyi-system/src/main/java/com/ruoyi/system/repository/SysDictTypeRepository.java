@@ -1,16 +1,16 @@
-package com.ruoyi.system.service;
+package com.ruoyi.system.repository;
 
 import java.util.List;
-import com.ruoyi.common.core.domain.entity.SysDictData;
+
 import com.ruoyi.common.core.domain.entity.SysDictType;
 import com.ruoyi.common.core.page.TableDataInfo;
 
 /**
- * 字典 业务层
+ * 字典表 数据层
  *
- * @author ruoyi
+ * @author winter123
  */
-public interface ISysDictTypeService
+public interface SysDictTypeRepository
 {
     /**
      * 根据条件查询字典类型
@@ -36,14 +36,6 @@ public interface ISysDictTypeService
     public List<SysDictType> selectDictTypeAll();
 
     /**
-     * 根据字典类型查询字典数据
-     *
-     * @param dictType 字典类型
-     * @return 字典数据集合信息
-     */
-    public List<SysDictData> selectDictDataByType(String dictType);
-
-    /**
      * 根据字典类型ID查询信息
      *
      * @param dictId 字典类型ID
@@ -60,29 +52,23 @@ public interface ISysDictTypeService
     public SysDictType selectDictTypeByType(String dictType);
 
     /**
-     * 批量删除字典信息
+     * 通过字典ID删除字典信息
+     *
+     * @param dictId 字典ID
+     * @return 结果
+     */
+    public int deleteDictTypeById(Long dictId);
+
+    /**
+     * 批量删除字典类型信息
      *
      * @param dictIds 需要删除的字典ID
+     * @return 结果
      */
-    public void deleteDictTypeByIds(Long[] dictIds);
+    public int deleteDictTypeByIds(Long[] dictIds);
 
     /**
-     * 加载字典缓存数据
-     */
-    public void loadingDictCache();
-
-    /**
-     * 清空字典缓存数据
-     */
-    public void clearDictCache();
-
-    /**
-     * 重置字典缓存数据
-     */
-    public void resetDictCache();
-
-    /**
-     * 新增保存字典类型信息
+     * 新增字典类型信息
      *
      * @param dictType 字典类型信息
      * @return 结果
@@ -90,7 +76,7 @@ public interface ISysDictTypeService
     public int insertDictType(SysDictType dictType);
 
     /**
-     * 修改保存字典类型信息
+     * 修改字典类型信息
      *
      * @param dictType 字典类型信息
      * @return 结果
@@ -103,5 +89,5 @@ public interface ISysDictTypeService
      * @param dictType 字典类型
      * @return 结果
      */
-    public boolean checkDictTypeUnique(SysDictType dictType);
+    public SysDictType checkDictTypeUnique(String dictType);
 }
