@@ -50,7 +50,7 @@ public class SysDeptRepositoryImpl implements SysDeptRepository {
             addWhereBuilder.append(" AND d.status=:inDeptStatus");
             parameters.addValue("inDeptStatus", deptStatus);
         }
-        addWhereBuilder.append(dept.getParams().get("dataScope"));
+        addWhereBuilder.append(dept.getDataScopeFilterParam());
         addWhereBuilder.append(" ORDER BY d.parent_id, d.order_num");
 
         List<SysDept> queryList = dbService.queryForList(addWhereBuilder.toString(), parameters, new SimplePropertyRowMapper<>(SysDept.class));
@@ -59,16 +59,16 @@ public class SysDeptRepositoryImpl implements SysDeptRepository {
 
     @Override
     public List<Long> selectDeptListByRoleId(Long roleId, boolean deptCheckStrictly) {
-        String sql = "SELECT d.dept_id FROM sys_dept d LEFT JOIN sys_role_dept rd ON d.dept_id = rd.dept_id WHERE rd.role_id=:inRoleId";
+        StringBuilder sqlBuilder = new StringBuilder("SELECT d.dept_id FROM sys_dept d LEFT JOIN sys_role_dept rd ON d.dept_id = rd.dept_id WHERE rd.role_id=:inRoleId");
 
         MapSqlParameterSource parameters = new MapSqlParameterSource("inRoleId", roleId);
 
         if(deptCheckStrictly) {
-            sql = sql + " AND d.dept_id NOT IN (SELECT d.parent_id FROM sys_dept d INNER JOIN sys_role_dept rd ON d.dept_id = rd.dept_id AND rd.role_id=:inRoleId)";
+            sqlBuilder.append(" AND d.dept_id NOT IN (SELECT d.parent_id FROM sys_dept d INNER JOIN sys_role_dept rd ON d.dept_id = rd.dept_id AND rd.role_id=:inRoleId)");
         }
-        sql = sql + " ORDER BY d.parent_id, d.order_num";
+        sqlBuilder.append(" ORDER BY d.parent_id, d.order_num");
 
-        List<Long> queryList = dbService.queryForList(sql, parameters, Long.class);
+        List<Long> queryList = dbService.queryForList(sqlBuilder.toString(), parameters, Long.class);
         return queryList;
     }
 
@@ -127,9 +127,9 @@ public class SysDeptRepositoryImpl implements SysDeptRepository {
         MapSqlParameterSource parameters = new MapSqlParameterSource("inDeptName", deptName);
         parameters.addValue("inParentId", parentId);
 
-        String addWhereSql = "AND dept_name=:inDeptName AND parent_id=:inParentId LIMIT 1";
+        String sql = baseSelectSql + " AND dept_name=:inDeptName AND parent_id=:inParentId LIMIT 1";
 
-        SysDept queryObj = dbService.queryForObject(baseSelectSql + addWhereSql, parameters, new SimplePropertyRowMapper<>(SysDept.class));
+        SysDept queryObj = dbService.queryForObject(sql, parameters, new SimplePropertyRowMapper<>(SysDept.class));
         return queryObj;
     }
 

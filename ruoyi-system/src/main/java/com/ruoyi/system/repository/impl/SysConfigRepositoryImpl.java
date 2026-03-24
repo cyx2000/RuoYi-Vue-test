@@ -48,12 +48,12 @@ public class SysConfigRepositoryImpl implements SysConfigRepository {
 
     @Override
     public List<SysConfig> selectConfigList(SysConfig config) {
-        StringBuilder addWhereBuilder = new StringBuilder();
+        StringBuilder addWhereBuilder = new StringBuilder(baseSelectSql);
         MapSqlParameterSource parameters = new MapSqlParameterSource();
 
         setListSqlAndParams(config, addWhereBuilder, parameters);
 
-        List<SysConfig> list = dbService.queryForList(baseSelectSql + addWhereBuilder.toString(), parameters, new SimplePropertyRowMapper<>(SysConfig.class));
+        List<SysConfig> list = dbService.queryForList(addWhereBuilder.toString(), parameters, new SimplePropertyRowMapper<>(SysConfig.class));
 
         return list;
     }
@@ -62,8 +62,8 @@ public class SysConfigRepositoryImpl implements SysConfigRepository {
         String configName = inConfig.getConfigName();
         String configType = inConfig.getConfigType();
         String configKey = inConfig.getConfigKey();
-        String beginDateTime = (String) inConfig.getParams().get("beginTime");
-        String endDateTime = (String) inConfig.getParams().get("endTime");
+        String beginDateTime = inConfig.getBeginTimeParam();
+        String endDateTime = inConfig.getEndTimeParam();
 
         if(StringUtils.isNotEmpty(configName)) {
             inBuilder.append(" AND scfg.config_name LIKE CONCAT('%', :inConfigName, '%')");
@@ -99,9 +99,13 @@ public class SysConfigRepositoryImpl implements SysConfigRepository {
         // 默认使用主键排序
         parameters.addValue("inOrderBy", "config_id");
 
-        List<SysConfig> list = dbService.getPagedList(baseSelectSql + addWhereBuilder.toString(), parameters, new SimplePropertyRowMapper<>(SysConfig.class));
+        String querListSql = baseSelectSql + addWhereBuilder.toString();
 
-        TableDataInfo pagedResp = dbService.getPagedResult(list, selectCountSql + addWhereBuilder.toString(), parameters);
+        List<SysConfig> list = dbService.getPagedList(querListSql, parameters, new SimplePropertyRowMapper<>(SysConfig.class));
+
+        String queryCountSql = selectCountSql + addWhereBuilder.toString();
+
+        TableDataInfo pagedResp = dbService.getPagedResult(list, queryCountSql, parameters);
         return pagedResp;
     }
 
@@ -173,10 +177,7 @@ public class SysConfigRepositoryImpl implements SysConfigRepository {
 
     @Override
     public int deleteConfigById(Long configId) {
-        String deleteSql = "DELETE FROM sys_config WHERE config_id=:inConfigId";
-        MapSqlParameterSource parameters = new MapSqlParameterSource("inConfigId", configId);
-        int[] deletedResList = dbService.batchUpdate(deleteSql.toString(), new MapSqlParameterSource[]{parameters});
-        return deletedResList[0];
+        return this.deleteConfigByIds(new Long[]{configId})[0];
     }
 
     @Override
@@ -185,7 +186,8 @@ public class SysConfigRepositoryImpl implements SysConfigRepository {
 
         MapSqlParameterSource[] paramsList = new MapSqlParameterSource[configIds.length];
         for (int i = 0; i < paramsList.length; i++) {
-            paramsList[i] = new MapSqlParameterSource("inConfigId", configIds[i]);
+            Long configId = configIds[i];
+            paramsList[i] = new MapSqlParameterSource("inConfigId", configId);
         }
 
         int[] deletedResList = dbService.batchUpdate(deleteSql, paramsList);
