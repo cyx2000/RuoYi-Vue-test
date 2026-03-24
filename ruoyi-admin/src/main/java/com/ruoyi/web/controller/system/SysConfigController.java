@@ -24,7 +24,7 @@ import com.ruoyi.system.service.ISysConfigService;
 
 /**
  * 参数配置 信息操作处理
- * 
+ *
  * @author ruoyi
  */
 @RestController
@@ -41,9 +41,8 @@ public class SysConfigController extends BaseController
     @GetMapping("/list")
     public TableDataInfo list(SysConfig config)
     {
-        startPage();
-        List<SysConfig> list = configService.selectConfigList(config);
-        return getDataTable(list);
+        TableDataInfo pagedList = configService.getPagedListResp(config);
+        return pagedList;
     }
 
     @Log(title = "参数管理", businessType = BusinessType.EXPORT)
