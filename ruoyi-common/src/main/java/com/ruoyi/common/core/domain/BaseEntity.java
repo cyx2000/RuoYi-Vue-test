@@ -7,10 +7,11 @@ import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.ruoyi.common.utils.StringUtils;
 
 /**
  * Entity基类
- * 
+ *
  * @author ruoyi
  */
 public class BaseEntity implements Serializable
@@ -41,6 +42,30 @@ public class BaseEntity implements Serializable
     /** 请求参数 */
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private Map<String, Object> params;
+
+    public String getBeginTimeParam() {
+        if(StringUtils.isNotEmpty(params))
+        {
+            return (String) this.params.get("beginTime");
+        }
+        return null;
+    }
+
+    public String getEndTimeParam() {
+        if(StringUtils.isNotEmpty(params))
+        {
+            return (String) this.params.get("endTime");
+        }
+        return null;
+    }
+
+    public String getDataScopeFilterParam() {
+        if(StringUtils.isNotEmpty(params))
+        {
+            return (String) this.params.get("dataScope");
+        }
+        return null;
+    }
 
     public String getSearchValue()
     {
