@@ -1,7 +1,6 @@
 package com.ruoyi.system.repository.impl;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.jdbc.core.SimplePropertyRowMapper;
@@ -184,12 +183,12 @@ public class SysConfigRepositoryImpl implements SysConfigRepository {
     public int[] deleteConfigByIds(Long[] configIds) {
         String deleteSql = "DELETE FROM sys_config WHERE config_id=:inConfigId";
 
-        ArrayList<MapSqlParameterSource> batchList = new ArrayList<MapSqlParameterSource>();
-        for(Long configId: configIds) {
-            batchList.add(new MapSqlParameterSource("inConfigId", configId));
+        MapSqlParameterSource[] paramsList = new MapSqlParameterSource[configIds.length];
+        for (int i = 0; i < paramsList.length; i++) {
+            paramsList[i] = new MapSqlParameterSource("inConfigId", configIds[i]);
         }
 
-        int[] deletedResList = dbService.batchUpdate(deleteSql, (MapSqlParameterSource[])batchList.toArray());
+        int[] deletedResList = dbService.batchUpdate(deleteSql, paramsList);
 
         return deletedResList;
     }
