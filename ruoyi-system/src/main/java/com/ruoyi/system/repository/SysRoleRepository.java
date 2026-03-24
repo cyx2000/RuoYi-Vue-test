@@ -7,7 +7,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
 /**
  * 角色表 数据层
  *
- * @author ruoyi
+ * @author winter123
  */
 public interface SysRoleRepository
 {
