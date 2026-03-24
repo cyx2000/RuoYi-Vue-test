@@ -180,7 +180,7 @@ public class DBService {
 	 * 批量insert,update,delete操作
 	 * @param sql sql语句必须固定
 	 * @param paramSourceList 参数数组
-	 * @return 1：成功 0：失败
+	 * @return int列表，1：成功 0：失败
 	 */
 	public int[] batchUpdate(String sql, SqlParameterSource[] paramSourceList) {
 		try {
@@ -188,7 +188,7 @@ public class DBService {
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage());
 		}
-		return new int[0];
+		return new int[]{0};
 	}
 
     public NamedParameterJdbcTemplate getNamedJdbc() {
