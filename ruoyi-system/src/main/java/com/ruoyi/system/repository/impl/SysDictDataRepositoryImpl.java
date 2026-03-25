@@ -22,8 +22,6 @@ public class SysDictDataRepositoryImpl implements SysDictDataRepository {
 
     private String baseSelectSql = "SELECT dict_code, dict_sort, dict_label, dict_value, dict_type, css_class, list_class, is_default, status, create_by, create_time, remark FROM sys_dict_data WHERE 1=1";
 
-    private String selectCountSql = "SELECT COUNT(1) FROM sys_dict_data WHERE 1=1";
-
     public SysDictDataRepositoryImpl(DBService inDbService) {
         this.dbService = inDbService;
     }
@@ -53,6 +51,8 @@ public class SysDictDataRepositoryImpl implements SysDictDataRepository {
         String querListSql = baseSelectSql + addWhereBuilder.toString();
 
         List<SysDictData> list = dbService.getPagedList(querListSql, parameters, new SimplePropertyRowMapper<>(SysDictData.class));
+
+        String selectCountSql = "SELECT COUNT(1) FROM sys_dict_data WHERE 1=1";
 
         String queryCountSql = selectCountSql + addWhereBuilder.toString();
 

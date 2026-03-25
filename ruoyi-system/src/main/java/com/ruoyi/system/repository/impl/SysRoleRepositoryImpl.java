@@ -22,8 +22,6 @@ public class SysRoleRepositoryImpl implements SysRoleRepository{
 
     private String baseSelectSql = "SELECT DISTINCT r.role_id, r.role_name, r.role_key, r.role_sort, r.data_scope, r.menu_check_strictly, r.dept_check_strictly, r.status, r.del_flag, r.create_time, r.remark FROM sys_role r LEFT JOIN sys_user_role ur ON ur.role_id = r.role_id LEFT JOIN sys_user u ON u.user_id = ur.user_id LEFT JOIN sys_dept d ON u.dept_id = d.dept_id WHERE r.del_flag = '0'";
 
-    private String selectCountSql = "SELECT DISTINCT COUNT(1) FROM sys_role r LEFT JOIN sys_user_role ur ON ur.role_id = r.role_id LEFT JOIN sys_user u ON u.user_id = ur.user_id LEFT JOIN sys_dept d ON u.dept_id = d.dept_id WHERE r.del_flag = '0'";
-
     public SysRoleRepositoryImpl(DBService inDbService) {
         this.dbService = inDbService;
     }
@@ -53,6 +51,8 @@ public class SysRoleRepositoryImpl implements SysRoleRepository{
         String querListSql = baseSelectSql + addWhereBuilder.toString();
 
         List<SysRole> list = dbService.getPagedList(querListSql, parameters, new SimplePropertyRowMapper<>(SysRole.class));
+
+        String selectCountSql = "SELECT DISTINCT COUNT(1) FROM sys_role r LEFT JOIN sys_user_role ur ON ur.role_id = r.role_id LEFT JOIN sys_user u ON u.user_id = ur.user_id LEFT JOIN sys_dept d ON u.dept_id = d.dept_id WHERE r.del_flag = '0'";
 
         String queryCountSql = selectCountSql + addWhereBuilder.toString();
 

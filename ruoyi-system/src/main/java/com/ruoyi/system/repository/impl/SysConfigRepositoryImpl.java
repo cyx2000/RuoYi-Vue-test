@@ -20,8 +20,6 @@ public class SysConfigRepositoryImpl implements SysConfigRepository {
 
     private String baseSelectSql = "SELECT scfg.config_id, scfg.config_name, scfg.config_key, scfg.config_value, scfg.config_type, scfg.create_by, scfg.create_time, scfg.update_by, scfg.update_time, scfg.remark FROM sys_config scfg WHERE 1=1";
 
-    private String selectCountSql = "SELECT COUNT(1) FROM sys_config scfg WHERE 1=1";
-
     public SysConfigRepositoryImpl(DBService inDbService) {
         this.dbService = inDbService;
     }
@@ -99,6 +97,8 @@ public class SysConfigRepositoryImpl implements SysConfigRepository {
         String querListSql = baseSelectSql + addWhereBuilder.toString();
 
         List<SysConfig> list = dbService.getPagedList(querListSql, parameters, new SimplePropertyRowMapper<>(SysConfig.class));
+
+        String selectCountSql = "SELECT COUNT(1) FROM sys_config scfg WHERE 1=1";
 
         String queryCountSql = selectCountSql + addWhereBuilder.toString();
 
