@@ -133,7 +133,7 @@ public class SysLogininforRepositoryImpl implements SysLogininforRepository {
 
     @Override
     public int cleanLogininfor() {
-        String clearSql = "truncate table sys_logininfor";
+        String clearSql = "TRUNCATE TABLE sys_logininfor";
 
         int clearResList = dbService.execute(clearSql);
         return clearResList;
