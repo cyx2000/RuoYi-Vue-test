@@ -96,9 +96,6 @@ public class SysConfigRepositoryImpl implements SysConfigRepository {
 
         setListSqlAndParams(config, addWhereBuilder, parameters);
 
-        // 默认使用主键排序
-        parameters.addValue("inOrderBy", "config_id");
-
         String querListSql = baseSelectSql + addWhereBuilder.toString();
 
         List<SysConfig> list = dbService.getPagedList(querListSql, parameters, new SimplePropertyRowMapper<>(SysConfig.class));
