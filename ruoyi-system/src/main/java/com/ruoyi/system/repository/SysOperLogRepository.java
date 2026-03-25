@@ -1,4 +1,4 @@
-package com.ruoyi.system.service;
+package com.ruoyi.system.repository;
 
 import java.util.List;
 
@@ -6,11 +6,11 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.system.domain.SysOperLog;
 
 /**
- * 操作日志 服务层
+ * 操作日志 数据层
  *
- * @author ruoyi
+ * @author winter123
  */
-public interface ISysOperLogService
+public interface SysOperLogRepository
 {
     /**
      * 新增操作日志
@@ -30,10 +30,10 @@ public interface ISysOperLogService
     /**
      * 根据条件分页查询系统操作日志
      *
-     * @param operLog 操作日志对象
+     * @param dictType 操作日志对象
      * @return 分页完成的操作日志集合
      */
-    public TableDataInfo getPagedListResp(SysOperLog operLog);
+    public TableDataInfo getPagedListResp(SysOperLog logininfor);
 
     /**
      * 批量删除系统操作日志
