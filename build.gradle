@@ -1,8 +1,8 @@
 // 编译脚本
 buildscript {
     ext {
-        springBootVersion = "4.0.3" // Spring Boot Bom版本定义
-        springFrameworkVersion = "7.0.5" // Spring Framework Bom版本定义
+        springBootVersion = "4.0.4" // Spring Boot Bom版本定义
+        springFrameworkVersion = "7.0.6" // Spring Framework Bom版本定义
         druidDBPool = "1.2.28"
         mybatis = "4.0.1"
         jacksonAnnotations = "2.21"
