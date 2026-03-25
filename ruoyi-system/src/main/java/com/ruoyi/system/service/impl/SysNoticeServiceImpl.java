@@ -1,13 +1,14 @@
 package com.ruoyi.system.service.impl;
 
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.system.domain.SysNotice;
 import com.ruoyi.system.repository.SysNoticeRepository;
 import com.ruoyi.system.service.ISysNoticeService;
+
+import jakarta.annotation.Resource;
 
 /**
  * 公告 服务层实现
@@ -17,7 +18,7 @@ import com.ruoyi.system.service.ISysNoticeService;
 @Service
 public class SysNoticeServiceImpl implements ISysNoticeService
 {
-    @Autowired
+    @Resource
     private SysNoticeRepository noticeMapper;
 
     /**

@@ -1,13 +1,14 @@
 package com.ruoyi.system.service.impl;
 
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.system.domain.SysOperLog;
 import com.ruoyi.system.repository.SysOperLogRepository;
 import com.ruoyi.system.service.ISysOperLogService;
+
+import jakarta.annotation.Resource;
 
 /**
  * 操作日志 服务层处理
@@ -17,7 +18,7 @@ import com.ruoyi.system.service.ISysOperLogService;
 @Service
 public class SysOperLogServiceImpl implements ISysOperLogService
 {
-    @Autowired
+    @Resource
     private SysOperLogRepository operLogRepository;
 
     /**

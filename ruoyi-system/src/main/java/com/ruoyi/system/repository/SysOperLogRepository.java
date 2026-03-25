@@ -30,10 +30,10 @@ public interface SysOperLogRepository
     /**
      * 根据条件分页查询系统操作日志
      *
-     * @param dictType 操作日志对象
+     * @param operLog 操作日志对象
      * @return 分页完成的操作日志集合
      */
-    public TableDataInfo getPagedListResp(SysOperLog logininfor);
+    public TableDataInfo getPagedListResp(SysOperLog operLog);
 
     /**
      * 批量删除系统操作日志

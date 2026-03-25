@@ -1,12 +1,13 @@
 package com.ruoyi.system.service.impl;
 
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.system.domain.SysNoticeRead;
 import com.ruoyi.system.domain.SysNotice;
 import com.ruoyi.system.repository.SysNoticeReadRepository;
 import com.ruoyi.system.service.ISysNoticeReadService;
+
+import jakarta.annotation.Resource;
 
 /**
  * 公告已读记录 服务层实现
@@ -16,7 +17,7 @@ import com.ruoyi.system.service.ISysNoticeReadService;
 @Service
 public class SysNoticeReadServiceImpl implements ISysNoticeReadService
 {
-    @Autowired
+    @Resource
     private SysNoticeReadRepository noticeReadRepository;
 
     /**
