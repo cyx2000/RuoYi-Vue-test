@@ -46,9 +46,6 @@ public class SysDictTypeRepositoryImpl implements SysDictTypeRepository {
 
         setListSqlAndParams(dictType, addWhereBuilder, parameters);
 
-        // 默认使用主键排序
-        parameters.addValue("inOrderBy", "dict_id");
-
         String querListSql = baseSelectSql + addWhereBuilder.toString();
 
         List<SysDictType> list = dbService.getPagedList(querListSql, parameters, new SimplePropertyRowMapper<>(SysDictType.class));
