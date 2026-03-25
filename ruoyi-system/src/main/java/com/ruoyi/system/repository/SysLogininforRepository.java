@@ -1,4 +1,4 @@
-package com.ruoyi.system.service;
+package com.ruoyi.system.repository;
 
 import java.util.List;
 
@@ -6,11 +6,11 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.system.domain.SysLogininfor;
 
 /**
- * 系统访问日志情况信息 服务层
+ * 系统访问日志情况信息 数据层
  *
- * @author ruoyi
+ * @author winter123
  */
-public interface ISysLogininforService
+public interface SysLogininforRepository
 {
     /**
      * 新增系统登录日志
@@ -28,10 +28,10 @@ public interface ISysLogininforService
     public List<SysLogininfor> selectLogininforList(SysLogininfor logininfor);
 
     /**
-     * 根据条件分页查询字典类型
+     * 根据条件分页查询系统登录日志
      *
-     * @param dictType 字典类型信息
-     * @return 分页完成的字典类型集合
+     * @param dictType 访问日志对象
+     * @return 分页完成的登录记录集合
      */
     public TableDataInfo getPagedListResp(SysLogininfor logininfor);
 
@@ -45,6 +45,8 @@ public interface ISysLogininforService
 
     /**
      * 清空系统登录日志
+     *
+     * @return 结果
      */
-    public void cleanLogininfor();
+    public int cleanLogininfor();
 }
