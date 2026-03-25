@@ -53,15 +53,16 @@ public class DBService {
         Integer pageSize = pageDomain.getPageSize();
         String orderBy = SqlUtil.escapeOrderBySql(pageDomain.getOrderBy());
 
-        StringBuilder pageSql = new StringBuilder(queryListSql + " ORDER BY ");
+        StringBuilder pageSql = new StringBuilder(queryListSql);
 
         if(StringUtils.isEmpty(orderBy)){
             if(paramSource instanceof NamedSqlParameterSource namedSource) {
-                pageSql.append(namedSource.getDefaultOrderByStr());
+                orderBy = (String) namedSource.getDefaultOrderByStr();
             }
         }
-        else {
-            pageSql.append(orderBy);
+
+        if(StringUtils.isNotEmpty(orderBy)) {
+            pageSql.append(" ORDER BY " + orderBy);
         }
 
         if(pageNum < 1) {
