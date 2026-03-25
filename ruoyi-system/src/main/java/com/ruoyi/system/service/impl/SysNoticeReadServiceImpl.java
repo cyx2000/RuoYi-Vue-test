@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.system.domain.SysNoticeRead;
 import com.ruoyi.system.domain.SysNotice;
-import com.ruoyi.system.mapper.SysNoticeReadMapper;
+import com.ruoyi.system.repository.SysNoticeReadRepository;
 import com.ruoyi.system.service.ISysNoticeReadService;
 
 /**
@@ -17,7 +17,7 @@ import com.ruoyi.system.service.ISysNoticeReadService;
 public class SysNoticeReadServiceImpl implements ISysNoticeReadService
 {
     @Autowired
-    private SysNoticeReadMapper noticeReadMapper;
+    private SysNoticeReadRepository noticeReadRepository;
 
     /**
      * 标记已读
@@ -28,7 +28,7 @@ public class SysNoticeReadServiceImpl implements ISysNoticeReadService
         SysNoticeRead record = new SysNoticeRead();
         record.setNoticeId(noticeId);
         record.setUserId(userId);
-        noticeReadMapper.insertNoticeRead(record);
+        noticeReadRepository.insertNoticeRead(record);
     }
 
     /**
@@ -37,7 +37,7 @@ public class SysNoticeReadServiceImpl implements ISysNoticeReadService
     @Override
     public int selectUnreadCount(Long userId)
     {
-        return noticeReadMapper.selectUnreadCount(userId);
+        return noticeReadRepository.selectUnreadCount(userId);
     }
 
     /**
@@ -46,7 +46,7 @@ public class SysNoticeReadServiceImpl implements ISysNoticeReadService
     @Override
     public List<SysNotice> selectNoticeListWithReadStatus(Long userId, int limit)
     {
-        return noticeReadMapper.selectNoticeListWithReadStatus(userId, limit);
+        return noticeReadRepository.selectNoticeListWithReadStatus(userId, limit);
     }
 
     /**
@@ -59,7 +59,7 @@ public class SysNoticeReadServiceImpl implements ISysNoticeReadService
         {
             return;
         }
-        noticeReadMapper.insertNoticeReadBatch(userId, noticeIds);
+        noticeReadRepository.insertNoticeReadBatch(userId, noticeIds);
     }
 
     /**
@@ -68,6 +68,6 @@ public class SysNoticeReadServiceImpl implements ISysNoticeReadService
     @Override
     public void deleteByNoticeIds(Long[] noticeIds)
     {
-        noticeReadMapper.deleteByNoticeIds(noticeIds);
+        noticeReadRepository.deleteByNoticeIds(noticeIds);
     }
 }
