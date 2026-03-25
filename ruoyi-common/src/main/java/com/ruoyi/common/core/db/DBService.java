@@ -15,9 +15,11 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
 import com.ruoyi.common.constant.HttpStatus;
+import com.ruoyi.common.core.db.parameter.NamedSqlParameterSource;
 import com.ruoyi.common.core.page.PageDomain;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.core.page.TableSupport;
+import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.sql.SqlUtil;
 
 /**
@@ -51,13 +53,16 @@ public class DBService {
         Integer pageSize = pageDomain.getPageSize();
         String orderBy = SqlUtil.escapeOrderBySql(pageDomain.getOrderBy());
 
-        StringBuilder pageSql = new StringBuilder(queryListSql);
+        StringBuilder pageSql = new StringBuilder(queryListSql + " ORDER BY ");
 
-        pageSql.append(" ORDER BY :inOrderBy :inSort");
-        if(!orderBy.isEmpty()){
-            paramSource.addValue("inOrderBy", orderBy);
+        if(StringUtils.isEmpty(orderBy)){
+            if(paramSource instanceof NamedSqlParameterSource namedSource) {
+                pageSql.append(namedSource.getDefaultOrderByStr());
+            }
         }
-        paramSource.addValue("inSort", pageDomain.getIsAsc());
+        else {
+            pageSql.append(orderBy);
+        }
 
         if(pageNum < 1) {
             pageNum = 1;
