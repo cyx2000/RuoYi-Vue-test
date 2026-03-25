@@ -44,7 +44,7 @@ public class SysMenuRepositoryImpl implements SysMenuRepository{
         String menuStatus = inMenu.getStatus();
 
         if(StringUtils.isNotEmpty(menuName)) {
-            inBuilder.append(" AND menu_name like concat('%', :inMenuName, '%')");
+            inBuilder.append(" AND menu_name LIKE CONCAT('%', :inMenuName, '%')");
             inParameters.addValue("inMenuName", menuName);
         }
         if(StringUtils.isNotEmpty(menuVisible)) {
@@ -288,7 +288,7 @@ public class SysMenuRepositoryImpl implements SysMenuRepository{
         parameters.addValue("inUpdateBy", updateBy);
         parameters.addValue("inUpdateTime", LocalDateTime.now(ZoneId.of("UTC")));
         parameters.addValue("inMenuId", menuId);
-        // "UPDATE sys_menu SET menu_name=:inMenuName, parent_id=:inParentId, order_num=:inMenuOrder, path=:inMenuPath, isFrame=:inMenuFrame, is_cache=:inMenuCache, menu_type=:inMenuType, visible=:inMenuVisi, status=:inMenuStatus, icon=:inMenuIcon, update_by=:inUpdateBy, update_time=:inUpdateTime WHERE menu_id=:inMenuId"
+
         int[] updateResList = dbService.batchUpdate(updateSqlBuffer.toString(), new MapSqlParameterSource[]{parameters});
         return updateResList[0];
     }

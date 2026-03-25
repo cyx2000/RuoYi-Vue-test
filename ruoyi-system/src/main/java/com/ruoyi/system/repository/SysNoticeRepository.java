@@ -1,4 +1,4 @@
-package com.ruoyi.system.service;
+package com.ruoyi.system.repository;
 
 import java.util.List;
 
@@ -6,11 +6,11 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.system.domain.SysNotice;
 
 /**
- * 公告 服务层
+ * 通知公告表 数据层
  *
- * @author ruoyi
+ * @author winter123
  */
-public interface ISysNoticeService
+public interface SysNoticeRepository
 {
     /**
      * 查询公告信息
@@ -32,7 +32,7 @@ public interface ISysNoticeService
      * 根据条件分页查询公告列表
      *
      * @param notice 公告信息
-     * @return 分页完成的公告信息集合
+     * @return 分页完成的公告集合
      */
     public TableDataInfo getPagedListResp(SysNotice notice);
 
@@ -53,7 +53,7 @@ public interface ISysNoticeService
     public int updateNotice(SysNotice notice);
 
     /**
-     * 删除公告信息
+     * 批量删除公告
      *
      * @param noticeId 公告ID
      * @return 结果
