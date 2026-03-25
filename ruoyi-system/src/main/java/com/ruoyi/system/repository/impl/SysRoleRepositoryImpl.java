@@ -9,6 +9,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Service;
 
 import com.ruoyi.common.core.db.DBService;
+import com.ruoyi.common.core.db.parameter.NamedSqlParameterSource;
 import com.ruoyi.common.core.domain.entity.SysRole;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.utils.StringUtils;
@@ -42,12 +43,12 @@ public class SysRoleRepositoryImpl implements SysRoleRepository{
     @Override
     public TableDataInfo getPagedListResp(SysRole role) {
         StringBuilder addWhereBuilder = new StringBuilder();
-        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        NamedSqlParameterSource parameters = new NamedSqlParameterSource();
 
         setListSqlAndParams(role, addWhereBuilder, parameters);
 
-        // 默认使用主键排序
-        parameters.addValue("inOrderBy", "role_id");
+        // 默认使用role_sort排序
+        parameters.setDefaultOrderByStr("role_sort ASC");
 
         String querListSql = baseSelectSql + addWhereBuilder.toString();
 
