@@ -39,6 +39,44 @@ public class DBService {
     }
 
     /**
+     * 拼接排序和分页的sql语句，添加分页参数
+     *
+     * @param queryBuilder 字符串构建
+     * @param inParamSource 参数
+     */
+    public void getPagedSqlAndSetParameters(StringBuilder inQueryBuilder, MapSqlParameterSource inParamSource) {
+        PageDomain pageDomain = TableSupport.buildPageRequest();
+        Integer pageNum = pageDomain.getPageNum();
+        Integer pageSize = pageDomain.getPageSize();
+        String orderBy = SqlUtil.escapeOrderBySql(pageDomain.getOrderBy());
+
+        if(StringUtils.isEmpty(orderBy)){
+            if(inParamSource instanceof NamedSqlParameterSource namedSource) {
+                orderBy = (String) namedSource.getDefaultOrderByStr();
+            }
+        }
+
+        if(StringUtils.isNotEmpty(orderBy)) {
+            inQueryBuilder.append(" ORDER BY " + orderBy);
+        }
+
+        if(pageNum < 1) {
+            pageNum = 1;
+        }
+
+        if(pageSize < 10) {
+            pageSize = 10;
+        }
+
+        inQueryBuilder.append(" LIMIT :inStartIdx,:inPageSize");
+
+        Integer startIndex = (pageNum-1) * pageSize;
+        inParamSource.addValue("inStartIdx", startIndex);
+        inParamSource.addValue("inPageSize", pageSize);
+
+    }
+
+    /**
      * 获取分页和排序后的数据列表
      *
      * @param <K> 泛型返回实体类型，例如 User、Student ...
@@ -80,6 +118,22 @@ public class DBService {
         paramSource.addValue("inPageSize", pageSize);
 
         return this.queryForList(pageSql.toString(), paramSource, rowMapper);
+    }
+
+    /**
+     * 获取查询的总数，设置返回体总数和错误码，列表数据需要在外部设置
+     *
+     * @param queryTotalSql 查询数据库总数的sql语句
+     * @param paramSource 占位符的参数，只有where语句的参数
+     * @return TableDataInfo分页返回体
+     */
+    public TableDataInfo getPagedRespInfo(final String queryTotalSql, final SqlParameterSource paramSource) {
+		long total = this.getTotalRows(queryTotalSql, paramSource);
+
+        TableDataInfo rspData = new TableDataInfo();
+		rspData.setCode(HttpStatus.SUCCESS);
+        rspData.setTotal(total);
+        return rspData;
     }
 
     /**
