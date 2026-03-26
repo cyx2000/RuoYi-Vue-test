@@ -48,42 +48,46 @@ public class SysLogininforRepositoryImpl implements SysLogininforRepository {
         dbService.batchUpdate(insertSql, new MapSqlParameterSource[]{parameters});
     }
 
+    protected List<SysLogininfor> queryList(final MapSqlParameterSource parameters, final String querySql) {
+        List<SysLogininfor> list = dbService.queryForList(querySql, parameters, new SimplePropertyRowMapper<>(SysLogininfor.class));
+        return list;
+    }
+
     @Override
     public List<SysLogininfor> selectLogininforList(SysLogininfor logininfor) {
         String sql = "SELECT info_id, user_name, ipaddr, login_location, browser, os, status, msg, login_time FROM sys_logininfor WHERE 1=1";
 
-        StringBuilder addWhereBuilder = new StringBuilder(sql);
+        StringBuilder sqlBuilder = new StringBuilder(sql);
         MapSqlParameterSource parameters = new MapSqlParameterSource();
 
-        setListSqlAndParams(logininfor, addWhereBuilder, parameters);
+        setListSqlAndParams(logininfor, sqlBuilder, parameters);
 
-        addWhereBuilder.append(" ORDER BY info_id DESC");
+        sqlBuilder.append(" ORDER BY info_id DESC");
 
-        List<SysLogininfor> list = dbService.queryForList(addWhereBuilder.toString(), parameters, new SimplePropertyRowMapper<>(SysLogininfor.class));
-
-        return list;
+        return queryList(parameters, sqlBuilder.toString());
     }
 
     @Override
     public TableDataInfo getPagedListResp(SysLogininfor logininfor) {
         String sql = "SELECT info_id, user_name, ipaddr, login_location, browser, os, status, msg, login_time FROM sys_logininfor WHERE 1=1";
 
-        StringBuilder addWhereBuilder = new StringBuilder();
+        StringBuilder sqlBuilder = new StringBuilder();
         NamedSqlParameterSource parameters = new NamedSqlParameterSource();
 
-        setListSqlAndParams(logininfor, addWhereBuilder, parameters);
+        setListSqlAndParams(logininfor, sqlBuilder, parameters);
+
+        String selectCountSql = "SELECT COUNT(1) FROM sys_logininfor WHERE 1=1";
+        String queryCountSql = selectCountSql + sqlBuilder.toString();
+
+        TableDataInfo pagedResp = dbService.getPagedRespInfo(queryCountSql, parameters);
 
         parameters.setDefaultOrderByStr("info_id DESC");
 
-        String queryListSql = sql + addWhereBuilder.toString();
+        dbService.buildPagedSqlAndSetParameters(sqlBuilder, parameters);
 
-        List<SysLogininfor> list = dbService.getPagedList(queryListSql, parameters, new SimplePropertyRowMapper<>(SysLogininfor.class));
+        String queryListSql = sql + sqlBuilder.toString();
 
-        String selectCountSql = "SELECT COUNT(1) FROM sys_logininfor WHERE 1=1";
-
-        String queryCountSql = selectCountSql + addWhereBuilder.toString();
-
-        TableDataInfo pagedResp = dbService.getPagedResult(list, queryCountSql, parameters);
+        pagedResp.setRows(queryList(parameters, queryListSql));
         return pagedResp;
     }
 

@@ -24,6 +24,11 @@ public class SysConfigRepositoryImpl implements SysConfigRepository {
         this.dbService = inDbService;
     }
 
+    protected List<SysConfig> queryList(final MapSqlParameterSource parameters, final String querySql) {
+        List<SysConfig> list = dbService.queryForList(querySql, parameters, new SimplePropertyRowMapper<>(SysConfig.class));
+        return list;
+    }
+
     @Override
     public SysConfig selectConfigByKey(String configKey) {
         String sql = baseSelectSql + " AND scfg.config_key=:inConfigKey";
@@ -46,14 +51,12 @@ public class SysConfigRepositoryImpl implements SysConfigRepository {
 
     @Override
     public List<SysConfig> selectConfigList(SysConfig config) {
-        StringBuilder addWhereBuilder = new StringBuilder(baseSelectSql);
+        StringBuilder sqlBuilder = new StringBuilder(baseSelectSql);
         MapSqlParameterSource parameters = new MapSqlParameterSource();
 
-        setListSqlAndParams(config, addWhereBuilder, parameters);
+        setListSqlAndParams(config, sqlBuilder, parameters);
 
-        List<SysConfig> list = dbService.queryForList(addWhereBuilder.toString(), parameters, new SimplePropertyRowMapper<>(SysConfig.class));
-
-        return list;
+        return queryList(parameters, sqlBuilder.toString());
     }
 
     private void setListSqlAndParams(final SysConfig inConfig, StringBuilder inBuilder, MapSqlParameterSource inParameters) {
@@ -89,20 +92,21 @@ public class SysConfigRepositoryImpl implements SysConfigRepository {
     @Override
     public TableDataInfo getPagedListResp(SysConfig config) {
 
-        StringBuilder addWhereBuilder = new StringBuilder();
+        StringBuilder sqlBuilder = new StringBuilder();
         MapSqlParameterSource parameters = new MapSqlParameterSource();
 
-        setListSqlAndParams(config, addWhereBuilder, parameters);
-
-        String querListSql = baseSelectSql + addWhereBuilder.toString();
-
-        List<SysConfig> list = dbService.getPagedList(querListSql, parameters, new SimplePropertyRowMapper<>(SysConfig.class));
+        setListSqlAndParams(config, sqlBuilder, parameters);
 
         String selectCountSql = "SELECT COUNT(1) FROM sys_config scfg WHERE 1=1";
+        String queryCountSql = selectCountSql + sqlBuilder.toString();
 
-        String queryCountSql = selectCountSql + addWhereBuilder.toString();
+        TableDataInfo pagedResp = dbService.getPagedRespInfo(queryCountSql, parameters);
 
-        TableDataInfo pagedResp = dbService.getPagedResult(list, queryCountSql, parameters);
+        dbService.buildPagedSqlAndSetParameters(sqlBuilder, parameters);
+
+        String querListSql = baseSelectSql + sqlBuilder.toString();
+
+        pagedResp.setRows(queryList(parameters, querListSql));
         return pagedResp;
     }
 

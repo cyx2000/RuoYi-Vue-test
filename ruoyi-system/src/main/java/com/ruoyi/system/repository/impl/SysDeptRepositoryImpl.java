@@ -24,6 +24,11 @@ public class SysDeptRepositoryImpl implements SysDeptRepository {
         this.dbService = inDbService;
     }
 
+    protected List<SysDept> queryList(final MapSqlParameterSource parameters, final String querySql) {
+        List<SysDept> list = dbService.queryForList(querySql, parameters, new SimplePropertyRowMapper<>(SysDept.class));
+        return list;
+    }
+
     @Override
     public List<SysDept> selectDeptList(SysDept dept) {
         Long deptId = dept.getDeptId();
@@ -31,30 +36,29 @@ public class SysDeptRepositoryImpl implements SysDeptRepository {
         String deptName = dept.getDeptName();
         String deptStatus = dept.getStatus();
 
-        StringBuilder addWhereBuilder = new StringBuilder(baseSelectSql);
+        StringBuilder sqlBuilder = new StringBuilder(baseSelectSql);
         MapSqlParameterSource parameters = new MapSqlParameterSource();
 
         if(StringUtils.isNotNull(deptId) && deptId != 0L) {
-            addWhereBuilder.append(" AND d.dept_id=:inDeptId");
+            sqlBuilder.append(" AND d.dept_id=:inDeptId");
             parameters.addValue("inDeptId", deptId);
         }
         if(StringUtils.isNotNull(parentId) && parentId != 0L) {
-            addWhereBuilder.append(" AND d.parent_id=:inParentId");
+            sqlBuilder.append(" AND d.parent_id=:inParentId");
             parameters.addValue("inParentId", deptId);
         }
         if(StringUtils.isNotEmpty(deptName)) {
-            addWhereBuilder.append(" AND d.dept_name LIKE CONCAT('%', :inDeptName, '%')");
+            sqlBuilder.append(" AND d.dept_name LIKE CONCAT('%', :inDeptName, '%')");
             parameters.addValue("inDeptName", deptName);
         }
         if(StringUtils.isNotEmpty(deptStatus)) {
-            addWhereBuilder.append(" AND d.status=:inDeptStatus");
+            sqlBuilder.append(" AND d.status=:inDeptStatus");
             parameters.addValue("inDeptStatus", deptStatus);
         }
-        addWhereBuilder.append(dept.getDataScopeFilterParam());
-        addWhereBuilder.append(" ORDER BY d.parent_id, d.order_num");
+        sqlBuilder.append(dept.getDataScopeFilterParam());
+        sqlBuilder.append(" ORDER BY d.parent_id, d.order_num");
 
-        List<SysDept> queryList = dbService.queryForList(addWhereBuilder.toString(), parameters, new SimplePropertyRowMapper<>(SysDept.class));
-        return queryList;
+        return queryList(parameters, sqlBuilder.toString());
     }
 
     @Override
@@ -84,12 +88,12 @@ public class SysDeptRepositoryImpl implements SysDeptRepository {
 
     @Override
     public List<SysDept> selectChildrenDeptById(Long deptId) {
+        // TODO 使用实际字段替换 * 号
         String sql = "SELECT * FROM sys_dept WHERE FIND_IN_SET(:inDeptId, ancestors)";
 
         MapSqlParameterSource parameters = new MapSqlParameterSource("inDeptId", deptId);
 
-        List<SysDept> queryList = dbService.queryForList(sql, parameters, new SimplePropertyRowMapper<>(SysDept.class));
-        return queryList;
+        return queryList(parameters, sql);
     }
 
     @Override

@@ -26,37 +26,41 @@ public class SysRoleRepositoryImpl implements SysRoleRepository{
         this.dbService = inDbService;
     }
 
-    @Override
-    public List<SysRole> selectRoleList(SysRole role) {
-        StringBuilder addWhereBuilder = new StringBuilder(baseSelectSql);
-        MapSqlParameterSource parameters = new MapSqlParameterSource();
-
-        setListSqlAndParams(role, addWhereBuilder, parameters);
-
-        List<SysRole> list = dbService.queryForList(addWhereBuilder.toString(), parameters, new SimplePropertyRowMapper<>(SysRole.class));
-
+    protected List<SysRole> queryList(final MapSqlParameterSource parameters, final String querySql) {
+        List<SysRole> list = dbService.queryForList(querySql, parameters, new SimplePropertyRowMapper<>(SysRole.class));
         return list;
     }
 
     @Override
+    public List<SysRole> selectRoleList(SysRole role) {
+        StringBuilder sqlBuilder = new StringBuilder(baseSelectSql);
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+
+        setListSqlAndParams(role, sqlBuilder, parameters);
+
+        return queryList(parameters, sqlBuilder.toString());
+    }
+
+    @Override
     public TableDataInfo getPagedListResp(SysRole role) {
-        StringBuilder addWhereBuilder = new StringBuilder();
+        StringBuilder sqlBuilder = new StringBuilder();
         NamedSqlParameterSource parameters = new NamedSqlParameterSource();
 
-        setListSqlAndParams(role, addWhereBuilder, parameters);
+        setListSqlAndParams(role, sqlBuilder, parameters);
+
+        String selectCountSql = "SELECT DISTINCT COUNT(1) FROM sys_role r LEFT JOIN sys_user_role ur ON ur.role_id = r.role_id LEFT JOIN sys_user u ON u.user_id = ur.user_id LEFT JOIN sys_dept d ON u.dept_id = d.dept_id WHERE r.del_flag = '0'";
+        String queryCountSql = selectCountSql + sqlBuilder.toString();
+
+        TableDataInfo pagedResp = dbService.getPagedRespInfo(queryCountSql, parameters);
 
         // 默认使用role_sort排序
         parameters.setDefaultOrderByStr("role_sort ASC");
 
-        String querListSql = baseSelectSql + addWhereBuilder.toString();
+        dbService.buildPagedSqlAndSetParameters(sqlBuilder, parameters);
 
-        List<SysRole> list = dbService.getPagedList(querListSql, parameters, new SimplePropertyRowMapper<>(SysRole.class));
+        String querListSql = baseSelectSql + sqlBuilder.toString();
 
-        String selectCountSql = "SELECT DISTINCT COUNT(1) FROM sys_role r LEFT JOIN sys_user_role ur ON ur.role_id = r.role_id LEFT JOIN sys_user u ON u.user_id = ur.user_id LEFT JOIN sys_dept d ON u.dept_id = d.dept_id WHERE r.del_flag = '0'";
-
-        String queryCountSql = selectCountSql + addWhereBuilder.toString();
-
-        TableDataInfo pagedResp = dbService.getPagedResult(list, queryCountSql, parameters);
+        pagedResp.setRows(queryList(parameters, querListSql));
         return pagedResp;
     }
 
@@ -93,22 +97,18 @@ public class SysRoleRepositoryImpl implements SysRoleRepository{
 
     @Override
     public List<SysRole> selectRolePermissionByUserId(Long userId) {
+        String sql = baseSelectSql + " AND ur.user_id=:inUserId";
 
         MapSqlParameterSource parameters = new MapSqlParameterSource("inUserId", userId);
 
-        String sql = baseSelectSql + " AND ur.user_id=:inUserId";
-
-        List<SysRole> list = dbService.queryForList(sql, parameters, new SimplePropertyRowMapper<>(SysRole.class));
-        return list;
+        return queryList(parameters, sql);
     }
 
     @Override
     public List<SysRole> selectRoleAll() {
-
         String sql = baseSelectSql + " OR 1=1";
 
-        List<SysRole> list = dbService.queryForList(sql, null, new SimplePropertyRowMapper<>(SysRole.class));
-        return list;
+        return queryList(null, sql);
     }
 
     @Override
@@ -138,8 +138,7 @@ public class SysRoleRepositoryImpl implements SysRoleRepository{
 
         MapSqlParameterSource parameters = new MapSqlParameterSource("inUserName", userName);
 
-        List<SysRole> list = dbService.queryForList(sql, parameters, new SimplePropertyRowMapper<>(SysRole.class));
-        return list;
+        return queryList(parameters, sql);
     }
 
     @Override

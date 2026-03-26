@@ -25,34 +25,38 @@ public class SysDictTypeRepositoryImpl implements SysDictTypeRepository {
         this.dbService = inDbService;
     }
 
-    @Override
-    public List<SysDictType> selectDictTypeList(SysDictType dictType) {
-        StringBuilder addWhereBuilder = new StringBuilder(baseSelectSql);
-        MapSqlParameterSource parameters = new MapSqlParameterSource();
-
-        setListSqlAndParams(dictType, addWhereBuilder, parameters);
-
-        List<SysDictType> list = dbService.queryForList(addWhereBuilder.toString(), parameters, new SimplePropertyRowMapper<>(SysDictType.class));
-
+    protected List<SysDictType> queryList(final MapSqlParameterSource parameters, final String querySql) {
+        List<SysDictType> list = dbService.queryForList(querySql, parameters, new SimplePropertyRowMapper<>(SysDictType.class));
         return list;
     }
 
     @Override
-    public TableDataInfo getPagedListResp(SysDictType dictType) {
-        StringBuilder addWhereBuilder = new StringBuilder();
+    public List<SysDictType> selectDictTypeList(SysDictType dictType) {
+        StringBuilder sqlBuilder = new StringBuilder(baseSelectSql);
         MapSqlParameterSource parameters = new MapSqlParameterSource();
 
-        setListSqlAndParams(dictType, addWhereBuilder, parameters);
+        setListSqlAndParams(dictType, sqlBuilder, parameters);
 
-        String querListSql = baseSelectSql + addWhereBuilder.toString();
+        return queryList(parameters, sqlBuilder.toString());
+    }
 
-        List<SysDictType> list = dbService.getPagedList(querListSql, parameters, new SimplePropertyRowMapper<>(SysDictType.class));
+    @Override
+    public TableDataInfo getPagedListResp(SysDictType dictType) {
+        StringBuilder sqlBuilder = new StringBuilder();
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+
+        setListSqlAndParams(dictType, sqlBuilder, parameters);
 
         String selectCountSql = "SELECT COUNT(1) FROM sys_dict_type WHERE 1=1";
+        String queryCountSql = selectCountSql + sqlBuilder.toString();
 
-        String queryCountSql = selectCountSql + addWhereBuilder.toString();
+        TableDataInfo pagedResp = dbService.getPagedRespInfo(queryCountSql, parameters);
 
-        TableDataInfo pagedResp = dbService.getPagedResult(list, queryCountSql, parameters);
+        dbService.buildPagedSqlAndSetParameters(sqlBuilder, parameters);
+
+        String querListSql = baseSelectSql + sqlBuilder.toString();
+
+        pagedResp.setRows(queryList(parameters, querListSql));
         return pagedResp;
     }
 
@@ -87,10 +91,7 @@ public class SysDictTypeRepositoryImpl implements SysDictTypeRepository {
 
     @Override
     public List<SysDictType> selectDictTypeAll() {
-        MapSqlParameterSource parameters = new MapSqlParameterSource();
-
-        List<SysDictType> list = dbService.queryForList(baseSelectSql, parameters, new SimplePropertyRowMapper<>(SysDictType.class));
-        return list;
+        return queryList(null, baseSelectSql);
     }
 
     @Override

@@ -37,14 +37,13 @@ public class SysUserRepositoryImpl implements SysUserRepository {
 
         setListSqlAndParams(sysUser, sqlBuilder, parameters);
 
-        List<SysUser> list = queryList(parameters, sqlBuilder);
-        return list;
+        return queryList(parameters, sqlBuilder.toString());
     }
 
-    protected List<SysUser> queryList(final MapSqlParameterSource parameters, final StringBuilder queryBuilder) {
+    protected List<SysUser> queryList(final MapSqlParameterSource parameters, final String querySql) {
         String sql = "SELECT u.user_id, u.dept_id, u.nick_name, u.user_name, u.email, u.avatar, u.phonenumber, u.sex, u.status, u.del_flag, u.login_ip, u.login_date, u.create_by, u.create_time, u.remark, d.dept_name, d.leader FROM sys_user u LEFT JOIN sys_dept d ON u.dept_id = d.dept_id WHERE u.del_flag = '0'";
 
-        String queryListSql = sql + queryBuilder.toString();
+        String queryListSql = sql + querySql;
 
         SqlRowSet sqlRs = dbService.getNamedJdbc().queryForRowSet(queryListSql, parameters);
 
@@ -79,11 +78,9 @@ public class SysUserRepositoryImpl implements SysUserRepository {
 
         TableDataInfo pagedResp = dbService.getPagedRespInfo(queryCountSql, parameters);
 
-        dbService.getPagedSqlAndSetParameters(sqlBuilder, parameters);
+        dbService.buildPagedSqlAndSetParameters(sqlBuilder, parameters);
 
-        List<SysUser> list = queryList(parameters, sqlBuilder);
-
-        pagedResp.setRows(list);
+        pagedResp.setRows(queryList(parameters, sqlBuilder.toString()));
         return pagedResp;
     }
 
