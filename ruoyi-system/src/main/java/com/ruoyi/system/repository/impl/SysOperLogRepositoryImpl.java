@@ -27,6 +27,11 @@ public class SysOperLogRepositoryImpl implements SysOperLogRepository {
         this.dbService = inDbService;
     }
 
+    protected List<SysOperLog> queryList(final MapSqlParameterSource parameters, final String querySql) {
+        List<SysOperLog> list = dbService.queryForList(querySql, parameters, new SimplePropertyRowMapper<>(SysOperLog.class));
+        return list;
+    }
+
     @Override
     public void insertOperlog(SysOperLog operLog) {
         String operTitle = operLog.getTitle();
@@ -69,36 +74,35 @@ public class SysOperLogRepositoryImpl implements SysOperLogRepository {
 
     @Override
     public List<SysOperLog> selectOperLogList(SysOperLog operLog) {
-        StringBuilder addWhereBuilder = new StringBuilder(baseSelectSql);
+        StringBuilder sqlBuilder = new StringBuilder(baseSelectSql);
         MapSqlParameterSource parameters = new MapSqlParameterSource();
 
-        setListSqlAndParams(operLog, addWhereBuilder, parameters);
+        setListSqlAndParams(operLog, sqlBuilder, parameters);
 
-        addWhereBuilder.append(" ORDER BY oper_id DESC");
+        sqlBuilder.append(" ORDER BY oper_id DESC");
 
-        List<SysOperLog> list = dbService.queryForList(addWhereBuilder.toString(), parameters, new SimplePropertyRowMapper<>(SysOperLog.class));
-
-        return list;
+        return queryList(parameters, sqlBuilder.toString());
     }
 
     @Override
     public TableDataInfo getPagedListResp(SysOperLog logininfor) {
-        StringBuilder addWhereBuilder = new StringBuilder();
+        StringBuilder sqlBuilder = new StringBuilder();
         NamedSqlParameterSource parameters = new NamedSqlParameterSource();
 
-        setListSqlAndParams(logininfor, addWhereBuilder, parameters);
+        setListSqlAndParams(logininfor, sqlBuilder, parameters);
+
+        String selectCountSql = "SELECT COUNT(1) FROM sys_oper_log WHERE 1=1";
+        String queryCountSql = selectCountSql + sqlBuilder.toString();
+
+        TableDataInfo pagedResp = dbService.getPagedRespInfo(queryCountSql, parameters);
 
         parameters.setDefaultOrderByStr("oper_id DESC");
 
-        String queryListSql = baseSelectSql + addWhereBuilder.toString();
+        dbService.buildPagedSqlAndSetParameters(sqlBuilder, parameters);
 
-        List<SysOperLog> list = dbService.getPagedList(queryListSql, parameters, new SimplePropertyRowMapper<>(SysOperLog.class));
+        String queryListSql = baseSelectSql + sqlBuilder.toString();
 
-        String selectCountSql = "SELECT COUNT(1) FROM sys_oper_log WHERE 1=1";
-
-        String queryCountSql = selectCountSql + addWhereBuilder.toString();
-
-        TableDataInfo pagedResp = dbService.getPagedResult(list, queryCountSql, parameters);
+        pagedResp.setRows(queryList(parameters, queryListSql));
         return pagedResp;
     }
 

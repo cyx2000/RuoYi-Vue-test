@@ -26,6 +26,10 @@ public class SysNoticeRepositoryImpl implements SysNoticeRepository {
         this.dbService = inDbService;
     }
 
+    protected List<SysNotice> queryList(final MapSqlParameterSource parameters, final String querySql) {
+        List<SysNotice> list = dbService.queryForList(querySql, parameters, new SimplePropertyRowMapper<>(SysNotice.class));
+        return list;
+    }
     @Override
     public SysNotice selectNoticeById(Long noticeId) {
         String sql = baseSelectSql + " AND notice_id=:inNoticeId";
@@ -38,33 +42,35 @@ public class SysNoticeRepositoryImpl implements SysNoticeRepository {
 
     @Override
     public List<SysNotice> selectNoticeList(SysNotice notice) {
-        StringBuilder addWhereBuilder = new StringBuilder(baseSelectSql);
+        StringBuilder sqlBuilder = new StringBuilder(baseSelectSql);
         MapSqlParameterSource parameters = new MapSqlParameterSource();
 
-        setListSqlAndParams(notice, addWhereBuilder, parameters);
+        setListSqlAndParams(notice, sqlBuilder, parameters);
 
-        addWhereBuilder.append("ORDER BY notice_id DESC");
+        sqlBuilder.append("ORDER BY notice_id DESC");
 
-        List<SysNotice> list = dbService.queryForList(addWhereBuilder.toString(), parameters, new SimplePropertyRowMapper<>(SysNotice.class));
-        return list;
+        return queryList(parameters, sqlBuilder.toString());
     }
 
     @Override
     public TableDataInfo getPagedListResp(SysNotice notice) {
-        StringBuilder addWhereBuilder = new StringBuilder();
+        StringBuilder sqlBuilder = new StringBuilder();
         NamedSqlParameterSource parameters = new NamedSqlParameterSource();
 
-        setListSqlAndParams(notice, addWhereBuilder, parameters);
+        setListSqlAndParams(notice, sqlBuilder, parameters);
+
+        String selectCountSql = "SELECT COUNT(1) FROM sys_notice WHERE 1=1";
+        String queryCountSql = selectCountSql + sqlBuilder.toString();
+
+        TableDataInfo pagedResp = dbService.getPagedRespInfo(queryCountSql, parameters);
 
         parameters.setDefaultOrderByStr("notice_id DESC");
 
-        String querListSql = baseSelectSql + addWhereBuilder.toString();
-        List<SysNotice> list = dbService.getPagedList(querListSql, parameters, new SimplePropertyRowMapper<>(SysNotice.class));
+        dbService.buildPagedSqlAndSetParameters(sqlBuilder, parameters);
 
-        String selectCountSql = "SELECT COUNT(1) FROM sys_notice WHERE 1=1";
-        String queryCountSql = selectCountSql + addWhereBuilder.toString();
-        TableDataInfo pagedResp = dbService.getPagedResult(list, queryCountSql, parameters);
+        String querListSql = baseSelectSql + sqlBuilder.toString();
 
+        pagedResp.setRows(queryList(parameters, querListSql));
         return pagedResp;
     }
 

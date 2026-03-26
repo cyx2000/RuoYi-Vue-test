@@ -25,6 +25,11 @@ public class SysPostRepositoryImpl implements SysPostRepository {
         this.dbService = inDbService;
     }
 
+    protected List<SysPost> queryList(final MapSqlParameterSource parameters, final String querySql) {
+         List<SysPost> list = dbService.queryForList(querySql, parameters, new SimplePropertyRowMapper<>(SysPost.class));
+        return list;
+    }
+
     @Override
     public List<SysPost> selectPostList(SysPost post) {
         StringBuilder sqlBuilder = new StringBuilder(baseSelectSql);
@@ -32,8 +37,7 @@ public class SysPostRepositoryImpl implements SysPostRepository {
 
         setListSqlAndParams(post, sqlBuilder, parameters);
 
-        List<SysPost> list = dbService.queryForList(sqlBuilder.toString(), parameters, new SimplePropertyRowMapper<>(SysPost.class));
-        return list;
+        return queryList(parameters, sqlBuilder.toString());
     }
 
     @Override
@@ -48,9 +52,10 @@ public class SysPostRepositoryImpl implements SysPostRepository {
 
         TableDataInfo pagedResp = dbService.getPagedRespInfo(queryCountSql, parameters);
 
-        dbService.getPagedSqlAndSetParameters(sqlBuilder, parameters);
+        dbService.buildPagedSqlAndSetParameters(sqlBuilder, parameters);
 
-        List<SysPost> list = dbService.queryForList(baseSelectSql + sqlBuilder.toString(), parameters, new SimplePropertyRowMapper<>(SysPost.class));
+        String querListSql = baseSelectSql + sqlBuilder.toString();
+        List<SysPost> list = queryList(parameters, querListSql);
 
         pagedResp.setRows(list);
         return pagedResp;
@@ -77,8 +82,7 @@ public class SysPostRepositoryImpl implements SysPostRepository {
 
     @Override
     public List<SysPost> selectPostAll() {
-        List<SysPost> list = dbService.queryForList(baseSelectSql, null, new SimplePropertyRowMapper<>(SysPost.class));
-        return list;
+        return queryList(null, baseSelectSql);
     }
 
     @Override
@@ -107,8 +111,7 @@ public class SysPostRepositoryImpl implements SysPostRepository {
 
         MapSqlParameterSource parameters = new MapSqlParameterSource("inUsername", userName);
 
-        List<SysPost> list = dbService.queryForList(sql, parameters, new SimplePropertyRowMapper<>(SysPost.class));
-        return list;
+        return queryList(parameters, sql);
     }
 
     @Override

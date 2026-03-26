@@ -44,7 +44,7 @@ public class DBService {
      * @param queryBuilder 字符串构建
      * @param inParamSource 参数
      */
-    public void getPagedSqlAndSetParameters(StringBuilder inQueryBuilder, MapSqlParameterSource inParamSource) {
+    public void buildPagedSqlAndSetParameters(StringBuilder inQueryBuilder, MapSqlParameterSource inParamSource) {
         PageDomain pageDomain = TableSupport.buildPageRequest();
         Integer pageNum = pageDomain.getPageNum();
         Integer pageSize = pageDomain.getPageSize();
@@ -77,50 +77,6 @@ public class DBService {
     }
 
     /**
-     * 获取分页和排序后的数据列表
-     *
-     * @param <K> 泛型返回实体类型，例如 User、Student ...
-     * @param queryListSql 查询列表的sql语句
-     * @param paramSource 查询参数
-     * @param rowMapper 字段映射，针对实体类，例如 User、Student ...
-     * @return 分页和排序后的实体类数组
-     */
-    public <K> List<K> getPagedList(String queryListSql, MapSqlParameterSource paramSource, RowMapper<K> rowMapper) {
-        PageDomain pageDomain = TableSupport.buildPageRequest();
-        Integer pageNum = pageDomain.getPageNum();
-        Integer pageSize = pageDomain.getPageSize();
-        String orderBy = SqlUtil.escapeOrderBySql(pageDomain.getOrderBy());
-
-        StringBuilder pageSql = new StringBuilder(queryListSql);
-
-        if(StringUtils.isEmpty(orderBy)){
-            if(paramSource instanceof NamedSqlParameterSource namedSource) {
-                orderBy = (String) namedSource.getDefaultOrderByStr();
-            }
-        }
-
-        if(StringUtils.isNotEmpty(orderBy)) {
-            pageSql.append(" ORDER BY " + orderBy);
-        }
-
-        if(pageNum < 1) {
-            pageNum = 1;
-        }
-
-        if(pageSize < 10) {
-            pageSize = 10;
-        }
-
-        pageSql.append(" LIMIT :inStartIdx,:inPageSize");
-
-        Integer startIndex = (pageNum-1) * pageSize;
-        paramSource.addValue("inStartIdx", startIndex);
-        paramSource.addValue("inPageSize", pageSize);
-
-        return this.queryForList(pageSql.toString(), paramSource, rowMapper);
-    }
-
-    /**
      * 获取查询的总数，设置返回体总数和错误码，列表数据需要在外部设置
      *
      * @param queryTotalSql 查询数据库总数的sql语句
@@ -133,25 +89,6 @@ public class DBService {
         TableDataInfo rspData = new TableDataInfo();
 		rspData.setCode(HttpStatus.SUCCESS);
         rspData.setTotal(total);
-        return rspData;
-    }
-
-    /**
-     * 获取查询的总数，将分页的数据封装到列表返回体中
-     *
-     * @param pagedList 已分页后的列表数据
-     * @param queryTotalSql 查询总数的sql语句，例如：SELECT COUNT(1) FROM aaa WHERE x=x
-     * @param paramSource 查询参数
-     * @return TableDataInfo分页返回体
-     */
-    public TableDataInfo getPagedResult(List<?> pagedList, String queryTotalSql, SqlParameterSource paramSource) {
-
-		long total = this.getTotalRows(queryTotalSql, paramSource);
-
-        TableDataInfo rspData = new TableDataInfo();
-		rspData.setCode(HttpStatus.SUCCESS);
-        rspData.setTotal(total);
-        rspData.setRows(pagedList);
         return rspData;
     }
 

@@ -26,37 +26,41 @@ public class SysDictDataRepositoryImpl implements SysDictDataRepository {
         this.dbService = inDbService;
     }
 
-    @Override
-    public List<SysDictData> selectDictDataList(SysDictData dictData) {
-        StringBuilder addWhereBuilder = new StringBuilder(baseSelectSql);
-        MapSqlParameterSource parameters = new MapSqlParameterSource();
-
-        setListSqlAndParams(dictData, addWhereBuilder, parameters);
-
-        List<SysDictData> list = dbService.queryForList(addWhereBuilder.toString(), parameters, new SimplePropertyRowMapper<>(SysDictData.class));
-
+    protected List<SysDictData> queryList(final MapSqlParameterSource parameters, final String querySql) {
+        List<SysDictData> list = dbService.queryForList(querySql, parameters, new SimplePropertyRowMapper<>(SysDictData.class));
         return list;
     }
 
     @Override
+    public List<SysDictData> selectDictDataList(SysDictData dictData) {
+        StringBuilder sqlBuilder = new StringBuilder(baseSelectSql);
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+
+        setListSqlAndParams(dictData, sqlBuilder, parameters);
+
+        return queryList(parameters, sqlBuilder.toString());
+    }
+
+    @Override
     public TableDataInfo getPagedListResp(SysDictData dictData) {
-        StringBuilder addWhereBuilder = new StringBuilder();
+        StringBuilder sqlBuilder = new StringBuilder();
         NamedSqlParameterSource parameters = new NamedSqlParameterSource();
 
-        setListSqlAndParams(dictData, addWhereBuilder, parameters);
-
-        // 默认使用dict_sort排序
-        parameters.setDefaultOrderByStr("dict_sort ASC");;
-
-        String querListSql = baseSelectSql + addWhereBuilder.toString();
-
-        List<SysDictData> list = dbService.getPagedList(querListSql, parameters, new SimplePropertyRowMapper<>(SysDictData.class));
+        setListSqlAndParams(dictData, sqlBuilder, parameters);
 
         String selectCountSql = "SELECT COUNT(1) FROM sys_dict_data WHERE 1=1";
+        String queryCountSql = selectCountSql + sqlBuilder.toString();
 
-        String queryCountSql = selectCountSql + addWhereBuilder.toString();
+        TableDataInfo pagedResp = dbService.getPagedRespInfo(queryCountSql, parameters);
 
-        TableDataInfo pagedResp = dbService.getPagedResult(list, queryCountSql, parameters);
+        // 默认使用dict_sort排序
+        parameters.setDefaultOrderByStr("dict_sort ASC");
+
+        dbService.buildPagedSqlAndSetParameters(sqlBuilder, parameters);
+
+        String querListSql = baseSelectSql + sqlBuilder.toString();
+
+        pagedResp.setRows(queryList(parameters, querListSql));
         return pagedResp;
     }
 
@@ -85,9 +89,7 @@ public class SysDictDataRepositoryImpl implements SysDictDataRepository {
 
         MapSqlParameterSource parameters = new MapSqlParameterSource("inDictType", dictType);
 
-        List<SysDictData> list = dbService.queryForList(sql, parameters, new SimplePropertyRowMapper<>(SysDictData.class));
-
-        return list;
+        return queryList(parameters, sql);
     }
 
     @Override

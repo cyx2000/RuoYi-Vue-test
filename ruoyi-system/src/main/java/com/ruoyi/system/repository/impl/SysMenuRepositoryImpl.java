@@ -25,17 +25,19 @@ public class SysMenuRepositoryImpl implements SysMenuRepository{
         this.dbService = inDbService;
     }
 
+    protected List<SysMenu> queryList(final MapSqlParameterSource parameters, final String querySql) {
+        List<SysMenu> list = dbService.queryForList(querySql, parameters, new SimplePropertyRowMapper<>(SysMenu.class));
+        return list;
+    }
     @Override
     public List<SysMenu> selectMenuList(SysMenu menu) {
 
-        StringBuilder addWhereBuilder = new StringBuilder(baseSelectSql);
+        StringBuilder sqlBuilder = new StringBuilder(baseSelectSql);
         NamedSqlParameterSource parameters = new NamedSqlParameterSource();
 
-        setListSqlAndParams(menu, addWhereBuilder, parameters);
+        setListSqlAndParams(menu, sqlBuilder, parameters);
 
-        List<SysMenu> list = dbService.queryForList(addWhereBuilder.toString(), parameters, new SimplePropertyRowMapper<>(SysMenu.class));
-
-        return list;
+        return queryList(parameters, sqlBuilder.toString());
     }
 
     private void setListSqlAndParams(final SysMenu inMenu, StringBuilder inBuilder, MapSqlParameterSource inParameters) {
@@ -69,15 +71,12 @@ public class SysMenuRepositoryImpl implements SysMenuRepository{
 
     @Override
     public List<SysMenu> selectMenuListByUserId(SysMenu menu) {
-
-        StringBuilder addWhereBuilder = new StringBuilder("SELECT DISTINCT m.menu_id, m.parent_id, m.menu_name, m.path, m.component, m.`query`, m.route_name, m.visible, m.status, IFNULL(m.perms,'') AS perms, m.is_frame, m.is_cache, m.menu_type, m.icon, m.order_num, m.create_time FROM sys_menu m LEFT JOIN sys_role_menu rm ON m.menu_id = rm.menu_id LEFT JOIN sys_user_role ur ON rm.role_id = ur.role_id LEFT JOIN sys_role ro ON ur.role_id = ro.role_id WHERE ur.user_id=:inUserId");
+        StringBuilder sqlBuilder = new StringBuilder("SELECT DISTINCT m.menu_id, m.parent_id, m.menu_name, m.path, m.component, m.`query`, m.route_name, m.visible, m.status, IFNULL(m.perms,'') AS perms, m.is_frame, m.is_cache, m.menu_type, m.icon, m.order_num, m.create_time FROM sys_menu m LEFT JOIN sys_role_menu rm ON m.menu_id = rm.menu_id LEFT JOIN sys_user_role ur ON rm.role_id = ur.role_id LEFT JOIN sys_role ro ON ur.role_id = ro.role_id WHERE ur.user_id=:inUserId");
         MapSqlParameterSource parameters = new MapSqlParameterSource("inUserId", menu.getParams().get("userId"));
 
-        setListSqlAndParams(menu, addWhereBuilder, parameters);
+        setListSqlAndParams(menu, sqlBuilder, parameters);
 
-        List<SysMenu> list = dbService.queryForList(addWhereBuilder.toString(), parameters, new SimplePropertyRowMapper<>(SysMenu.class));
-
-        return list;
+        return queryList(parameters, sqlBuilder.toString());
     }
 
     @Override
@@ -104,9 +103,7 @@ public class SysMenuRepositoryImpl implements SysMenuRepository{
     public List<SysMenu> selectMenuTreeAll() {
         String sql = "SELECT DISTINCT m.menu_id, m.parent_id, m.menu_name, m.path, m.component, m.`query`, m.route_name, m.visible, m.status, IFNULL(m.perms,'') AS perms, m.is_frame, m.is_cache, m.menu_type, m.icon, m.order_num, m.create_time FROM sys_menu m WHERE m.menu_type in ('M', 'C') AND m.status = 0 ORDER BY m.parent_id, m.order_num";
 
-        List<SysMenu> list = dbService.queryForList(sql, null, new SimplePropertyRowMapper<>(SysMenu.class));
-
-        return list;
+        return queryList(null, sql);
     }
 
     @Override
@@ -115,9 +112,7 @@ public class SysMenuRepositoryImpl implements SysMenuRepository{
 
         MapSqlParameterSource parameters = new MapSqlParameterSource("inUserId", userId);
 
-        List<SysMenu> list = dbService.queryForList(sql, parameters, new SimplePropertyRowMapper<>(SysMenu.class));
-
-        return list;
+        return queryList(parameters, sql);
     }
 
     @Override
@@ -334,8 +329,7 @@ public class SysMenuRepositoryImpl implements SysMenuRepository{
         MapSqlParameterSource parameters = new MapSqlParameterSource("inMenuPath", path);
         parameters.addValue("inMenuRoute", routeName);
 
-        List<SysMenu> list = dbService.queryForList(sql, parameters, new SimplePropertyRowMapper<>(SysMenu.class));
-        return list;
+        return queryList(parameters, sql);
     }
 
 }
