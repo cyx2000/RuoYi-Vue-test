@@ -57,10 +57,12 @@ public class SysRoleMenuRepositoryImpl implements SysRoleMenuRepository {
             SysRoleMenu roleMenu = roleMenuList.get(i);
             Long roleId = roleMenu.getRoleId();
             Long menuId = roleMenu.getMenuId();
-            MapSqlParameterSource params = new MapSqlParameterSource("inRoleId", roleId);
-            params.addValue("inMenuID", menuId);
-            parametersList[i] = params;
 
+            MapSqlParameterSource parameters = new MapSqlParameterSource();
+            parameters.addValue("inRoleId", roleId);
+            parameters.addValue("inMenuID", menuId);
+
+            parametersList[i] = parameters;
         }
 
         int[] insertResList = dbService.batchUpdate(insertSql, parametersList);

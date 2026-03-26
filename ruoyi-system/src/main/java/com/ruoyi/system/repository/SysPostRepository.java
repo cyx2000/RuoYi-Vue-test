@@ -1,4 +1,4 @@
-package com.ruoyi.system.service;
+package com.ruoyi.system.repository;
 
 import java.util.List;
 
@@ -6,25 +6,25 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.system.domain.SysPost;
 
 /**
- * 岗位信息 服务层
+ * 岗位信息 数据层
  *
- * @author ruoyi
+ * @author winter123
  */
-public interface ISysPostService
+public interface SysPostRepository
 {
     /**
-     * 查询岗位信息集合
+     * 查询岗位数据集合
      *
      * @param post 岗位信息
-     * @return 岗位列表
+     * @return 岗位数据集合
      */
     public List<SysPost> selectPostList(SysPost post);
 
     /**
-     * 根据条件分页查询岗位信息
+     * 根据条件分页查询岗位数据
      *
      * @param post 岗位信息
-     * @return 分页完成的岗位信息集合
+     * @return 分页完成的岗位数据集合
      */
     public TableDataInfo getPagedListResp(SysPost post);
 
@@ -52,28 +52,12 @@ public interface ISysPostService
     public List<Long> selectPostListByUserId(Long userId);
 
     /**
-     * 校验岗位名称
+     * 查询用户所属岗位组
      *
-     * @param post 岗位信息
+     * @param userName 用户名
      * @return 结果
      */
-    public boolean checkPostNameUnique(SysPost post);
-
-    /**
-     * 校验岗位编码
-     *
-     * @param post 岗位信息
-     * @return 结果
-     */
-    public boolean checkPostCodeUnique(SysPost post);
-
-    /**
-     * 通过岗位ID查询岗位使用数量
-     *
-     * @param postId 岗位ID
-     * @return 结果
-     */
-    public int countUserPostById(Long postId);
+    public List<SysPost> selectPostsByUserName(String userName);
 
     /**
      * 删除岗位信息
@@ -92,7 +76,15 @@ public interface ISysPostService
     public int deletePostByIds(Long[] postIds);
 
     /**
-     * 新增保存岗位信息
+     * 修改岗位信息
+     *
+     * @param post 岗位信息
+     * @return 结果
+     */
+    public int updatePost(SysPost post);
+
+    /**
+     * 新增岗位信息
      *
      * @param post 岗位信息
      * @return 结果
@@ -100,10 +92,18 @@ public interface ISysPostService
     public int insertPost(SysPost post);
 
     /**
-     * 修改保存岗位信息
+     * 校验岗位名称
      *
-     * @param post 岗位信息
+     * @param postName 岗位名称
      * @return 结果
      */
-    public int updatePost(SysPost post);
+    public SysPost checkPostNameUnique(String postName);
+
+    /**
+     * 校验岗位编码
+     *
+     * @param postCode 岗位编码
+     * @return 结果
+     */
+    public SysPost checkPostCodeUnique(String postCode);
 }
