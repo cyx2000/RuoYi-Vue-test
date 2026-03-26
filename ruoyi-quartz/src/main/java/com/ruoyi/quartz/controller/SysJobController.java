@@ -29,7 +29,7 @@ import com.ruoyi.quartz.util.ScheduleUtils;
 
 /**
  * 调度任务信息操作处理
- * 
+ *
  * @author ruoyi
  */
 @RestController
@@ -46,9 +46,8 @@ public class SysJobController extends BaseController
     @GetMapping("/list")
     public TableDataInfo list(SysJob sysJob)
     {
-        startPage();
-        List<SysJob> list = jobService.selectJobList(sysJob);
-        return getDataTable(list);
+        TableDataInfo pagedResp = jobService.getPagedListResp(sysJob);
+        return pagedResp;
     }
 
     /**

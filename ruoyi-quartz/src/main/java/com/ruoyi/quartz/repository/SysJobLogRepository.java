@@ -1,4 +1,4 @@
-package com.ruoyi.quartz.service;
+package com.ruoyi.quartz.repository;
 
 import java.util.List;
 
@@ -6,11 +6,11 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.quartz.domain.SysJobLog;
 
 /**
- * 定时任务调度日志信息信息 服务层
+ * 调度任务日志信息 数据层
  *
- * @author ruoyi
+ * @author winter123
  */
-public interface ISysJobLogService
+public interface SysJobLogRepository
 {
     /**
      * 获取quartz调度器日志的计划任务
@@ -21,12 +21,19 @@ public interface ISysJobLogService
     public List<SysJobLog> selectJobLogList(SysJobLog jobLog);
 
     /**
-     * 根据条件分页查询调度任务日志
+     * 根据条件分页查询任务日志
      *
      * @param jobLog 调度日志信息
-     * @return 分页完成的调度日志集合
+     * @return 分页完成的调度任务日志集合
      */
     public TableDataInfo getPagedListResp(SysJobLog jobLog);
+
+    /**
+     * 查询所有调度任务日志
+     *
+     * @return 调度任务日志列表
+     */
+    public List<SysJobLog> selectJobLogAll();
 
     /**
      * 通过调度任务日志ID查询调度信息
@@ -40,13 +47,14 @@ public interface ISysJobLogService
      * 新增任务日志
      *
      * @param jobLog 调度日志信息
+     * @return 结果
      */
-    public void addJobLog(SysJobLog jobLog);
+    public int insertJobLog(SysJobLog jobLog);
 
     /**
      * 批量删除调度日志信息
      *
-     * @param logIds 需要删除的日志ID
+     * @param logIds 需要删除的数据ID
      * @return 结果
      */
     public int deleteJobLogByIds(Long[] logIds);
