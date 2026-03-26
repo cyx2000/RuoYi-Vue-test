@@ -101,14 +101,14 @@ public class SysMenuRepositoryImpl implements SysMenuRepository{
 
     @Override
     public List<SysMenu> selectMenuTreeAll() {
-        String sql = "SELECT DISTINCT m.menu_id, m.parent_id, m.menu_name, m.path, m.component, m.`query`, m.route_name, m.visible, m.status, IFNULL(m.perms,'') AS perms, m.is_frame, m.is_cache, m.menu_type, m.icon, m.order_num, m.create_time FROM sys_menu m WHERE m.menu_type in ('M', 'C') AND m.status = 0 ORDER BY m.parent_id, m.order_num";
+        String sql = "SELECT DISTINCT m.menu_id, m.parent_id, m.menu_name, m.path, m.component, m.`query`, m.route_name, m.visible, m.status, IFNULL(m.perms,'') AS perms, m.is_frame, m.is_cache, m.menu_type, m.icon, m.order_num, m.create_time FROM sys_menu m WHERE m.menu_type IN ('M', 'C') AND m.status = 0 ORDER BY m.parent_id, m.order_num";
 
         return queryList(null, sql);
     }
 
     @Override
     public List<SysMenu> selectMenuTreeByUserId(Long userId) {
-        String sql = "SELECT DISTINCT m.menu_id, m.parent_id, m.menu_name, m.path, m.component, m.`query`, m.route_name, m.visible, m.status, IFNULL(m.perms,'') AS perms, m.is_frame, m.is_cache, m.menu_type, m.icon, m.order_num, m.create_time FROM sys_menu m LEFT JOIN sys_role_menu rm ON m.menu_id = rm.menu_id LEFT JOIN sys_user_role ur ON rm.role_id = ur.role_id LEFT JOIN sys_role ro ON ur.role_id = ro.role_id LEFT JOIN sys_user u ON ur.user_id = u.user_id WHERE u.user_id=:inUserId AND m.menu_type in ('M', 'C') AND m.status = 0  AND ro.status = 0 ORDER BY m.parent_id, m.order_num";
+        String sql = "SELECT DISTINCT m.menu_id, m.parent_id, m.menu_name, m.path, m.component, m.`query`, m.route_name, m.visible, m.status, IFNULL(m.perms,'') AS perms, m.is_frame, m.is_cache, m.menu_type, m.icon, m.order_num, m.create_time FROM sys_menu m LEFT JOIN sys_role_menu rm ON m.menu_id = rm.menu_id LEFT JOIN sys_user_role ur ON rm.role_id = ur.role_id LEFT JOIN sys_role ro ON ur.role_id = ro.role_id LEFT JOIN sys_user u ON ur.user_id = u.user_id WHERE u.user_id=:inUserId AND m.menu_type IN ('M', 'C') AND m.status = 0  AND ro.status = 0 ORDER BY m.parent_id, m.order_num";
 
         MapSqlParameterSource parameters = new MapSqlParameterSource("inUserId", userId);
 
@@ -122,7 +122,7 @@ public class SysMenuRepositoryImpl implements SysMenuRepository{
         MapSqlParameterSource parameters = new MapSqlParameterSource("inRoleId", roleId);
 
         if(menuCheckStrictly) {
-            sql = sql + " AND m.menu_id not in (SELECT m.parent_id FROM sys_menu m INNER JOIN sys_role_menu rm ON m.menu_id = rm.menu_id AND rm.role_id=:inRoleId)";
+            sql = sql + " AND m.menu_id NOT IN (SELECT m.parent_id FROM sys_menu m INNER JOIN sys_role_menu rm ON m.menu_id = rm.menu_id AND rm.role_id=:inRoleId)";
         }
 
         sql = sql + " ORDER BY m.parent_id, m.order_num";
@@ -143,7 +143,7 @@ public class SysMenuRepositoryImpl implements SysMenuRepository{
 
     @Override
     public int hasChildByMenuId(Long menuId) {
-        String sql = "SELECT count(1) FROM sys_menu WHERE parent_id=:inMenuId";
+        String sql = "SELECT COUNT(1) FROM sys_menu WHERE parent_id=:inMenuId";
 
         MapSqlParameterSource parameters = new MapSqlParameterSource("inMenuId", menuId);
 
@@ -324,7 +324,7 @@ public class SysMenuRepositoryImpl implements SysMenuRepository{
 
     @Override
     public List<SysMenu> selectMenusByPathOrRouteName(String path, String routeName) {
-        String sql = baseSelectSql + " AND menu_type in ('M', 'C') AND (path=:inMenuPath OR path=:inMenuRoute OR route_name=:inMenuPath OR route_name=:inMenuRoute)";
+        String sql = baseSelectSql + " AND menu_type IN ('M', 'C') AND (path=:inMenuPath OR path=:inMenuRoute OR route_name=:inMenuPath OR route_name=:inMenuRoute)";
 
         MapSqlParameterSource parameters = new MapSqlParameterSource("inMenuPath", path);
         parameters.addValue("inMenuRoute", routeName);

@@ -113,7 +113,7 @@ public class SysRoleRepositoryImpl implements SysRoleRepository{
 
     @Override
     public List<Long> selectRoleListByUserId(Long userId) {
-        String sql = "SELECT r.role_id FROM sys_role r LEFT JOIN sys_user_role ur on ur.role_id = r.role_id LEFT JOIN sys_user u on u.user_id = ur.user_id WHERE u.user_id=:inUserId";
+        String sql = "SELECT r.role_id FROM sys_role r LEFT JOIN sys_user_role ur ON ur.role_id = r.role_id LEFT JOIN sys_user u ON u.user_id = ur.user_id WHERE u.user_id=:inUserId";
 
         MapSqlParameterSource parameters = new MapSqlParameterSource("inUserId", userId);
 

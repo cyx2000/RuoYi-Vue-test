@@ -1,7 +1,6 @@
 package com.ruoyi.system.repository;
 
 import java.util.List;
-import org.apache.ibatis.annotations.Param;
 import com.ruoyi.common.core.domain.entity.SysDictData;
 import com.ruoyi.common.core.page.TableDataInfo;
 
@@ -43,7 +42,7 @@ public interface SysDictDataRepository
      * @param dictValue 字典键值
      * @return 字典标签
      */
-    public String selectDictLabel(@Param("dictType") String dictType, @Param("dictValue") String dictValue);
+    public String selectDictLabel(String dictType, String dictValue);
 
     /**
      * 根据字典数据ID查询信息
@@ -100,5 +99,5 @@ public interface SysDictDataRepository
      * @param newDictType 新旧字典类型
      * @return 结果
      */
-    public int updateDictDataType(@Param("oldDictType") String oldDictType, @Param("newDictType") String newDictType);
+    public int updateDictDataType(String oldDictType, String newDictType);
 }

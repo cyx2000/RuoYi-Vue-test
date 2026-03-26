@@ -150,7 +150,7 @@ public class SysUserRepositoryImpl implements SysUserRepository {
         String username = user.getUserName();
         String userPhone = user.getPhonenumber();
 
-        StringBuilder addWhereBuilder = new StringBuilder("SELECT DISTINCT u.user_id, u.dept_id, u.user_name, u.nick_name, u.email, u.phonenumber, u.status, u.create_time FROM sys_user u LEFT JOIN sys_dept d ON u.dept_id = d.dept_id LEFT JOIN sys_user_role ur ON u.user_id = ur.user_id LEFT JOIN sys_role r ON r.role_id = ur.role_id WHERE u.del_flag = '0' AND (r.role_id!=:inRoleId or r.role_id IS NULL) nd u.user_id NOT IN (SELECT u.user_id FROM sys_user u inner JOIN sys_user_role ur ON u.user_id = ur.user_id AND r.role_id=:inRoleId");
+        StringBuilder addWhereBuilder = new StringBuilder("SELECT DISTINCT u.user_id, u.dept_id, u.user_name, u.nick_name, u.email, u.phonenumber, u.status, u.create_time FROM sys_user u LEFT JOIN sys_dept d ON u.dept_id = d.dept_id LEFT JOIN sys_user_role ur ON u.user_id = ur.user_id LEFT JOIN sys_role r ON r.role_id = ur.role_id WHERE u.del_flag = '0' AND (r.role_id!=:inRoleId OR r.role_id IS NULL) nd u.user_id NOT IN (SELECT u.user_id FROM sys_user u INNER JOIN sys_user_role ur ON u.user_id = ur.user_id AND r.role_id=:inRoleId");
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("inRoleId", roleId);
 
@@ -462,7 +462,7 @@ public class SysUserRepositoryImpl implements SysUserRepository {
 
     @Override
     public SysUser checkUserNameUnique(String userName) {
-        String sql = "SELECT user_id, user_name FROM sys_user WHERE user_name=:inUsername AND del_flag = '0' limit 1";
+        String sql = "SELECT user_id, user_name FROM sys_user WHERE user_name=:inUsername AND del_flag = '0' LIMIT 1";
 
         MapSqlParameterSource parameters = new MapSqlParameterSource("inUsername", userName);
 
@@ -472,7 +472,7 @@ public class SysUserRepositoryImpl implements SysUserRepository {
 
     @Override
     public SysUser checkPhoneUnique(String phonenumber) {
-        String sql = "SELECT user_id, phonenumber FROM sys_user WHERE phonenumber=:inUserPhone AND del_flag = '0' limit 1";
+        String sql = "SELECT user_id, phonenumber FROM sys_user WHERE phonenumber=:inUserPhone AND del_flag = '0' LIMIT 1";
 
         MapSqlParameterSource parameters = new MapSqlParameterSource("inUserPhone", phonenumber);
 
@@ -482,7 +482,7 @@ public class SysUserRepositoryImpl implements SysUserRepository {
 
     @Override
     public SysUser checkEmailUnique(String email) {
-        String sql = "SELECT user_id, email FROM sys_user WHERE email=:inUserEmail AND del_flag = '0' limit 1";
+        String sql = "SELECT user_id, email FROM sys_user WHERE email=:inUserEmail AND del_flag = '0' LIMIT 1";
 
         MapSqlParameterSource parameters = new MapSqlParameterSource("inUserEmail", email);
 
