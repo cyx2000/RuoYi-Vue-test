@@ -91,11 +91,11 @@ public class SysJobLogRepositoryImpl implements SysJobLogRepository {
             inParameters.addValue("inJLogInTarget", jLogInvokeTarget);
         }
         if(StringUtils.isNotEmpty(beginDateTime)) {
-            inBuilder.append(" AND create_time >= :inBeginTime");
+            inBuilder.append(" AND DATE_FORMAT(create_time,'%Y%m%d') >= DATE_FORMAT(:inBeginTime,'%Y%m%d')");
             inParameters.addValue("inBeginTime", beginDateTime);
         }
         if(StringUtils.isNotEmpty(endDateTime)) {
-            inBuilder.append(" AND create_time <= :inEndTime");
+            inBuilder.append(" AND DATE_FORMAT(create_time,'%Y%m%d') <= DATE_FORMAT(:inEndTime,'%Y%m%d')");
             inParameters.addValue("inEndTime", endDateTime);
         }
     }
