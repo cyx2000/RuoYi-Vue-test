@@ -77,7 +77,7 @@ public class SysNoticeReadRepositoryImpl implements SysNoticeReadRepository {
 
     @Override
     public List<SysNotice> selectNoticeListWithReadStatus(Long userId, int limit) {
-        String sql = "SELECT n.notice_id AS noticeId, n.notice_title AS noticeTitle, n.notice_type AS noticeType, n.status, n.create_by AS createBy, n.create_time AS createTime, case WHEN r.notice_id IS NOT NULL THEN TRUE ELSE FALSE END AS isRead FROM sys_notice n LEFT JOIN sys_notice_read r ON r.notice_id = n.notice_id AND r.user_id=:inUserId WHERE n.status = '0' ORDER BY n.notice_id DESC LIMIT :inLimit";
+        String sql = "SELECT n.notice_id AS noticeId, n.notice_title AS noticeTitle, n.notice_type AS noticeType, n.status, n.create_by AS createBy, n.create_time AS createTime, CASE WHEN r.notice_id IS NOT NULL THEN TRUE ELSE FALSE END AS isRead FROM sys_notice n LEFT JOIN sys_notice_read r ON r.notice_id = n.notice_id AND r.user_id=:inUserId WHERE n.status = '0' ORDER BY n.notice_id DESC LIMIT :inLimit";
 
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("inUserId", userId);

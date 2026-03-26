@@ -19,7 +19,7 @@ public class SysDictTypeRepositoryImpl implements SysDictTypeRepository {
 
     private DBService dbService;
 
-    private String baseSelectSql = "select dict_id, dict_name, dict_type, status, create_by, create_time, remark from sys_dict_type WHERE 1=1";
+    private String baseSelectSql = "SELECT dict_id, dict_name, dict_type, status, create_by, create_time, remark FROM sys_dict_type WHERE 1=1";
 
     public SysDictTypeRepositoryImpl(DBService inDbService) {
         this.dbService = inDbService;

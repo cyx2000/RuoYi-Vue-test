@@ -85,7 +85,7 @@ public class SysDictDataRepositoryImpl implements SysDictDataRepository {
 
     @Override
     public List<SysDictData> selectDictDataByType(String dictType) {
-        String sql = baseSelectSql + " AND status = '0' AND dict_type=:inDictType order by dict_sort asc";
+        String sql = baseSelectSql + " AND status = '0' AND dict_type=:inDictType ORDER BY dict_sort ASC";
 
         MapSqlParameterSource parameters = new MapSqlParameterSource("inDictType", dictType);
 

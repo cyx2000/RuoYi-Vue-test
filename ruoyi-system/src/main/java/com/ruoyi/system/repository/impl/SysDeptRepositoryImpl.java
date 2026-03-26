@@ -78,7 +78,7 @@ public class SysDeptRepositoryImpl implements SysDeptRepository {
 
     @Override
     public SysDept selectDeptById(Long deptId) {
-        String sql = "SELECT d.dept_id, d.parent_id, d.ancestors, d.dept_name, d.order_num, d.leader, d.phone, d.email, d.status,(SELECT dept_name FROM sys_dept where dept_id = d.parent_id) parent_name FROM sys_dept d WHERE d.dept_id=:inDeptId";
+        String sql = "SELECT d.dept_id, d.parent_id, d.ancestors, d.dept_name, d.order_num, d.leader, d.phone, d.email, d.status,(SELECT dept_name FROM sys_dept WHERE dept_id = d.parent_id) parent_name FROM sys_dept d WHERE d.dept_id=:inDeptId";
 
         MapSqlParameterSource parameters = new MapSqlParameterSource("inDeptId", deptId);
 
@@ -88,8 +88,7 @@ public class SysDeptRepositoryImpl implements SysDeptRepository {
 
     @Override
     public List<SysDept> selectChildrenDeptById(Long deptId) {
-        // TODO 使用实际字段替换 * 号
-        String sql = "SELECT * FROM sys_dept WHERE FIND_IN_SET(:inDeptId, ancestors)";
+        String sql = "SELECT dept_id, parent_id, ancestors, dept_name, order_num, leader, phone, email, status, del_flag, parent_name, create_by, create_time, update_by, update_time FROM sys_dept WHERE FIND_IN_SET(:inDeptId, ancestors)";
 
         MapSqlParameterSource parameters = new MapSqlParameterSource("inDeptId", deptId);
 
@@ -98,7 +97,7 @@ public class SysDeptRepositoryImpl implements SysDeptRepository {
 
     @Override
     public int selectNormalChildrenDeptById(Long deptId) {
-        String sql = "SELECT count(1) FROM sys_dept WHERE status = 0 AND del_flag = '0' AND FIND_IN_SET(:inDeptId, ancestors)";
+        String sql = "SELECT COUNT(1) FROM sys_dept WHERE status = 0 AND del_flag = '0' AND FIND_IN_SET(:inDeptId, ancestors)";
 
         MapSqlParameterSource parameters = new MapSqlParameterSource("inDeptId", deptId);
 
@@ -108,7 +107,7 @@ public class SysDeptRepositoryImpl implements SysDeptRepository {
 
     @Override
     public int hasChildByDeptId(Long deptId) {
-        String sql = "SELECT count(1) FROM sys_dept WHERE del_flag = '0' AND parent_id=:inDeptId limit 1";
+        String sql = "SELECT COUNT(1) FROM sys_dept WHERE del_flag = '0' AND parent_id=:inDeptId LIMIT 1";
 
         MapSqlParameterSource parameters = new MapSqlParameterSource("inDeptId", deptId);
 
@@ -118,7 +117,7 @@ public class SysDeptRepositoryImpl implements SysDeptRepository {
 
     @Override
     public int checkDeptExistUser(Long deptId) {
-        String sql = "SELECT count(1) FROM sys_user WHERE dept_id=:inDeptId AND del_flag = '0'";
+        String sql = "SELECT COUNT(1) FROM sys_user WHERE dept_id=:inDeptId AND del_flag = '0'";
 
         MapSqlParameterSource parameters = new MapSqlParameterSource("inDeptId", deptId);
 
