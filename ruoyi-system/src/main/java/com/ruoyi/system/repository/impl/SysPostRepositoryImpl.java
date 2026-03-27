@@ -1,7 +1,5 @@
 package com.ruoyi.system.repository.impl;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.List;
 
 import org.springframework.jdbc.core.SimplePropertyRowMapper;
@@ -55,9 +53,8 @@ public class SysPostRepositoryImpl implements SysPostRepository {
         dbService.buildPagedSqlAndSetParameters(sqlBuilder, parameters);
 
         String querListSql = baseSelectSql + sqlBuilder.toString();
-        List<SysPost> list = queryList(parameters, querListSql);
 
-        pagedResp.setRows(list);
+        pagedResp.setRows(queryList(parameters, querListSql));
         return pagedResp;
     }
 
@@ -126,6 +123,7 @@ public class SysPostRepositoryImpl implements SysPostRepository {
         MapSqlParameterSource[] parametersList = new MapSqlParameterSource[postIds.length];
         for (int i = 0; i < parametersList.length; i++) {
             Long postId = postIds[i];
+
             parametersList[i] = new MapSqlParameterSource("inPostId", postId);
         }
 
@@ -142,7 +140,6 @@ public class SysPostRepositoryImpl implements SysPostRepository {
         String postStatus = post.getStatus();
         String postRemark = post.getRemark();
         String updateBy = post.getUpdateBy();
-        LocalDateTime updateTime = LocalDateTime.now(ZoneId.of("UTC"));
 
         StringBuffer updateSqlBuffer = new StringBuffer("UPDATE sys_post SET");
 
@@ -169,9 +166,9 @@ public class SysPostRepositoryImpl implements SysPostRepository {
             parameters.addValue("inPostRemark", postRemark);
         }
 
-        updateSqlBuffer.append(" update_by=:inUpdateBy, update_time=:inUpdateTime WHERE post_id=:inPostId");
+        updateSqlBuffer.append(" update_by=:inUpdateBy, update_time=SYSDATE() WHERE post_id=:inPostId");
+
         parameters.addValue("inUpdateBy", updateBy);
-        parameters.addValue("inUpdateTime", updateTime);
         parameters.addValue("inPostId", postId);
 
         int[] updateResList = dbService.batchUpdate(updateSqlBuffer.toString(), new MapSqlParameterSource[]{parameters});
@@ -186,9 +183,8 @@ public class SysPostRepositoryImpl implements SysPostRepository {
         String postStatus = post.getStatus();
         String postRemark = post.getRemark();
         String createBy = post.getCreateBy();
-        LocalDateTime createTime = LocalDateTime.now(ZoneId.of("UTC"));
 
-        String insertSql = "INSERT INTO sys_post(post_code, post_name, post_sort, status, remark, create_by, create_time) VALUES(:inPostCode, :inPostName, :inPostSort, :inPostStatus, :inPostRemark, :inCreateBy, :inCreateTime)";
+        String insertSql = "INSERT INTO sys_post(post_code, post_name, post_sort, status, remark, create_by, create_time) VALUES(:inPostCode, :inPostName, :inPostSort, :inPostStatus, :inPostRemark, :inCreateBy, SYSDATE())";
 
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("inPostCode", postCode);
@@ -197,7 +193,6 @@ public class SysPostRepositoryImpl implements SysPostRepository {
         parameters.addValue("inPostStatus", postStatus);
         parameters.addValue("inPostRemark", postRemark);
         parameters.addValue("inCreateBy", createBy);
-        parameters.addValue("inCreateTime", createTime);
 
         int[] insertResList = dbService.batchUpdate(insertSql, new MapSqlParameterSource[]{parameters});
         return insertResList[0];

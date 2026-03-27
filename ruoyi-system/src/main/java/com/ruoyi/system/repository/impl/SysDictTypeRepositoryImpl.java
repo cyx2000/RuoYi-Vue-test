@@ -1,7 +1,5 @@
 package com.ruoyi.system.repository.impl;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.List;
 
 import org.springframework.jdbc.core.SimplePropertyRowMapper;
@@ -126,11 +124,11 @@ public class SysDictTypeRepositoryImpl implements SysDictTypeRepository {
         MapSqlParameterSource[] parametersList = new MapSqlParameterSource[dictIds.length];
         for (int i = 0; i < parametersList.length; i++) {
             Long dictId = dictIds[i];
+
             parametersList[i] = new MapSqlParameterSource("inDictId", dictId);
         }
 
         int[] deleteResList = dbService.batchUpdate(deleteSql, parametersList);
-
         return deleteResList[0];
     }
 
@@ -142,14 +140,14 @@ public class SysDictTypeRepositoryImpl implements SysDictTypeRepository {
         String dictTyRemark = dictType.getRemark();
         String createBy = dictType.getCreateBy();
 
-        String insertSql = "INSERT INTO sys_dict_type(dict_name, dict_type, status, remark, create_by, create_time) VALUES(:inDictTyName, :inDictTyType, :inDicTytStatus, :inDictTyRemark, :inCreateBy, :inCreateTime)";
+        String insertSql = "INSERT INTO sys_dict_type(dict_name, dict_type, status, remark, create_by, create_time) VALUES(:inDictTyName, :inDictTyType, :inDicTytStatus, :inDictTyRemark, :inCreateBy, SYSDATE())";
 
-        MapSqlParameterSource parameters = new MapSqlParameterSource("inDictTyName", dictTyName);
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("inDictTyName", dictTyName);
         parameters.addValue("inDictTyType", dictTyType);
         parameters.addValue("inDicTytStatus", dictTyStatus);
         parameters.addValue("inDictTyRemark", dictTyRemark);
         parameters.addValue("inCreateBy", createBy);
-        parameters.addValue("inCreateTime", LocalDateTime.now(ZoneId.of("UTC")));
 
         int[] insertResList = dbService.batchUpdate(insertSql, new MapSqlParameterSource[]{parameters});
         return insertResList[0];
@@ -185,9 +183,9 @@ public class SysDictTypeRepositoryImpl implements SysDictTypeRepository {
             parameters.addValue("inDictTyRemark", dictTyRemark);
         }
 
-        updateSqlBuffer.append(" update_by=:inUpdateBy, update_time=:inUpdateTime WHERE dict_id=:inDictId");
+        updateSqlBuffer.append(" update_by=:inUpdateBy, update_time=SYSDATE() WHERE dict_id=:inDictId");
+
         parameters.addValue("inUpdateBy", updateBy);
-        parameters.addValue("inUpdateTime", LocalDateTime.now(ZoneId.of("UTC")));
         parameters.addValue("inDictId", dictId);
 
         int[] updateResList = dbService.batchUpdate(updateSqlBuffer.toString(), new MapSqlParameterSource[]{parameters});

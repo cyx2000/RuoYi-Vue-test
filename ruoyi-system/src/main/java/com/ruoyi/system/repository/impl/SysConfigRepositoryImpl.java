@@ -1,6 +1,5 @@
 package com.ruoyi.system.repository.impl;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.jdbc.core.SimplePropertyRowMapper;
@@ -117,16 +116,16 @@ public class SysConfigRepositoryImpl implements SysConfigRepository {
         String configKey = config.getConfigKey();
         String configValue = config.getConfigValue();
         String createBy = config.getCreateBy();
+
         String remark = config.getRemark();
-        String insertSql = "INSERT INTO sys_config (config_name,config_type,config_key,config_value,create_by,remark,create_time) VALUES(:inConfigName,:inConfigType,:inConfigKey,:inConfigValue,:inCreateBy,:inRemark,:inCreateTime)";
+        String insertSql = "INSERT INTO sys_config(config_name, config_type, config_key, config_value, create_by, remark, create_time) VALUES(:inConfigName, :inConfigType, :inConfigKey, :inConfigValue, :inCreateBy, :inRemark, SYSDATE())";
 
         MapSqlParameterSource parameters = new MapSqlParameterSource("inConfigName", configName);
-        parameters.addValue("inConfigType", configType)
-            .addValue("inConfigKey", configKey)
-            .addValue("inConfigValue", configValue)
-            .addValue("inCreateBy", createBy)
-            .addValue("inRemark", remark)
-            .addValue("inCreateTime", LocalDateTime.now());
+        parameters.addValue("inConfigType", configType);
+        parameters.addValue("inConfigKey", configKey);
+        parameters.addValue("inConfigValue", configValue);
+        parameters.addValue("inCreateBy", createBy);
+        parameters.addValue("inRemark", remark);
 
         int[] insertResList = dbService.batchUpdate(insertSql, new MapSqlParameterSource[]{parameters});
         return insertResList[0];
@@ -134,6 +133,7 @@ public class SysConfigRepositoryImpl implements SysConfigRepository {
 
     @Override
     public int updateConfig(SysConfig config) {
+        Long configId = config.getConfigId();
         String configName = config.getConfigName();
         String configType = config.getConfigType();
         String configKey = config.getConfigKey();
@@ -141,38 +141,36 @@ public class SysConfigRepositoryImpl implements SysConfigRepository {
         String updateBy = config.getUpdateBy();
         String remark = config.getRemark();
 
-        StringBuilder updateBuilder = new StringBuilder("UPDATE sys_config SET");
+        StringBuffer updateBuffer = new StringBuffer("UPDATE sys_config SET");
         MapSqlParameterSource parameters = new MapSqlParameterSource();
 
         if(StringUtils.isNotEmpty(configName)) {
-            updateBuilder.append(" config_name=:inConfigName,");
+            updateBuffer.append(" config_name=:inConfigName,");
             parameters.addValue("inConfigName", configName);
         }
         if(StringUtils.isNotEmpty(configType)) {
-            updateBuilder.append(" config_type=:inConfigType,");
+            updateBuffer.append(" config_type=:inConfigType,");
             parameters.addValue("inConfigType", configType);
         }
         if(StringUtils.isNotEmpty(configKey)) {
-            updateBuilder.append(" config_key=:inConfigKey,");
+            updateBuffer.append(" config_key=:inConfigKey,");
             parameters.addValue("inConfigKey", configKey);
         }
         if(StringUtils.isNotEmpty(configValue)) {
-            updateBuilder.append(" config_value=:inConfigValue,");
+            updateBuffer.append(" config_value=:inConfigValue,");
             parameters.addValue("inConfigValue", configValue);
         }
         if(StringUtils.isNotEmpty(remark)) {
-            updateBuilder.append(" remark=:inRemark,");
+            updateBuffer.append(" remark=:inRemark,");
             parameters.addValue("inRemark", remark);
         }
-        updateBuilder.append(" update_by=:inUpdateBy,");
+
+        updateBuffer.append(" update_by=:inUpdateBy, update_time=SYSDATE() WHERE config_id=:inConfigId");
+
         parameters.addValue("inUpdateBy", updateBy);
-        updateBuilder.append(" update_time=:inUpdateTime");
-        parameters.addValue("inUpdateTime", LocalDateTime.now());
+        parameters.addValue("inConfigId", configId);
 
-        updateBuilder.append(" WHERE config_id=:inConfigId");
-        parameters.addValue("inConfigId", config.getConfigId());
-
-        int[] updatedResList = dbService.batchUpdate(updateBuilder.toString(), new MapSqlParameterSource[]{parameters});
+        int[] updatedResList = dbService.batchUpdate(updateBuffer.toString(), new MapSqlParameterSource[]{parameters});
         return updatedResList[0];
     }
 

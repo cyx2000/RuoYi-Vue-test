@@ -1,7 +1,5 @@
 package com.ruoyi.quartz.repository.impl;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.List;
 
 import org.springframework.jdbc.core.SimplePropertyRowMapper;
@@ -111,6 +109,7 @@ public class SysJobRepositoryImpl implements SysJobRepository {
         MapSqlParameterSource[] parametersList = new MapSqlParameterSource[jobIds.length];
         for (int i = 0; i < parametersList.length; i++) {
             Long jobId = jobIds[i];
+
             parametersList[i] = new MapSqlParameterSource("inJobId", jobId);
         }
 
@@ -130,9 +129,9 @@ public class SysJobRepositoryImpl implements SysJobRepository {
         String jobStatus = job.getStatus();
         String jobRemark = job.getRemark();
         String updateBy = job.getUpdateBy();
-        LocalDateTime updateTime = LocalDateTime.now(ZoneId.of("UTC"));
 
         StringBuffer updateBuffer = new StringBuffer("UPDATE sys_job SET");
+
         MapSqlParameterSource parameters = new MapSqlParameterSource();
 
         if(StringUtils.isNotEmpty(jobName)) {
@@ -168,10 +167,9 @@ public class SysJobRepositoryImpl implements SysJobRepository {
             parameters.addValue("inJobRemark", jobRemark);
         }
 
-        updateBuffer.append(" update_by=:inUpdateBy, update_time=:inUpdateTime WHERE job_id=:inJobId");
+        updateBuffer.append(" update_by=:inUpdateBy, update_time=SYSDATE() WHERE job_id=:inJobId");
 
         parameters.addValue("inUpdateBy", updateBy);
-        parameters.addValue("inUpdateTime", updateTime);
         parameters.addValue("inJobId", jobId);
 
         int[] updatedResList = dbService.batchUpdate(updateBuffer.toString(), new MapSqlParameterSource[]{parameters});
@@ -189,9 +187,8 @@ public class SysJobRepositoryImpl implements SysJobRepository {
         String jobStatus = job.getStatus();
         String jobRemark = job.getRemark();
         String createBy = job.getCreateBy();
-        LocalDateTime createTime = LocalDateTime.now(ZoneId.of("UTC"));
 
-        String insertSql = "INSERT INTO sys_job(job_name, job_group, invoke_target, cron_expression, misfire_policy, concurrent, status, remark, create_by, create_time) VALUES(:inJobName, :inJobGroup, :inJobInTarget, :inJobExpress, :inJobMisfire, :inJobConcur, :inJobStatus, :inJobRemark, :inCreateBy, :inCreateTime)";
+        String insertSql = "INSERT INTO sys_job(job_name, job_group, invoke_target, cron_expression, misfire_policy, concurrent, status, remark, create_by, create_time) VALUES(:inJobName, :inJobGroup, :inJobInTarget, :inJobExpress, :inJobMisfire, :inJobConcur, :inJobStatus, :inJobRemark, :inCreateBy, SYSDATE())";
 
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("inJobName", jobName);
@@ -203,7 +200,6 @@ public class SysJobRepositoryImpl implements SysJobRepository {
         parameters.addValue("inJobStatus", jobStatus);
         parameters.addValue("inJobRemark", jobRemark);
         parameters.addValue("inCreateBy", createBy);
-        parameters.addValue("inCreateTime", createTime);
 
         int[] insertResList = dbService.batchUpdate(insertSql, new MapSqlParameterSource[]{parameters});
         return insertResList[0];

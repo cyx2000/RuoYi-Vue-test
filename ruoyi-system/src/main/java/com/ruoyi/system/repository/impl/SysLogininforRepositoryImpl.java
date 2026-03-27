@@ -1,7 +1,5 @@
 package com.ruoyi.system.repository.impl;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.List;
 
 import org.springframework.jdbc.core.SimplePropertyRowMapper;
@@ -34,16 +32,16 @@ public class SysLogininforRepositoryImpl implements SysLogininforRepository {
         String loginOS = logininfor.getOs();
         String loginMsg = logininfor.getMsg();
 
-        String insertSql = "INSERT INTO sys_logininfor(user_name, status, ipaddr, login_location, browser, os, msg, login_time) VALUES(:inUsername, :inLoginStatus, :inLoginIp, :inLoginLocation, :inLoginBrowser, :inLoginOS, :inLoginMsg, :inLoginTime)";
+        String insertSql = "INSERT INTO sys_logininfor(user_name, status, ipaddr, login_location, browser, os, msg, login_time) VALUES(:inUsername, :inLoginStatus, :inLoginIp, :inLoginLocation, :inLoginBrowser, :inLoginOS, :inLoginMsg, SYSDATE())";
 
-        MapSqlParameterSource parameters = new MapSqlParameterSource("inUsername", username);
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("inUsername", username);
         parameters.addValue("inLoginStatus", loginStatus);
         parameters.addValue("inLoginIp", loginIp);
         parameters.addValue("inLoginLocation", loginLocation);
         parameters.addValue("inLoginBrowser", loginBrowser);
         parameters.addValue("inLoginOS", loginOS);
         parameters.addValue("inLoginMsg", loginMsg);
-        parameters.addValue("inLoginTime", LocalDateTime.now(ZoneId.of("UTC")));
 
         dbService.batchUpdate(insertSql, new MapSqlParameterSource[]{parameters});
     }
@@ -81,6 +79,7 @@ public class SysLogininforRepositoryImpl implements SysLogininforRepository {
 
         TableDataInfo pagedResp = dbService.getPagedRespInfo(queryCountSql, parameters);
 
+        // 默认使用info_id排序
         parameters.setDefaultOrderByStr("info_id DESC");
 
         dbService.buildPagedSqlAndSetParameters(sqlBuilder, parameters);
@@ -127,11 +126,11 @@ public class SysLogininforRepositoryImpl implements SysLogininforRepository {
         MapSqlParameterSource[] parametersList = new MapSqlParameterSource[infoIds.length];
         for (int i = 0; i < parametersList.length; i++) {
             Long inforId = infoIds[i];
+
             parametersList[i] = new MapSqlParameterSource("inInforId", inforId);
         }
 
         int[] deleteResList = dbService.batchUpdate(deleteSql, parametersList);
-
         return deleteResList[0];
     }
 

@@ -1,7 +1,5 @@
 package com.ruoyi.quartz.repository.impl;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 
@@ -39,6 +37,7 @@ public class SysJobLogRepositoryImpl implements SysJobLogRepository {
 
         setListSqlAndParams(jobLog, sqlBuilder, parameters);
 
+        // 默认使用job_log_id排序
         sqlBuilder.append(" ORDER BY job_log_id DESC");
 
         return queryList(parameters, sqlBuilder.toString());
@@ -56,6 +55,7 @@ public class SysJobLogRepositoryImpl implements SysJobLogRepository {
 
         TableDataInfo pagedResp = dbService.getPagedRespInfo(queryCountSql, parameters);
 
+        // 默认使用job_log_id排序
         parameters.setDefaultOrderByStr("job_log_id DESC");
 
         dbService.buildPagedSqlAndSetParameters(sqlBuilder, parameters);
@@ -125,9 +125,8 @@ public class SysJobLogRepositoryImpl implements SysJobLogRepository {
         String jLogExcep = StringUtils.isEmpty(jobLog.getExceptionInfo()) ? "" : jobLog.getExceptionInfo();
         Date jLogStartTime = jobLog.getStartTime();
         Date jLogEndTime = jobLog.getEndTime();
-        LocalDateTime createTime = LocalDateTime.now(ZoneId.of("UTC"));
 
-        String insertSql = "INSERT INTO sys_job_log(job_name, job_group, invoke_target, job_message, status, exception_info, start_time, end_time, create_time) VALUES(:inJLogName, :inJLogGro, :inJLogInv, :inJLogMess, :inJLogStatus, :inJLogExcep, :inJLogStart, :inJLogEnd, :inCreateTime)";
+        String insertSql = "INSERT INTO sys_job_log(job_name, job_group, invoke_target, job_message, status, exception_info, start_time, end_time, create_time) VALUES(:inJLogName, :inJLogGro, :inJLogInv, :inJLogMess, :inJLogStatus, :inJLogExcep, :inJLogStart, :inJLogEnd, SYSDATE())";
 
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("inJLogName", jLogName);
@@ -138,7 +137,6 @@ public class SysJobLogRepositoryImpl implements SysJobLogRepository {
         parameters.addValue("inJLogExcep", jLogExcep);
         parameters.addValue("inJLogStart", jLogStartTime);
         parameters.addValue("inJLogEnd", jLogEndTime);
-        parameters.addValue("inCreateTime", createTime);
 
         int[] insertResList = dbService.batchUpdate(insertSql, new MapSqlParameterSource[]{parameters});
         return insertResList[0];
@@ -151,6 +149,7 @@ public class SysJobLogRepositoryImpl implements SysJobLogRepository {
         MapSqlParameterSource[] parametersList = new MapSqlParameterSource[logIds.length];
         for (int i = 0; i < parametersList.length; i++) {
             Long jLogId = logIds[i];
+
             parametersList[i] = new MapSqlParameterSource("inJLogId", jLogId);
         }
 

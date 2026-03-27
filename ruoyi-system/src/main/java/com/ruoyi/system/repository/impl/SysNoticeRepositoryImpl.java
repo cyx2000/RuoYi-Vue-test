@@ -1,7 +1,5 @@
 package com.ruoyi.system.repository.impl;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.List;
 
 import org.springframework.jdbc.core.SimplePropertyRowMapper;
@@ -47,6 +45,7 @@ public class SysNoticeRepositoryImpl implements SysNoticeRepository {
 
         setListSqlAndParams(notice, sqlBuilder, parameters);
 
+        // 默认使用notice_id排序
         sqlBuilder.append("ORDER BY notice_id DESC");
 
         return queryList(parameters, sqlBuilder.toString());
@@ -64,6 +63,7 @@ public class SysNoticeRepositoryImpl implements SysNoticeRepository {
 
         TableDataInfo pagedResp = dbService.getPagedRespInfo(queryCountSql, parameters);
 
+        // 默认使用notice_id排序
         parameters.setDefaultOrderByStr("notice_id DESC");
 
         dbService.buildPagedSqlAndSetParameters(sqlBuilder, parameters);
@@ -102,7 +102,7 @@ public class SysNoticeRepositoryImpl implements SysNoticeRepository {
         String noticeRemark = notice.getRemark();
         String createBy = notice.getCreateBy();
 
-        String insertSql = "INSERT INTO sys_notice(notice_title, notice_type, notice_content, status, remark, create_by, create_time) VALUES(:inNoticeTitle, :inNoticeType, :inNoticeContent, :inNoticeStatus, :inNoticeRemark, :inCreateBy, :inCreateTime)";
+        String insertSql = "INSERT INTO sys_notice(notice_title, notice_type, notice_content, status, remark, create_by, create_time) VALUES(:inNoticeTitle, :inNoticeType, :inNoticeContent, :inNoticeStatus, :inNoticeRemark, :inCreateBy, SYSDATE())";
 
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("inNoticeTitle", noticeTitle);
@@ -111,7 +111,6 @@ public class SysNoticeRepositoryImpl implements SysNoticeRepository {
         parameters.addValue("inNoticeStatus", noticeStatus);
         parameters.addValue("inNoticeRemark", noticeRemark);
         parameters.addValue("inCreateBy", createBy);
-        parameters.addValue("inCreateTime", LocalDateTime.now(ZoneId.of("UTC")));
 
         int[] insertResList = dbService.batchUpdate(insertSql, new MapSqlParameterSource[]{parameters});
         return insertResList[0];
@@ -152,9 +151,9 @@ public class SysNoticeRepositoryImpl implements SysNoticeRepository {
             parameters.addValue("inNoticeRemark", noticeRemark);
         }
 
-        updateSqlBuffer.append(" update_by=:inUpdateBy, update_time=:inUpdateTime WHERE notice_id=:inNoticeId");
+        updateSqlBuffer.append(" update_by=:inUpdateBy, update_time=SYSDATE() WHERE notice_id=:inNoticeId");
+
         parameters.addValue("inUpdateBy", updateBy);
-        parameters.addValue("inUpdateTime", LocalDateTime.now(ZoneId.of("UTC")));
         parameters.addValue("inNoticeId", noticeId);
 
         int[] updateResList = dbService.batchUpdate(updateSqlBuffer.toString(), new MapSqlParameterSource[]{parameters});
@@ -169,15 +168,16 @@ public class SysNoticeRepositoryImpl implements SysNoticeRepository {
     @Override
     public int deleteNoticeByIds(Long[] noticeIds) {
         String deleteSql = "DELETE FROM sys_notice WHERE notice_id=:inNoticeId";
+
         MapSqlParameterSource[] parametersList = new MapSqlParameterSource[noticeIds.length];
 
         for (int i = 0; i < parametersList.length; i++) {
             Long noticeId = noticeIds[i];
+
             parametersList[i] = new MapSqlParameterSource("inNoticeId", noticeId);
         }
 
         int[] deleteResList = dbService.batchUpdate(deleteSql, parametersList);
-
         return deleteResList[0];
     }
 

@@ -1,7 +1,5 @@
 package com.ruoyi.generator.repository.impl;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.List;
 
@@ -48,7 +46,7 @@ public class GenTableColumnRepositoryImpl implements GenTableColumnRepository {
 
     @Override
     public int[] batchInsertGenTableColumn(List<GenTableColumn> genTableColumns) {
-        String insertSql = "INSERT INTO gen_table_column(table_id, column_name, column_comment, column_type, java_type, java_field, is_pk, is_increment, is_required, is_insert, is_edit, is_list, is_query, query_type, html_type, dict_type, sort, create_by, create_time) VALUES(:inTaId, :inTColName, :inTColComm, :inTColTyp, :inTJaTyp, :inTJaFie, :inTIsPk, :inTIsIncr, :inTIsRequ, :inTIsInsert, :inTIsEdit, :inTIsList, :inTIsQuery, :inTQueTyp, :inTHtmlTyp, :inTDictTyp, :inTSort, :inCreateBy, :inCreateTime)";
+        String insertSql = "INSERT INTO gen_table_column(table_id, column_name, column_comment, column_type, java_type, java_field, is_pk, is_increment, is_required, is_insert, is_edit, is_list, is_query, query_type, html_type, dict_type, sort, create_by, create_time) VALUES(:inTaId, :inTColName, :inTColComm, :inTColTyp, :inTJaTyp, :inTJaFie, :inTIsPk, :inTIsIncr, :inTIsRequ, :inTIsInsert, :inTIsEdit, :inTIsList, :inTIsQuery, :inTQueTyp, :inTHtmlTyp, :inTDictTyp, :inTSort, :inCreateBy, SYSDATE())";
 
         MapSqlParameterSource[] parametersList = new MapSqlParameterSource[genTableColumns.size()];
 
@@ -73,7 +71,6 @@ public class GenTableColumnRepositoryImpl implements GenTableColumnRepository {
             String tDictType = StringUtils.isEmpty(genTableColumn.getDictType()) ? "" : genTableColumn.getDictType();
             Integer tSort = genTableColumn.getSort();
             String createBy = genTableColumn.getCreateBy();
-            LocalDateTime createTime = LocalDateTime.now(ZoneId.of("UTC"));
 
             MapSqlParameterSource parameters = new MapSqlParameterSource();
             parameters.addValue("inTaId", tableId);
@@ -94,7 +91,6 @@ public class GenTableColumnRepositoryImpl implements GenTableColumnRepository {
             parameters.addValue("inTDictTyp", tDictType);
             parameters.addValue("inTSort", tSort);
             parameters.addValue("inCreateBy", createBy);
-            parameters.addValue("inCreateTime", createTime);
 
             parametersList[i] = parameters;
         }
@@ -124,9 +120,9 @@ public class GenTableColumnRepositoryImpl implements GenTableColumnRepository {
         String tDictType = genTableColumn.getDictType();
         Integer tSort = genTableColumn.getSort();
         String updateBy = genTableColumn.getUpdateBy();
-        LocalDateTime updateTime = LocalDateTime.now(ZoneId.of("UTC"));
 
         StringBuffer updateBuffer = new StringBuffer("UPDATE gen_table_column SET");
+
         MapSqlParameterSource parameters = new MapSqlParameterSource();
 
         if(StringUtils.isNotEmpty(tColumnComment)) {
@@ -178,10 +174,9 @@ public class GenTableColumnRepositoryImpl implements GenTableColumnRepository {
             parameters.addValue("inTSort", tSort);
         }
 
-        updateBuffer.append(" update_by=:inUpdateBy, update_time=:inUpdateTime WHERE column_id=:inTColuId");
+        updateBuffer.append(" update_by=:inUpdateBy, update_time=SYSDATE() WHERE column_id=:inTColuId");
 
         parameters.addValue("inUpdateBy", updateBy);
-        parameters.addValue("inUpdateTime", updateTime);
         parameters.addValue("inTColuId", tColumnId);
 
         int[] updatedResList = dbService.batchUpdate(updateBuffer.toString(), new MapSqlParameterSource[]{parameters});
@@ -194,7 +189,9 @@ public class GenTableColumnRepositoryImpl implements GenTableColumnRepository {
 
         MapSqlParameterSource[] parametersList = new MapSqlParameterSource[genTableColumns.size()];
         for (int i = 0; i < parametersList.length; i++) {
-            Long tColumnId = genTableColumns.get(i).getColumnId();
+            GenTableColumn column = genTableColumns.get(i);
+            Long tColumnId = column.getColumnId();
+
             parametersList[i] = new MapSqlParameterSource("inTColuId", tColumnId);
         }
 
@@ -209,11 +206,11 @@ public class GenTableColumnRepositoryImpl implements GenTableColumnRepository {
         MapSqlParameterSource[] parametersList = new MapSqlParameterSource[tableIds.length];
         for (int i = 0; i < parametersList.length; i++) {
             Long tableId = tableIds[i];
+
             parametersList[i] = new MapSqlParameterSource("inTaId", tableId);
         }
 
         int[] deleteResList = dbService.batchUpdate(deleteSql, parametersList);
         return deleteResList[0];
     }
-
 }
