@@ -73,7 +73,7 @@ public class SysUserRepositoryImpl implements SysUserRepository {
 
         setListSqlAndParams(sysUser, sqlBuilder, parameters);
 
-        String selectCountSql = "SELECT COUNT(1) FROM sys_user u WHERE u.del_flag = '0'";
+        String selectCountSql = "SELECT COUNT(1) FROM sys_user u LEFT JOIN sys_dept d ON u.dept_id = d.dept_id WHERE u.del_flag = '0'";
         String queryCountSql = selectCountSql + sqlBuilder.toString();
 
         TableDataInfo pagedResp = dbService.getPagedRespInfo(queryCountSql, parameters);
@@ -121,51 +121,73 @@ public class SysUserRepositoryImpl implements SysUserRepository {
     }
 
     @Override
-    public List<SysUser> selectAllocatedList(SysUser user) {
+    public TableDataInfo selectAllocatedList(SysUser user) {
         Long roleId = user.getRoleId();
         String username = user.getUserName();
         String userPhone = user.getPhonenumber();
 
-        StringBuilder addWhereBuilder = new StringBuilder("SELECT DISTINCT u.user_id, u.dept_id, u.user_name, u.nick_name, u.email, u.phonenumber, u.status, u.create_time FROM sys_user u LEFT JOIN sys_dept d ON u.dept_id = d.dept_id LEFT JOIN sys_user_role ur ON u.user_id = ur.user_id LEFT JOIN sys_role r ON r.role_id = ur.role_id WHERE u.del_flag = '0' AND r.role_id=:inRoleId");
+        String sql = "SELECT DISTINCT u.user_id, u.dept_id, u.user_name, u.nick_name, u.email, u.phonenumber, u.status, u.create_time FROM sys_user u LEFT JOIN sys_dept d ON u.dept_id = d.dept_id LEFT JOIN sys_user_role ur ON u.user_id = ur.user_id LEFT JOIN sys_role r ON r.role_id = ur.role_id WHERE u.del_flag = '0' AND r.role_id=:inRoleId";
+
+        StringBuilder sqlBuilder = new StringBuilder();
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("inRoleId", roleId);
 
         if(StringUtils.isNotEmpty(username)) {
-            addWhereBuilder.append(" AND u.user_name LIKE CONCAT('%', :inUsername, '%')");
+            sqlBuilder.append(" AND u.user_name LIKE CONCAT('%', :inUsername, '%')");
             parameters.addValue("inUsername", username);
         }
         if(StringUtils.isNotEmpty(userPhone)) {
-            addWhereBuilder.append(" AND u.phonenumber LIKE CONCAT('%', :inUserPhone, '%')");
+            sqlBuilder.append(" AND u.phonenumber LIKE CONCAT('%', :inUserPhone, '%')");
             parameters.addValue("inUserPhone", userPhone);
         }
-        addWhereBuilder.append(user.getDataScopeFilterParam());
+        sqlBuilder.append(user.getDataScopeFilterParam());
 
-        List<SysUser> list = dbService.queryForList(addWhereBuilder.toString(), parameters, new SimplePropertyRowMapper<>(SysUser.class));
-        return list;
+        String selectCountSql = "SELECT DISTINCT COUNT(1) FROM sys_user u LEFT JOIN sys_dept d ON u.dept_id = d.dept_id LEFT JOIN sys_user_role ur ON u.user_id = ur.user_id LEFT JOIN sys_role r ON r.role_id = ur.role_id WHERE u.del_flag = '0' AND r.role_id=:inRoleId";
+        String queryCountSql = selectCountSql + sqlBuilder.toString();
+
+        TableDataInfo pagedResp = dbService.getPagedRespInfo(queryCountSql, parameters);
+
+        sql = sql + sqlBuilder.toString();
+
+        List<SysUser> list = dbService.queryForList(sql, parameters, new SimplePropertyRowMapper<>(SysUser.class));
+
+        pagedResp.setRows(list);
+        return pagedResp;
     }
 
     @Override
-    public List<SysUser> selectUnallocatedList(SysUser user) {
+    public TableDataInfo selectUnallocatedList(SysUser user) {
         Long roleId = user.getRoleId();
         String username = user.getUserName();
         String userPhone = user.getPhonenumber();
 
-        StringBuilder addWhereBuilder = new StringBuilder("SELECT DISTINCT u.user_id, u.dept_id, u.user_name, u.nick_name, u.email, u.phonenumber, u.status, u.create_time FROM sys_user u LEFT JOIN sys_dept d ON u.dept_id = d.dept_id LEFT JOIN sys_user_role ur ON u.user_id = ur.user_id LEFT JOIN sys_role r ON r.role_id = ur.role_id WHERE u.del_flag = '0' AND (r.role_id!=:inRoleId OR r.role_id IS NULL) nd u.user_id NOT IN (SELECT u.user_id FROM sys_user u INNER JOIN sys_user_role ur ON u.user_id = ur.user_id AND r.role_id=:inRoleId");
+        String sql = "SELECT DISTINCT u.user_id, u.dept_id, u.user_name, u.nick_name, u.email, u.phonenumber, u.status, u.create_time FROM sys_user u LEFT JOIN sys_dept d ON u.dept_id = d.dept_id LEFT JOIN sys_user_role ur ON u.user_id = ur.user_id LEFT JOIN sys_role r ON r.role_id = ur.role_id WHERE u.del_flag = '0' AND (r.role_id!=:inRoleId OR r.role_id IS NULL) nd u.user_id NOT IN (SELECT u.user_id FROM sys_user u INNER JOIN sys_user_role ur ON u.user_id = ur.user_id AND r.role_id=:inRoleId";
+
+        StringBuilder sqlBuilder = new StringBuilder();
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("inRoleId", roleId);
 
         if(StringUtils.isNotEmpty(username)) {
-            addWhereBuilder.append(" AND u.user_name LIKE CONCAT('%', :inUsername, '%')");
+            sqlBuilder.append(" AND u.user_name LIKE CONCAT('%', :inUsername, '%')");
             parameters.addValue("inUsername", username);
         }
         if(StringUtils.isNotEmpty(userPhone)) {
-            addWhereBuilder.append(" AND u.phonenumber LIKE CONCAT('%', :inUserPhone, '%')");
+            sqlBuilder.append(" AND u.phonenumber LIKE CONCAT('%', :inUserPhone, '%')");
             parameters.addValue("inUserPhone", userPhone);
         }
-        addWhereBuilder.append(user.getDataScopeFilterParam());
+        sqlBuilder.append(user.getDataScopeFilterParam());
 
-        List<SysUser> list = dbService.queryForList(addWhereBuilder.toString(), parameters, new SimplePropertyRowMapper<>(SysUser.class));
-        return list;
+        String selectCountSql = "SELECT DISTINCT COUNT(1) FROM sys_user u LEFT JOIN sys_dept d ON u.dept_id = d.dept_id LEFT JOIN sys_user_role ur ON u.user_id = ur.user_id LEFT JOIN sys_role r ON r.role_id = ur.role_id WHERE u.del_flag = '0' AND (r.role_id!=:inRoleId OR r.role_id IS NULL) nd u.user_id NOT IN (SELECT u.user_id FROM sys_user u INNER JOIN sys_user_role ur ON u.user_id = ur.user_id AND r.role_id=:inRoleId";
+        String queryCountSql = selectCountSql + sqlBuilder.toString();
+
+        TableDataInfo pagedResp = dbService.getPagedRespInfo(queryCountSql, parameters);
+
+        sql = sql + sqlBuilder.toString();
+
+        List<SysUser> list = dbService.queryForList(sql, parameters, new SimplePropertyRowMapper<>(SysUser.class));
+
+        pagedResp.setRows(list);
+        return pagedResp;
     }
 
     @Override

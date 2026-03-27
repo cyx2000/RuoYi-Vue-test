@@ -25,7 +25,7 @@ import com.ruoyi.system.service.ISysUserOnlineService;
 
 /**
  * 在线用户监控
- * 
+ *
  * @author ruoyi
  */
 @RestController
@@ -66,6 +66,7 @@ public class SysUserOnlineController extends BaseController
         }
         Collections.reverse(userOnlineList);
         userOnlineList.removeAll(Collections.singleton(null));
+        // TODO 重新实现在线用户列表排序分页？
         return getDataTable(userOnlineList);
     }
 

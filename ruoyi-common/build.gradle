@@ -7,7 +7,6 @@ dependencies {
     implementation 'org.springframework:spring-context-support' // Spring框架基本的核心工具
     implementation 'org.springframework:spring-web' // SpringWeb模块
     api 'org.springframework.boot:spring-boot-starter-security' // spring security 安全认证
-    api 'com.github.pagehelper:pagehelper-spring-boot-starter' // pagehelper 分页插件
     api 'org.springframework.boot:spring-boot-starter-validation' // 自定义验证注解
     api 'org.apache.commons:commons-lang3' // 常用工具类
     implementation 'tools.jackson.core:jackson-databind' // JSON工具类
@@ -16,6 +15,7 @@ dependencies {
     implementation 'org.apache.poi:poi-ooxml' // excel工具
     implementation 'javax.xml.bind:jaxb-api' // Jaxb
     api 'org.springframework.boot:spring-boot-starter-data-redis' // redis 缓存操作
+    api 'org.springframework.boot:spring-boot-starter-data-jdbc' // redis 缓存操作
     implementation 'org.springframework.boot:spring-boot-starter-cache' // 缓存
     implementation 'org.apache.commons:commons-pool2' // pool 对象池
     implementation 'nl.basjes.parse.useragent:yauaa' // 解析客户端操作系统、浏览器等

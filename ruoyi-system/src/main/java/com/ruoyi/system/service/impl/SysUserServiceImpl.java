@@ -96,7 +96,7 @@ public class SysUserServiceImpl implements ISysUserService
      */
     @Override
     @DataScope(deptAlias = "d", userAlias = "u")
-    public List<SysUser> selectAllocatedList(SysUser user)
+    public TableDataInfo selectAllocatedList(SysUser user)
     {
         return userRepository.selectAllocatedList(user);
     }
@@ -109,7 +109,7 @@ public class SysUserServiceImpl implements ISysUserService
      */
     @Override
     @DataScope(deptAlias = "d", userAlias = "u")
-    public List<SysUser> selectUnallocatedList(SysUser user)
+    public TableDataInfo selectUnallocatedList(SysUser user)
     {
         return userRepository.selectUnallocatedList(user);
     }
