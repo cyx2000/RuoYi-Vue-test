@@ -210,7 +210,7 @@ public class GenTableRepositoryImpl implements GenTableRepository {
     @Override
     public int updateGenTable(GenTable genTable) {
         Long tableId = genTable.getTableId();
-        String tableName = genTable.getTreeName();
+        String tableName = genTable.getTableName();
         String tableComment  = genTable.getTableComment();
         String tableSubName   = genTable.getSubTableName();
         String tableSubFkName   = genTable.getSubTableFkName();
