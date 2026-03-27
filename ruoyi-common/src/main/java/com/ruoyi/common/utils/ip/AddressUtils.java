@@ -7,7 +7,7 @@ import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.http.HttpUtils;
 import com.ruoyi.common.utils.json.JsonUtils;
-import com.ruoyi.common.utils.json.JsonUtils.JSONObject;
+import com.ruoyi.common.utils.json.JSONObject;
 
 /**
  * 获取地址类

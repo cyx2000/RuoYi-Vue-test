@@ -9,7 +9,7 @@ import com.ruoyi.common.constant.GenConstants;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.json.JsonUtils;
-import com.ruoyi.common.utils.json.JsonUtils.JSONObject;
+import com.ruoyi.common.utils.json.JSONObject;
 import com.ruoyi.generator.domain.GenTable;
 import com.ruoyi.generator.domain.GenTableColumn;
 
