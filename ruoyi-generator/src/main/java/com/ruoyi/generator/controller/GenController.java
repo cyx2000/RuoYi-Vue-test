@@ -39,7 +39,7 @@ import com.ruoyi.generator.service.IGenTableService;
 
 /**
  * 代码生成 操作处理
- * 
+ *
  * @author ruoyi
  */
 @RestController
@@ -59,9 +59,8 @@ public class GenController extends BaseController
     @GetMapping("/list")
     public TableDataInfo genList(GenTable genTable)
     {
-        startPage();
-        List<GenTable> list = genTableService.selectGenTableList(genTable);
-        return getDataTable(list);
+        TableDataInfo pagedResp = genTableService.selectGenTableList(genTable);
+        return pagedResp;
     }
 
     /**
@@ -88,9 +87,8 @@ public class GenController extends BaseController
     @GetMapping("/db/list")
     public TableDataInfo dataList(GenTable genTable)
     {
-        startPage();
-        List<GenTable> list = genTableService.selectDbTableList(genTable);
-        return getDataTable(list);
+        TableDataInfo pagedResp = genTableService.selectDbTableList(genTable);
+        return pagedResp;
     }
 
     /**
