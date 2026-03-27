@@ -12,6 +12,8 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
 import com.ruoyi.common.constant.HttpStatus;
@@ -207,6 +209,25 @@ public class DBService {
 			LOGGER.error(e.getMessage());
 		}
 		return exc;
+	}
+
+    /**
+	 * 执行插入操作并返回主键
+	 * @param sql 传入的语句
+	 * @param paramSources  参数数组
+	 * @return 返回自动增加的id号，失败则返回 -1
+	 */
+	public long insertAndReturnPk(String sql, SqlParameterSource paramSources) {
+        try {
+			KeyHolder keyHolder = new GeneratedKeyHolder();
+
+            namedJdbc.update(sql, paramSources, keyHolder);
+
+            return keyHolder.getKey().longValue();
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage());
+		}
+        return -1L;
 	}
 
     /**
