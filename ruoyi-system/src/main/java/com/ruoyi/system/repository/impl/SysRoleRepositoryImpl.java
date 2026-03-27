@@ -1,7 +1,5 @@
 package com.ruoyi.system.repository.impl;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.List;
 
 import org.springframework.jdbc.core.SimplePropertyRowMapper;
@@ -123,7 +121,6 @@ public class SysRoleRepositoryImpl implements SysRoleRepository{
 
     @Override
     public SysRole selectRoleById(Long roleId) {
-
         String sql = baseSelectSql + " AND r.role_id=:inRoleId";
 
         MapSqlParameterSource parameters = new MapSqlParameterSource("inRoleId", roleId);
@@ -143,7 +140,6 @@ public class SysRoleRepositoryImpl implements SysRoleRepository{
 
     @Override
     public SysRole checkRoleNameUnique(String roleName) {
-
         String sql = baseSelectSql + " AND r.role_name=:inRoleName LIMIT 1";
 
         MapSqlParameterSource parameters = new MapSqlParameterSource("inRoleName", roleName);
@@ -212,9 +208,9 @@ public class SysRoleRepositoryImpl implements SysRoleRepository{
             parameters.addValue("inRoleRemark", roleRemark);
         }
 
-        updateSqlBuffer.append(" update_by=:inUpdateBy, update_time=:inUpdateTime WHERE role_id=:inRoleId");
+        updateSqlBuffer.append(" update_by=:inUpdateBy, update_time=SYSDATE() WHERE role_id=:inRoleId");
+
         parameters.addValue("inUpdateBy", updateBy);
-        parameters.addValue("inUpdateTime", LocalDateTime.now(ZoneId.of("UTC")));
         parameters.addValue("inRoleId", roleId);
 
         int[] updateResList = dbService.batchUpdate(updateSqlBuffer.toString(), new MapSqlParameterSource[]{parameters});
@@ -233,9 +229,10 @@ public class SysRoleRepositoryImpl implements SysRoleRepository{
         String roleRemark = role.getRemark();
         String createBy = role.getCreateBy();
 
-        String insertSql = "INSERT INTO sys_role(role_name, role_key, role_sort, data_scope, menu_check_strictly, dept_check_strictly, status, remark, create_by, create_time) VALUES(:inRoleName, :inRoleKey, :inRoleSort, :inRoleDataScope, :inRoleMenuCheck, :inRoleDeptCheck, :inRoleStatus, :inRoleRemark, :inCreateBy, :inCreateTime)";
+        String insertSql = "INSERT INTO sys_role(role_name, role_key, role_sort, data_scope, menu_check_strictly, dept_check_strictly, status, remark, create_by, create_time) VALUES(:inRoleName, :inRoleKey, :inRoleSort, :inRoleDataScope, :inRoleMenuCheck, :inRoleDeptCheck, :inRoleStatus, :inRoleRemark, :inCreateBy, SYSDATE())";
 
-        MapSqlParameterSource parameters = new MapSqlParameterSource("inRoleName", roleName);
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("inRoleName", roleName);
         parameters.addValue("inRoleKey", roleKey);
         parameters.addValue("inRoleSort", roleSort);
         parameters.addValue("inRoleDataScope", roleDataScope);
@@ -244,7 +241,6 @@ public class SysRoleRepositoryImpl implements SysRoleRepository{
         parameters.addValue("inRoleStatus", roleStatus);
         parameters.addValue("inRoleRemark", roleRemark);
         parameters.addValue("inCreateBy", createBy);
-        parameters.addValue("inCreateTime", LocalDateTime.now(ZoneId.of("UTC")));
 
         int[] insertResList = dbService.batchUpdate(insertSql, new MapSqlParameterSource[]{parameters});
         return insertResList[0];
@@ -262,11 +258,11 @@ public class SysRoleRepositoryImpl implements SysRoleRepository{
         MapSqlParameterSource[] paramsList = new MapSqlParameterSource[roleIds.length];
         for (int i = 0; i < paramsList.length; i++) {
             Long roleId = roleIds[i];
+
             paramsList[i] = new MapSqlParameterSource("inRoleId", roleId);
         }
 
         int[] deletedResList = dbService.batchUpdate(deleteSql, paramsList);
-
         return deletedResList[0];
     }
 

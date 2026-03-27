@@ -1,7 +1,5 @@
 package com.ruoyi.system.repository.impl;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.List;
 
 import org.springframework.jdbc.core.SimplePropertyRowMapper;
@@ -70,6 +68,7 @@ public class SysDeptRepositoryImpl implements SysDeptRepository {
         if(deptCheckStrictly) {
             sqlBuilder.append(" AND d.dept_id NOT IN (SELECT d.parent_id FROM sys_dept d INNER JOIN sys_role_dept rd ON d.dept_id = rd.dept_id AND rd.role_id=:inRoleId)");
         }
+
         sqlBuilder.append(" ORDER BY d.parent_id, d.order_num");
 
         List<Long> queryList = dbService.queryForList(sqlBuilder.toString(), parameters, Long.class);
@@ -148,7 +147,7 @@ public class SysDeptRepositoryImpl implements SysDeptRepository {
         String deptStatus = dept.getStatus();
         String createBy = dept.getCreateBy();
 
-        String insterSql = "INSERT INTO sys_dept(parent_id, dept_name, ancestors, order_num, leader, phone, email, status, create_by, create_time) VALUES(:inParentId, :inDeptName, :inDeptAncestors, :inDeptOrderNum, :inDeptLeader, :inDeptLeaderPhone, :inDeptEmail, :inDeptStatus, :inCreateBy, :inCreateTime)";
+        String insterSql = "INSERT INTO sys_dept(parent_id, dept_name, ancestors, order_num, leader, phone, email, status, create_by, create_time) VALUES(:inParentId, :inDeptName, :inDeptAncestors, :inDeptOrderNum, :inDeptLeader, :inDeptLeaderPhone, :inDeptEmail, :inDeptStatus, :inCreateBy, SYSDATE())";
 
         MapSqlParameterSource parameters = new MapSqlParameterSource("inParentId", parentId);
         parameters.addValue("inDeptName", deptName);
@@ -159,7 +158,6 @@ public class SysDeptRepositoryImpl implements SysDeptRepository {
         parameters.addValue("inDeptEmail", deptEmail);
         parameters.addValue("inDeptStatus", deptStatus);
         parameters.addValue("inCreateBy", createBy);
-        parameters.addValue("inCreateTime", LocalDateTime.now(ZoneId.of("UTC")));
 
         int[] insertResList = dbService.batchUpdate(insterSql, new MapSqlParameterSource[]{parameters});
         return insertResList[0];
@@ -215,9 +213,10 @@ public class SysDeptRepositoryImpl implements SysDeptRepository {
             updateSqlBuffer.append(" status=:inDeptStatus,");
             parameters.addValue("inDeptStatus", deptStatus);
         }
-        updateSqlBuffer.append(" update_by=:inUpdateBy, update_time=:inUpdateTime WHERE dept_id=:inDeptId");
+
+        updateSqlBuffer.append(" update_by=:inUpdateBy, update_time=SYSDATE() WHERE dept_id=:inDeptId");
+
         parameters.addValue("inUpdateBy", updateBy);
-        parameters.addValue("inUpdateTime", LocalDateTime.now(ZoneId.of("UTC")));
         parameters.addValue("inDeptId", deptId);
 
         int[] updateResList = dbService.batchUpdate(updateSqlBuffer.toString(), new MapSqlParameterSource[]{parameters});
@@ -228,28 +227,33 @@ public class SysDeptRepositoryImpl implements SysDeptRepository {
     public void updateDeptStatusNormal(Long[] deptIds) {
         String sql = "UPDATE sys_dept SET status = '0' WHERE dept_id=:inDeptId";
 
-        MapSqlParameterSource[] paramsList = new MapSqlParameterSource[deptIds.length];
-        for (int i = 0; i < paramsList.length; i++) {
+        MapSqlParameterSource[] parametersList = new MapSqlParameterSource[deptIds.length];
+        for (int i = 0; i < parametersList.length; i++) {
             Long deptId = deptIds[i];
-            paramsList[i] = new MapSqlParameterSource("inDeptId", deptId);
+
+            parametersList[i] = new MapSqlParameterSource("inDeptId", deptId);
         }
 
-        dbService.batchUpdate(sql, paramsList);
+        dbService.batchUpdate(sql, parametersList);
     }
 
     @Override
     public int updateDeptChildren(List<SysDept> depts) {
         String sql = "UPDATE sys_dept SET ancestors = CASE dept_id WHEN :inDeptId THEN :inDeptAncestors END WHERE dept_id=:inDeptId";
 
-        MapSqlParameterSource[] paramsList = new MapSqlParameterSource[depts.size()];
-        for (int i = 0; i < paramsList.length; i++) {
+        MapSqlParameterSource[] parametersList = new MapSqlParameterSource[depts.size()];
+        for (int i = 0; i < parametersList.length; i++) {
             Long deptId = depts.get(i).getDeptId();
             String deptAncestors = depts.get(i).getAncestors();
-            paramsList[i] = new MapSqlParameterSource("inDeptId", deptId);
-            paramsList[i].addValue("inDeptAncestors", deptAncestors);
+
+            MapSqlParameterSource parameters = new MapSqlParameterSource();
+            parameters.addValue("inDeptId", deptId);
+            parameters.addValue("inDeptAncestors", deptAncestors);
+
+            parametersList[i] = parameters;
         }
 
-        int[] updateResList = dbService.batchUpdate(sql, paramsList);
+        int[] updateResList = dbService.batchUpdate(sql, parametersList);
         return updateResList[0];
     }
 
@@ -260,7 +264,8 @@ public class SysDeptRepositoryImpl implements SysDeptRepository {
         Long deptId = dept.getDeptId();
         Integer deptOrderNum = dept.getOrderNum();
 
-        MapSqlParameterSource parameters = new MapSqlParameterSource("inDeptId", deptId);
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("inDeptId", deptId);
         parameters.addValue("inDeptOrderNum", deptOrderNum);
 
         dbService.batchUpdate(sql, new MapSqlParameterSource[]{parameters});

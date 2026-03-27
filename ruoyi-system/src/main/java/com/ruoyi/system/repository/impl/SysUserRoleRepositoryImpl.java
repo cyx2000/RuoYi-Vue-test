@@ -30,11 +30,11 @@ public class SysUserRoleRepositoryImpl implements SysUserRoleRepository {
         MapSqlParameterSource[] parametersList = new MapSqlParameterSource[userIds.length];
         for (int i = 0; i < parametersList.length; i++) {
             Long userId = userIds[i];
+
             parametersList[i] = new MapSqlParameterSource("inUserId", userId);
         }
 
         int[] deleteResList = dbService.batchUpdate(deleteSql, parametersList);
-
         return deleteResList[0];
     }
 
@@ -54,12 +54,15 @@ public class SysUserRoleRepositoryImpl implements SysUserRoleRepository {
 
         MapSqlParameterSource[] parametersList = new MapSqlParameterSource[userRoleList.size()];
         for (int i = 0; i < parametersList.length; i++) {
-            SysUserRole roleMenu = userRoleList.get(i);
-            Long roleId = roleMenu.getRoleId();
-            Long userId = roleMenu.getUserId();
-            MapSqlParameterSource params = new MapSqlParameterSource("inRoleId", roleId);
-            params.addValue("inUserID", userId);
-            parametersList[i] = params;
+            SysUserRole userRole = userRoleList.get(i);
+            Long roleId = userRole.getRoleId();
+            Long userId = userRole.getUserId();
+
+            MapSqlParameterSource parameters = new MapSqlParameterSource();
+            parameters.addValue("inRoleId", roleId);
+            parameters.addValue("inUserID", userId);
+
+            parametersList[i] = parameters;
         }
 
         int[] insertResList = dbService.batchUpdate(insertSql, parametersList);
@@ -79,13 +82,15 @@ public class SysUserRoleRepositoryImpl implements SysUserRoleRepository {
         MapSqlParameterSource[] parametersList = new MapSqlParameterSource[userIds.length];
         for (int i = 0; i < parametersList.length; i++) {
             Long userId = userIds[i];
-            MapSqlParameterSource params = new MapSqlParameterSource("inRoleId", roleId);
-            params.addValue("inUserID", userId);
-            parametersList[i] = params;
+
+            MapSqlParameterSource parameters = new MapSqlParameterSource();
+            parameters.addValue("inRoleId", roleId);
+            parameters.addValue("inUserID", userId);
+
+            parametersList[i] = parameters;
         }
 
         int[] deleteResList = dbService.batchUpdate(deleteSql, parametersList);
-
         return deleteResList[0];
     }
 

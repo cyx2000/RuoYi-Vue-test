@@ -40,11 +40,11 @@ public class SysRoleMenuRepositoryImpl implements SysRoleMenuRepository {
         MapSqlParameterSource[] parametersList = new MapSqlParameterSource[roleIds.length];
         for (int i = 0; i < parametersList.length; i++) {
             Long roleId = roleIds[i];
+
             parametersList[i] = new MapSqlParameterSource("inRoleId", roleId);
         }
 
         int[] deleteResList = dbService.batchUpdate(deleteSql, parametersList);
-
         return deleteResList[0];
     }
 
@@ -66,7 +66,6 @@ public class SysRoleMenuRepositoryImpl implements SysRoleMenuRepository {
         }
 
         int[] insertResList = dbService.batchUpdate(insertSql, parametersList);
-
         return insertResList[0];
     }
 

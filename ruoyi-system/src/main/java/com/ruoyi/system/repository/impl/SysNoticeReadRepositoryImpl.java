@@ -1,7 +1,5 @@
 package com.ruoyi.system.repository.impl;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.List;
 
 import org.springframework.jdbc.core.SimplePropertyRowMapper;
@@ -54,10 +52,7 @@ public class SysNoticeReadRepositoryImpl implements SysNoticeReadRepository {
 
     @Override
     public int insertNoticeReadBatch(Long userId, Long[] noticeIds) {
-
-        LocalDateTime readTime = LocalDateTime.now(ZoneId.of("UTC"));
-
-        String insertSql = "INSERT IGNORE INTO sys_notice_read(notice_id, user_id, read_time) VALUES(:inNoticeId, :inUserId, :inReadTime)";
+        String insertSql = "INSERT IGNORE INTO sys_notice_read(notice_id, user_id, read_time) VALUES(:inNoticeId, :inUserId, SYSDATE())";
 
         MapSqlParameterSource[] parametersList =  new MapSqlParameterSource[noticeIds.length];
         for (int i = 0; i < parametersList.length; i++) {
@@ -66,7 +61,6 @@ public class SysNoticeReadRepositoryImpl implements SysNoticeReadRepository {
             MapSqlParameterSource parameters = new MapSqlParameterSource();
             parameters.addValue("inNoticeId", noticeId);
             parameters.addValue("inUserId", userId);
-            parameters.addValue("inReadTime", readTime);
 
             parametersList[i] = parameters;
         }
@@ -94,6 +88,7 @@ public class SysNoticeReadRepositoryImpl implements SysNoticeReadRepository {
         MapSqlParameterSource[] parametersList = new MapSqlParameterSource[noticeIds.length];
         for (int i = 0; i < parametersList.length; i++) {
             Long noticeId = noticeIds[i];
+
             parametersList[i] = new MapSqlParameterSource("inNoticeId", noticeId);
         }
 

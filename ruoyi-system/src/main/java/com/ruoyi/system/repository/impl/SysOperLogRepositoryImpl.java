@@ -1,7 +1,5 @@
 package com.ruoyi.system.repository.impl;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.List;
 
@@ -50,9 +48,10 @@ public class SysOperLogRepositoryImpl implements SysOperLogRepository {
         String operErrorMsg = StringUtils.isEmpty(operLog.getErrorMsg()) ? "" : operLog.getErrorMsg(); // 设置空字符串，避免null导致异常：Parameter metadata not available for the given statement
         Long operCostTime = operLog.getCostTime();
 
-        String insertSql = "INSERT INTO sys_oper_log(title, business_type, method, request_method, operator_type, oper_name, dept_name, oper_url, oper_ip, oper_location, oper_param, json_result, status, error_msg, cost_time, oper_time) VALUES(:inOperTitile, :inOperBusiType, :inOperMethod, :inOperReqMethod, :inOperType, :inOperName, :inOperDeptName, :inOperUrl, :inOperIp, :inOperLocation, :inOperParam, :inOperJsonResult, :inOperStatus, :inOperErrorMsg, :inOperCostTime, :inOperTime)";
+        String insertSql = "INSERT INTO sys_oper_log(title, business_type, method, request_method, operator_type, oper_name, dept_name, oper_url, oper_ip, oper_location, oper_param, json_result, status, error_msg, cost_time, oper_time) VALUES(:inOperTitile, :inOperBusiType, :inOperMethod, :inOperReqMethod, :inOperType, :inOperName, :inOperDeptName, :inOperUrl, :inOperIp, :inOperLocation, :inOperParam, :inOperJsonResult, :inOperStatus, :inOperErrorMsg, :inOperCostTime, SYSDATE())";
 
-        MapSqlParameterSource parameters = new MapSqlParameterSource("inOperTitile", operTitle);
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("inOperTitile", operTitle);
         parameters.addValue("inOperBusiType", operBusinessType);
         parameters.addValue("inOperMethod", operMethod);
         parameters.addValue("inOperReqMethod", operRequestMethod);
@@ -67,7 +66,6 @@ public class SysOperLogRepositoryImpl implements SysOperLogRepository {
         parameters.addValue("inOperStatus", operStatus);
         parameters.addValue("inOperErrorMsg", operErrorMsg);
         parameters.addValue("inOperCostTime", operCostTime);
-        parameters.addValue("inOperTime", LocalDateTime.now(ZoneId.of("UTC")));
 
         dbService.batchUpdate(insertSql, new MapSqlParameterSource[]{parameters});
     }
@@ -79,6 +77,7 @@ public class SysOperLogRepositoryImpl implements SysOperLogRepository {
 
         setListSqlAndParams(operLog, sqlBuilder, parameters);
 
+        // 默认使用oper_id排序
         sqlBuilder.append(" ORDER BY oper_id DESC");
 
         return queryList(parameters, sqlBuilder.toString());
@@ -96,6 +95,7 @@ public class SysOperLogRepositoryImpl implements SysOperLogRepository {
 
         TableDataInfo pagedResp = dbService.getPagedRespInfo(queryCountSql, parameters);
 
+        // 默认使用oper_id排序
         parameters.setDefaultOrderByStr("oper_id DESC");
 
         dbService.buildPagedSqlAndSetParameters(sqlBuilder, parameters);
@@ -157,11 +157,11 @@ public class SysOperLogRepositoryImpl implements SysOperLogRepository {
         MapSqlParameterSource[] parametersList = new MapSqlParameterSource[operIds.length];
         for (int i = 0; i < parametersList.length; i++) {
             Long operId = operIds[i];
+
             parametersList[i] = new MapSqlParameterSource("inOperId", operId);
         }
 
         int[] deleteResList = dbService.batchUpdate(deleteSql, parametersList);
-
         return deleteResList[0];
     }
 
@@ -172,7 +172,6 @@ public class SysOperLogRepositoryImpl implements SysOperLogRepository {
         MapSqlParameterSource parameters = new MapSqlParameterSource("inOperId", operId);
 
         SysOperLog queryObj = dbService.queryForObject(sql, parameters, new SimplePropertyRowMapper<>(SysOperLog.class));
-
         return queryObj;
     }
 

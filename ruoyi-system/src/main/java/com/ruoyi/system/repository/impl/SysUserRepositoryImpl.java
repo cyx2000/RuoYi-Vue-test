@@ -1,7 +1,5 @@
 package com.ruoyi.system.repository.impl;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -55,6 +53,7 @@ public class SysUserRepositoryImpl implements SysUserRepository {
 
             String deptName = sqlRs.getString("dept_name");
             String deptLeader = sqlRs.getString("leader");
+
             SysDept dept = new SysDept();
             dept.setDeptName(deptName);
             dept.setLeader(deptLeader);
@@ -140,6 +139,7 @@ public class SysUserRepositoryImpl implements SysUserRepository {
             sqlBuilder.append(" AND u.phonenumber LIKE CONCAT('%', :inUserPhone, '%')");
             parameters.addValue("inUserPhone", userPhone);
         }
+
         sqlBuilder.append(user.getDataScopeFilterParam());
 
         String selectCountSql = "SELECT DISTINCT COUNT(1) FROM sys_user u LEFT JOIN sys_dept d ON u.dept_id = d.dept_id LEFT JOIN sys_user_role ur ON u.user_id = ur.user_id LEFT JOIN sys_role r ON r.role_id = ur.role_id WHERE u.del_flag = '0' AND r.role_id=:inRoleId";
@@ -175,6 +175,7 @@ public class SysUserRepositoryImpl implements SysUserRepository {
             sqlBuilder.append(" AND u.phonenumber LIKE CONCAT('%', :inUserPhone, '%')");
             parameters.addValue("inUserPhone", userPhone);
         }
+
         sqlBuilder.append(user.getDataScopeFilterParam());
 
         String selectCountSql = "SELECT DISTINCT COUNT(1) FROM sys_user u LEFT JOIN sys_dept d ON u.dept_id = d.dept_id LEFT JOIN sys_user_role ur ON u.user_id = ur.user_id LEFT JOIN sys_role r ON r.role_id = ur.role_id WHERE u.del_flag = '0' AND (r.role_id!=:inRoleId OR r.role_id IS NULL) nd u.user_id NOT IN (SELECT u.user_id FROM sys_user u INNER JOIN sys_user_role ur ON u.user_id = ur.user_id AND r.role_id=:inRoleId";
@@ -243,6 +244,7 @@ public class SysUserRepositoryImpl implements SysUserRepository {
         inUser.setCreateBy(createBy);
         inUser.setCreateTime(createTime);
     }
+
     protected SysUser querySingleUser(String inSql, MapSqlParameterSource parameters) {
         SqlRowSet sqlRs = dbService.getNamedJdbc().queryForRowSet(inSql, parameters);
 
@@ -307,9 +309,8 @@ public class SysUserRepositoryImpl implements SysUserRepository {
         Date userPwdUpdateDate = user.getPwdUpdateDate();
         String userRemark = user.getRemark();
         String createBy = user.getCreateBy();
-        LocalDateTime createTime = LocalDateTime.now(ZoneId.of("UTC"));
 
-        String insertSql = "INSERT INTO sys_user(dept_id, user_name, nick_name, email, avatar, phonenumber, sex, password, status, pwd_update_date, remark, create_by, create_time) VALUES(:inDeptId, :inUsername, :inUserNick, :inUserEmail, :inUserAvatar, :inUserPhone, :inUserSex, :inUserPwd, :inUserStatus, :inUserPwdUpdate, :inUserRemark, :inCreateBy, :inCreateTime)";
+        String insertSql = "INSERT INTO sys_user(dept_id, user_name, nick_name, email, avatar, phonenumber, sex, password, status, pwd_update_date, remark, create_by, create_time) VALUES(:inDeptId, :inUsername, :inUserNick, :inUserEmail, :inUserAvatar, :inUserPhone, :inUserSex, :inUserPwd, :inUserStatus, :inUserPwdUpdate, :inUserRemark, :inCreateBy, SYSDATE())";
 
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("inDeptId", deptId);
@@ -324,7 +325,6 @@ public class SysUserRepositoryImpl implements SysUserRepository {
         parameters.addValue("inUserPwdUpdate", userPwdUpdateDate);
         parameters.addValue("inUserRemark", userRemark);
         parameters.addValue("inCreateBy", createBy);
-        parameters.addValue("inCreateTime", createTime);
 
         long pK = dbService.insertAndReturnPk(insertSql, parameters);
         user.setUserId(pK);
@@ -346,7 +346,6 @@ public class SysUserRepositoryImpl implements SysUserRepository {
         Date userLoginDate = user.getLoginDate();
         String userRemark = user.getRemark();
         String updateBy = user.getUpdateBy();
-        LocalDateTime updateTime = LocalDateTime.now(ZoneId.of("UTC"));
 
         StringBuffer updateSqlBuffer = new StringBuffer("UPDATE sys_user SET");
 
@@ -397,9 +396,9 @@ public class SysUserRepositoryImpl implements SysUserRepository {
             parameters.addValue("inUserRemark", userRemark);
         }
 
-        updateSqlBuffer.append(" update_by=:inUpdateBy, update_time=:inUpdateTime WHERE user_id=:inUserId");
+        updateSqlBuffer.append(" update_by=:inUpdateBy, update_time=SYSDATE() WHERE user_id=:inUserId");
+
         parameters.addValue("inUpdateBy", updateBy);
-        parameters.addValue("inUpdateTime", updateTime);
         parameters.addValue("inUserId", userId);
 
         int[] updateResList = dbService.batchUpdate(updateSqlBuffer.toString(), new MapSqlParameterSource[]{parameters});
@@ -408,14 +407,11 @@ public class SysUserRepositoryImpl implements SysUserRepository {
 
     @Override
     public int updateUserAvatar(Long userId, String avatar) {
-        LocalDateTime updateTime = LocalDateTime.now(ZoneId.of("UTC"));
-
-        String updateSql = "UPDATE sys_user SET avatar=:inUserAvatar, update_time=:inUpdateTime WHERE user_id=:inUserId";
+        String updateSql = "UPDATE sys_user SET avatar=:inUserAvatar, update_time=SYSDATE() WHERE user_id=:inUserId";
 
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("inUserId", userId);
         parameters.addValue("inUserAvatar", avatar);
-        parameters.addValue("inUpdateTime", updateTime);
 
         int[] updateResList = dbService.batchUpdate(updateSql, new MapSqlParameterSource[]{parameters});
         return updateResList[0];
@@ -423,14 +419,11 @@ public class SysUserRepositoryImpl implements SysUserRepository {
 
     @Override
     public int updateUserStatus(Long userId, String status) {
-        LocalDateTime updateTime = LocalDateTime.now(ZoneId.of("UTC"));
-
-        String updateSql = "UPDATE sys_user SET status=:inUserStatus, update_time=:inUpdateTime WHERE user_id=:inUserId";
+        String updateSql = "UPDATE sys_user SET status=:inUserStatus, update_time=SYSDATE() WHERE user_id=:inUserId";
 
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("inUserId", userId);
         parameters.addValue("inUserStatus", status);
-        parameters.addValue("inUpdateTime", updateTime);
 
         int[] updateResList = dbService.batchUpdate(updateSql, new MapSqlParameterSource[]{parameters});
         return updateResList[0];
@@ -451,14 +444,11 @@ public class SysUserRepositoryImpl implements SysUserRepository {
 
     @Override
     public int resetUserPwd(Long userId, String password) {
-        LocalDateTime updateTime = LocalDateTime.now(ZoneId.of("UTC"));
-
-        String updateSql = "UPDATE sys_user SET pwd_update_date=:inUpdateTime, password=:inUserPwd, update_time=:inUpdateTime WHERE user_id=:inUserId";
+        String updateSql = "UPDATE sys_user SET pwd_update_date=SYSDATE(), password=:inUserPwd, update_time=SYSDATE() WHERE user_id=:inUserId";
 
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("inUserId", userId);
         parameters.addValue("inUserPwd", password);
-        parameters.addValue("inUpdateTime", updateTime);
 
         int[] updateResList = dbService.batchUpdate(updateSql, new MapSqlParameterSource[]{parameters});
         return updateResList[0];
@@ -476,6 +466,7 @@ public class SysUserRepositoryImpl implements SysUserRepository {
         MapSqlParameterSource[] parametersList = new MapSqlParameterSource[userIds.length];
         for (int i = 0; i < parametersList.length; i++) {
             Long userId = userIds[i];
+
             parametersList[i] = new MapSqlParameterSource("inUserId", userId);
         }
 

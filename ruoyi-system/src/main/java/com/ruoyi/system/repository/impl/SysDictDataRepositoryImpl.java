@@ -1,7 +1,5 @@
 package com.ruoyi.system.repository.impl;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.List;
 
 import org.springframework.jdbc.core.SimplePropertyRowMapper;
@@ -96,7 +94,8 @@ public class SysDictDataRepositoryImpl implements SysDictDataRepository {
     public String selectDictLabel(String dictType, String dictValue) {
         String sql = "SELECT dict_label FROM sys_dict_data WHERE dict_type=:inDictType AND dict_value=:inDictValue";
 
-        MapSqlParameterSource parameters = new MapSqlParameterSource("inDictType", dictType);
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("inDictType", dictType);
         parameters.addValue("inDictValue", dictValue);
 
         String queryObj = dbService.queryForObject(sql, parameters, String.class);
@@ -137,6 +136,7 @@ public class SysDictDataRepositoryImpl implements SysDictDataRepository {
         MapSqlParameterSource[] parametersList = new MapSqlParameterSource[dictCodes.length];
         for (int i = 0; i < parametersList.length; i++) {
             Long dictCode = dictCodes[i];
+
             parametersList[i] = new MapSqlParameterSource("inDictCode", dictCode);
         }
 
@@ -158,9 +158,10 @@ public class SysDictDataRepositoryImpl implements SysDictDataRepository {
         String dictRemark = dictData.getRemark();
         String createBy = dictData.getCreateBy();
 
-        String insertSql = "INSERT INTO sys_dict_data(dict_sort, dict_label, dict_value, dict_type, css_class, list_class, is_default, status, remark, create_by, create_time) VALUES(:inDictSort, :inDictLabel, :inDictValue, :inDictType, :inDictCss, :inDictList, :inDictDefault, :inDictStatus, :inDictRemark, :inCreateBy, :inCreateTime)";
+        String insertSql = "INSERT INTO sys_dict_data(dict_sort, dict_label, dict_value, dict_type, css_class, list_class, is_default, status, remark, create_by, create_time) VALUES(:inDictSort, :inDictLabel, :inDictValue, :inDictType, :inDictCss, :inDictList, :inDictDefault, :inDictStatus, :inDictRemark, :inCreateBy, SYSDATE())";
 
-        MapSqlParameterSource parameters = new MapSqlParameterSource("inDictSort", dictSort);
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("inDictSort", dictSort);
         parameters.addValue("inDictLabel", dictLabel);
         parameters.addValue("inDictValue", dictValue);
         parameters.addValue("inDictType", dictType);
@@ -170,7 +171,6 @@ public class SysDictDataRepositoryImpl implements SysDictDataRepository {
         parameters.addValue("inDictStatus", dictStatus);
         parameters.addValue("inDictRemark", dictRemark);
         parameters.addValue("inCreateBy", createBy);
-        parameters.addValue("inCreateTime", LocalDateTime.now(ZoneId.of("UTC")));
 
         int[] insertResList = dbService.batchUpdate(insertSql, new MapSqlParameterSource[]{parameters});
         return insertResList[0];
@@ -231,9 +231,9 @@ public class SysDictDataRepositoryImpl implements SysDictDataRepository {
             parameters.addValue("inDictRemark", dictRemark);
         }
 
-        updateSqlBuffer.append(" update_by=:inUpdateBy, update_time=:inUpdateTime WHERE dict_code=:inDictCode");
+        updateSqlBuffer.append(" update_by=:inUpdateBy, update_time=SYSDATE() WHERE dict_code=:inDictCode");
+
         parameters.addValue("inUpdateBy", updateBy);
-        parameters.addValue("inUpdateTime", LocalDateTime.now(ZoneId.of("UTC")));
         parameters.addValue("inDictCode", dictCode);
 
         int[] updateResList = dbService.batchUpdate(updateSqlBuffer.toString(), new MapSqlParameterSource[]{parameters});
@@ -244,7 +244,8 @@ public class SysDictDataRepositoryImpl implements SysDictDataRepository {
     public int updateDictDataType(String oldDictType, String newDictType) {
         String updateSql = "UPDATE sys_dict_data SET dict_type=:inDictType WHERE dict_type=:inOldDictType";
 
-        MapSqlParameterSource parameters = new MapSqlParameterSource("inDictType", newDictType);
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("inDictType", newDictType);
         parameters.addValue("inOldDictType", oldDictType);
 
         int[] updateResList = dbService.batchUpdate(updateSql, new MapSqlParameterSource[]{parameters});

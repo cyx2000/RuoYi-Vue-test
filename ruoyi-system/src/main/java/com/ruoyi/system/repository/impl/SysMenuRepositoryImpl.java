@@ -1,7 +1,5 @@
 package com.ruoyi.system.repository.impl;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.List;
 
 import org.springframework.jdbc.core.SimplePropertyRowMapper;
@@ -58,6 +56,7 @@ public class SysMenuRepositoryImpl implements SysMenuRepository{
             inParameters.addValue("inMenuStatus", menuStatus);
         }
 
+        // 默认使用parent_id, order_num排序
         inBuilder.append(" ORDER BY parent_id, order_num");
     }
 
@@ -170,9 +169,10 @@ public class SysMenuRepositoryImpl implements SysMenuRepository{
         String menuRemark = menu.getRemark();
         String createBy = menu.getCreateBy();
 
-        String insertSql = "INSERT INTO sys_menu(parent_id, menu_name, order_num, path, component, `query`, route_name, is_frame, is_cache, menu_type, visible, status, perms, icon, remark, create_by, create_time) VALUES(:inParentId, :inMenuName, :inMenuOrder, :inMenuPath, :inMenuComp, :inMenuQuery, :inMenuRoute, :inMenuFrame, :inMenuCache, :inMenuType, :inMenuVisi, :inMenuStatus, :inMenuPerms, :inMenuIcon, :inMenuRemark, :inCreateBy, :inCreateTime)";
+        String insertSql = "INSERT INTO sys_menu(parent_id, menu_name, order_num, path, component, `query`, route_name, is_frame, is_cache, menu_type, visible, status, perms, icon, remark, create_by, create_time) VALUES(:inParentId, :inMenuName, :inMenuOrder, :inMenuPath, :inMenuComp, :inMenuQuery, :inMenuRoute, :inMenuFrame, :inMenuCache, :inMenuType, :inMenuVisi, :inMenuStatus, :inMenuPerms, :inMenuIcon, :inMenuRemark, :inCreateBy, SYSDATE())";
 
-        MapSqlParameterSource parameters = new MapSqlParameterSource("inParentId", parentId);
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("inParentId", parentId);
         parameters.addValue("inMenuName", menuName);
         parameters.addValue("inMenuOrder", menuOrder);
         parameters.addValue("inMenuPath", menuPath);
@@ -188,7 +188,6 @@ public class SysMenuRepositoryImpl implements SysMenuRepository{
         parameters.addValue("inMenuIcon", menuIcon);
         parameters.addValue("inMenuRemark", menuRemark);
         parameters.addValue("inCreateBy", createBy);
-        parameters.addValue("inCreateTime", LocalDateTime.now(ZoneId.of("UTC")));
 
         int[] insertResList = dbService.batchUpdate(insertSql, new MapSqlParameterSource[]{parameters});
         return insertResList[0];
@@ -279,9 +278,9 @@ public class SysMenuRepositoryImpl implements SysMenuRepository{
             parameters.addValue("inMenuRemark", menuRemark);
         }
 
-        updateSqlBuffer.append(" update_by=:inUpdateBy, update_time=:inUpdateTime WHERE menu_id=:inMenuId");
+        updateSqlBuffer.append(" update_by=:inUpdateBy, update_time=SYSDATE() WHERE menu_id=:inMenuId");
+
         parameters.addValue("inUpdateBy", updateBy);
-        parameters.addValue("inUpdateTime", LocalDateTime.now(ZoneId.of("UTC")));
         parameters.addValue("inMenuId", menuId);
 
         int[] updateResList = dbService.batchUpdate(updateSqlBuffer.toString(), new MapSqlParameterSource[]{parameters});
@@ -295,7 +294,8 @@ public class SysMenuRepositoryImpl implements SysMenuRepository{
         Long menuId = menu.getMenuId();
         Integer menuOrder = menu.getOrderNum();
 
-        MapSqlParameterSource parameters = new MapSqlParameterSource("inMenuId", menuId);
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("inMenuId", menuId);
         parameters.addValue("inMenuOrder", menuOrder);
 
         dbService.batchUpdate(updateSql, new MapSqlParameterSource[]{parameters});
@@ -315,7 +315,8 @@ public class SysMenuRepositoryImpl implements SysMenuRepository{
     public SysMenu checkMenuNameUnique(String menuName, Long parentId) {
         String sql = baseSelectSql + " AND menu_name=:inMenuName AND parent_id=inParentId LIMIT 1";
 
-        MapSqlParameterSource parameters = new MapSqlParameterSource("inParentId", parentId);
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("inParentId", parentId);
         parameters.addValue("inMenuName", menuName);
 
         SysMenu queryObj = dbService.queryForObject(sql, parameters, new SimplePropertyRowMapper<>(SysMenu.class));
@@ -326,7 +327,8 @@ public class SysMenuRepositoryImpl implements SysMenuRepository{
     public List<SysMenu> selectMenusByPathOrRouteName(String path, String routeName) {
         String sql = baseSelectSql + " AND menu_type IN ('M', 'C') AND (path=:inMenuPath OR path=:inMenuRoute OR route_name=:inMenuPath OR route_name=:inMenuRoute)";
 
-        MapSqlParameterSource parameters = new MapSqlParameterSource("inMenuPath", path);
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("inMenuPath", path);
         parameters.addValue("inMenuRoute", routeName);
 
         return queryList(parameters, sql);

@@ -30,11 +30,11 @@ public class SysRoleDeptRepositoryImpl implements SysRoleDeptRepository {
         MapSqlParameterSource[] parametersList = new MapSqlParameterSource[roleIds.length];
         for (int i = 0; i < parametersList.length; i++) {
             Long roleId = roleIds[i];
+
             parametersList[i] = new MapSqlParameterSource("inRoleId", roleId);
         }
 
         int[] deleteResList = dbService.batchUpdate(deleteSql, parametersList);
-
         return deleteResList[0];
     }
 
@@ -57,13 +57,15 @@ public class SysRoleDeptRepositoryImpl implements SysRoleDeptRepository {
             SysRoleDept roleDept = roleDeptList.get(i);
             Long roleId = roleDept.getRoleId();
             Long deptId = roleDept.getDeptId();
-            MapSqlParameterSource params = new MapSqlParameterSource("inRoleId", roleId);
+
+            MapSqlParameterSource params = new MapSqlParameterSource();
+            params.addValue("inRoleId", roleId);
             params.addValue("inDeptID", deptId);
+
             parametersList[i] = params;
         }
 
         int[] insertResList = dbService.batchUpdate(insertSql, parametersList);
-
         return insertResList[0];
     }
 

@@ -40,6 +40,7 @@ public class SysUserPostRepositoryImpl implements SysUserPostRepository {
         MapSqlParameterSource[] parametersList = new MapSqlParameterSource[userIds.length];
         for (int i = 0; i < parametersList.length; i++) {
             Long userId = userIds[i];
+
             parametersList[i] = new MapSqlParameterSource("inUserId", userId);
         }
 
@@ -57,7 +58,8 @@ public class SysUserPostRepositoryImpl implements SysUserPostRepository {
             Long userId = userPost.getUserId();
             Long postId = userPost.getPostId();
 
-            MapSqlParameterSource parameters = new MapSqlParameterSource("inPostId", postId);
+            MapSqlParameterSource parameters = new MapSqlParameterSource();
+            parameters.addValue("inPostId", postId);
             parameters.addValue("inUserId", userId);
             parameters.addValue("inPostId", postId);
 

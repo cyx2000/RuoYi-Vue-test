@@ -1,7 +1,5 @@
 package com.ruoyi.generator.repository.impl;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.List;
 
@@ -36,7 +34,6 @@ public class GenTableRepositoryImpl implements GenTableRepository {
         String sql = "SELECT table_id, table_name, table_comment, sub_table_name, sub_table_fk_name, class_name, tpl_category, tpl_web_type, package_name, module_name, business_name, function_name, function_author, gen_type, gen_path, options, create_by, create_time, update_by, update_time, remark FROM gen_table WHERE 1=1";
 
         StringBuilder sqlBuilder = new StringBuilder();
-
         MapSqlParameterSource parameters = new MapSqlParameterSource();
 
         setListSqlAndParams(genTable, sqlBuilder, parameters);
@@ -59,7 +56,6 @@ public class GenTableRepositoryImpl implements GenTableRepository {
         String sql = "SELECT table_name, table_comment, create_time, update_time FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = (SELECT DATABASE()) AND table_name NOT LIKE 'qrtz_%' AND table_name NOT LIKE 'gen_%' AND table_name NOT IN (SELECT table_name FROM gen_table)";
 
         StringBuilder sqlBuilder = new StringBuilder();
-
         NamedSqlParameterSource parameters = new NamedSqlParameterSource();
 
         setListSqlAndParams(genTable, sqlBuilder, parameters);
@@ -69,6 +65,7 @@ public class GenTableRepositoryImpl implements GenTableRepository {
 
         TableDataInfo pagedResp = dbService.getPagedRespInfo(queryCountSql, parameters);
 
+        // 默认使用create_time排序
         parameters.setDefaultOrderByStr("create_time DESC");
 
         dbService.buildPagedSqlAndSetParameters(sqlBuilder, parameters);
@@ -122,6 +119,7 @@ public class GenTableRepositoryImpl implements GenTableRepository {
 
         for (GenTable genTable : list) {
             Long tableId = genTable.getTableId();
+
             MapSqlParameterSource parameters = new MapSqlParameterSource("inTaId", tableId);
 
             List<GenTableColumn> columns = dbService.queryForList(sql, parameters, new SimplePropertyRowMapper<>(GenTableColumn.class));
@@ -143,8 +141,8 @@ public class GenTableRepositoryImpl implements GenTableRepository {
         sql = "SELECT c.column_id, c.table_id, c.column_name, c.column_comment, c.column_type, c.java_type, c.java_field, c.is_pk, c.is_increment, c.is_required, c.is_insert, c.is_edit, c.is_list, c.is_query, c.query_type, c.html_type, c.dict_type, c.sort FROM gen_table_column c WHERE c.table_id=:inTaId ORDER BY c.sort";
 
         List<GenTableColumn> columns = dbService.queryForList(sql, parameters, new SimplePropertyRowMapper<>(GenTableColumn.class));
-        queryObj.setColumns(columns);
 
+        queryObj.setColumns(columns);
         return queryObj;
     }
 
@@ -161,8 +159,8 @@ public class GenTableRepositoryImpl implements GenTableRepository {
         parameters.addValue("inTaId", queryObj.getTableId());
 
         List<GenTableColumn> columns = dbService.queryForList(sql, parameters, new SimplePropertyRowMapper<>(GenTableColumn.class));
-        queryObj.setColumns(columns);
 
+        queryObj.setColumns(columns);
         return queryObj;
     }
 
@@ -182,9 +180,8 @@ public class GenTableRepositoryImpl implements GenTableRepository {
         String tableGenPath = StringUtils.isEmpty(genTable.getGenPath()) ? "/" : genTable.getGenPath();
         String tableRemark = StringUtils.isEmpty(genTable.getRemark()) ? "" : genTable.getRemark();
         String createBy = genTable.getCreateBy();
-        LocalDateTime createTime = LocalDateTime.now(ZoneId.of("UTC"));
 
-        String insertSql = "INSERT INTO gen_table(table_name, table_comment, class_name, tpl_category, tpl_web_type, package_name, module_name, business_name, function_name, function_author, gen_type, gen_path, remark, create_by, create_time) VALUES(:inTaName, :inTaComm, :inTaClass, :inTaCateg, :inTaWebTyp, :inTaPack, :inTaModule, :inTaBusi, :inTaFuName, :inTaFuAuthor, :inTaGeTyp, :inTaGePath, :inTaRemark, :inCreateBy, :inCreateTime)";
+        String insertSql = "INSERT INTO gen_table(table_name, table_comment, class_name, tpl_category, tpl_web_type, package_name, module_name, business_name, function_name, function_author, gen_type, gen_path, remark, create_by, create_time) VALUES(:inTaName, :inTaComm, :inTaClass, :inTaCateg, :inTaWebTyp, :inTaPack, :inTaModule, :inTaBusi, :inTaFuName, :inTaFuAuthor, :inTaGeTyp, :inTaGePath, :inTaRemark, :inCreateBy, SYSDATE())";
 
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("inTaName", tableName);
@@ -201,7 +198,6 @@ public class GenTableRepositoryImpl implements GenTableRepository {
         parameters.addValue("inTaGePath", tableGenPath);
         parameters.addValue("inTaRemark", tableRemark);
         parameters.addValue("inCreateBy", createBy);
-        parameters.addValue("inCreateTime", createTime);
 
         long pK = dbService.insertAndReturnPk(insertSql, parameters);
         return pK;
@@ -227,9 +223,9 @@ public class GenTableRepositoryImpl implements GenTableRepository {
         String tableOptions = genTable.getOptions();
         String tableRemark = genTable.getRemark();
         String updateBy = genTable.getUpdateBy();
-        LocalDateTime updateTime = LocalDateTime.now(ZoneId.of("UTC"));
 
         StringBuffer updateBuffer = new StringBuffer("UPDATE gen_table SET");
+
         MapSqlParameterSource parameters = new MapSqlParameterSource();
 
         if(StringUtils.isNotEmpty(tableName)) {
@@ -297,10 +293,9 @@ public class GenTableRepositoryImpl implements GenTableRepository {
             parameters.addValue("inTaRemark", tableRemark);
         }
 
-        updateBuffer.append(" update_by=:inUpdateBy, update_time=:inUpdateTime WHERE table_id=:inTaId");
+        updateBuffer.append(" update_by=:inUpdateBy, update_time=SYSDATE() WHERE table_id=:inTaId");
 
         parameters.addValue("inUpdateBy", updateBy);
-        parameters.addValue("inUpdateTime", updateTime);
         parameters.addValue("inTaId", tableId);
 
         int[] updatedResList = dbService.batchUpdate(updateBuffer.toString(), new MapSqlParameterSource[]{parameters});
@@ -314,6 +309,7 @@ public class GenTableRepositoryImpl implements GenTableRepository {
         MapSqlParameterSource[] parametersList = new MapSqlParameterSource[tableIds.length];
         for (int i = 0; i < parametersList.length; i++) {
             Long tableId = tableIds[i];
+
             parametersList[i] = new MapSqlParameterSource("inTaId", tableId);
         }
 
@@ -326,5 +322,4 @@ public class GenTableRepositoryImpl implements GenTableRepository {
         int exec = dbService.execute(sql);
         return exec;
     }
-
 }
