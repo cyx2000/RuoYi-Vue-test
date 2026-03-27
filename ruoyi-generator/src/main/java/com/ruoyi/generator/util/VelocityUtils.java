@@ -23,9 +23,6 @@ public class VelocityUtils
     /** 项目空间路径 */
     private static final String PROJECT_PATH = "main/java";
 
-    /** mybatis空间路径 */
-    private static final String MYBATIS_PATH = "main/resources/mapper";
-
     /** 默认上级菜单，系统工具 */
     private static final String DEFAULT_PARENT_MENU_ID = "3";
 
@@ -148,11 +145,9 @@ public class VelocityUtils
         }
         List<String> templates = new ArrayList<String>();
         templates.add("vm/java/domain.java.vm");
-        templates.add("vm/java/mapper.java.vm");
         templates.add("vm/java/service.java.vm");
         templates.add("vm/java/serviceImpl.java.vm");
         templates.add("vm/java/controller.java.vm");
-        templates.add("vm/xml/mapper.xml.vm");
         templates.add("vm/sql/sql.vm");
         templates.add(apiTemplate);
         if (StringUtils.equals(ELEMENT_PLUS_TYPESSRIPT, tplWebType))
@@ -193,7 +188,6 @@ public class VelocityUtils
         String businessName = genTable.getBusinessName();
 
         String javaPath = PROJECT_PATH + "/" + StringUtils.replace(packageName, ".", "/");
-        String mybatisPath = MYBATIS_PATH + "/" + moduleName;
         String vuePath = "vue";
 
         if (template.contains("domain.java.vm"))
@@ -203,10 +197,6 @@ public class VelocityUtils
         if (template.contains("sub-domain.java.vm") && StringUtils.equals(GenConstants.TPL_SUB, genTable.getTplCategory()))
         {
             fileName = StringUtils.format("{}/domain/{}.java", javaPath, genTable.getSubTable().getClassName());
-        }
-        else if (template.contains("mapper.java.vm"))
-        {
-            fileName = StringUtils.format("{}/mapper/{}Mapper.java", javaPath, className);
         }
         else if (template.contains("service.java.vm"))
         {
@@ -219,10 +209,6 @@ public class VelocityUtils
         else if (template.contains("controller.java.vm"))
         {
             fileName = StringUtils.format("{}/controller/{}Controller.java", javaPath, className);
-        }
-        else if (template.contains("mapper.xml.vm"))
-        {
-            fileName = StringUtils.format("{}/{}Mapper.xml", mybatisPath, className);
         }
         else if (template.contains("sql.vm"))
         {
