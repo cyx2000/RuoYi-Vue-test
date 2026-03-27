@@ -287,7 +287,7 @@ public class SysUserRepositoryImpl implements SysUserRepository {
         String createBy = user.getCreateBy();
         LocalDateTime createTime = LocalDateTime.now(ZoneId.of("UTC"));
 
-        String insertSql = "INSERT INTO sys_user(dept_id, user_name, nick_name, email, avatar, phonenumber, sex, password, status, pwd_update_date, remark, create_by, create_time) VALUES(:inDeptId, inUsername, inUserNick, :inUserEmail, :inUserAvatar, :inUserPhone, :inUserSex, :inUserPwd, :inUserStatus, :inUserPwdUpdate, :inUserRemark, :inCreateBy, :inCreateTime)";
+        String insertSql = "INSERT INTO sys_user(dept_id, user_name, nick_name, email, avatar, phonenumber, sex, password, status, pwd_update_date, remark, create_by, create_time) VALUES(:inDeptId, :inUsername, :inUserNick, :inUserEmail, :inUserAvatar, :inUserPhone, :inUserSex, :inUserPwd, :inUserStatus, :inUserPwdUpdate, :inUserRemark, :inCreateBy, :inCreateTime)";
 
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("inDeptId", deptId);
@@ -304,8 +304,9 @@ public class SysUserRepositoryImpl implements SysUserRepository {
         parameters.addValue("inCreateBy", createBy);
         parameters.addValue("inCreateTime", createTime);
 
-        int[] insertResList = dbService.batchUpdate(insertSql, new MapSqlParameterSource[]{parameters});
-        return insertResList[0];
+        long pK = dbService.insertAndReturnPk(insertSql, parameters);
+        user.setUserId(pK);
+        return pK > 0L ? 1 : -1;
     }
 
     @Override
