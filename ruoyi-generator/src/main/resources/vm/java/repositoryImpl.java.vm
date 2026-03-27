@@ -1,0 +1,341 @@
+package ${packageName}.repository.impl;
+
+import java.util.List;
+
+import org.springframework.jdbc.core.SimplePropertyRowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.stereotype.Service;
+
+import com.ruoyi.common.core.db.DBService;
+import com.ruoyi.common.core.page.TableDataInfo;
+import com.ruoyi.common.utils.StringUtils;
+import ${packageName}.domain.${ClassName};
+#if($table.sub)
+import ${packageName}.domain.${subClassName};
+#end
+
+/**
+ * ${functionName}Repository实现
+ *
+ * @author ${author}
+ * @date ${datetime}
+ */
+@Service
+public class ${ClassName}RepositoryImpl
+{
+    private DBService dbService;
+
+    private String baseSelectSql = "SELECT#foreach($column in $columns) a.$column.columnName#if($foreach.count != $columns.size()),#end#end FROM ${tableName} a WHERE 1=1";
+
+    public ${ClassName}RepositoryImpl(DBService inDbService) {
+        this.dbService = inDbService;
+    }
+
+    protected List<${ClassName}> queryList(final MapSqlParameterSource parameters, final String querySql) {
+        List<${ClassName}> list = dbService.queryForList(querySql, parameters, new SimplePropertyRowMapper<>(${ClassName}.class));
+        return list;
+    }
+
+    /**
+     * 查询${functionName}
+     *
+     * @param ${pkColumn.javaField} ${functionName}主键
+     * @return ${functionName}
+     */
+    public ${ClassName} select${ClassName}By${pkColumn.capJavaField}(${pkColumn.javaType} ${pkColumn.javaField}) {
+        String sql = baseSelectSql + " AND a.${pkColumn.columnName}=:in${pkColumn.capJavaField}";
+
+        MapSqlParameterSource parameters = new MapSqlParameterSource("in${pkColumn.capJavaField}", ${pkColumn.javaField});
+
+        ${ClassName} queryObj = dbService.queryForObject(sql, parameters, new SimplePropertyRowMapper<>(${ClassName}.class));
+        return queryObj;
+    }
+
+    /**
+     * 根据条件查询${functionName}列表
+     *
+     * @param ${className} ${functionName}
+     * @return ${functionName}集合
+     */
+    public List<${ClassName}> select${ClassName}List(${ClassName} ${className}) {
+        StringBuilder sqlBuilder = new StringBuilder(baseSelectSql);
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+
+        setListSqlAndParams(${className}, sqlBuilder, parameters);
+
+        return queryList(parameters, sqlBuilder.toString());
+    }
+#if($table.crud || $table.sub)
+
+    /**
+     * 根据条件分页查询${functionName}列表
+     *
+     * @param ${className} ${functionName}
+     * @return 分页完成的${functionName}集合
+     */
+    public TableDataInfo getPagedListResp(${ClassName} ${className}) {
+
+        StringBuilder sqlBuilder = new StringBuilder();
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+
+        setListSqlAndParams(${className}, sqlBuilder, parameters);
+
+        String selectCountSql = "SELECT COUNT(1) FROM $column.columnName a WHERE 1=1";
+        String queryCountSql = selectCountSql + sqlBuilder.toString();
+
+        TableDataInfo pagedResp = dbService.getPagedRespInfo(queryCountSql, parameters);
+
+        dbService.buildPagedSqlAndSetParameters(sqlBuilder, parameters);
+
+        String queryListSql = baseSelectSql + sqlBuilder.toString();
+
+        pagedResp.setRows(queryList(parameters, queryListSql));
+        return pagedResp;
+    }
+#end
+
+    private void setListSqlAndParams(final ${ClassName} ${className}, StringBuilder inBuilder, MapSqlParameterSource inParameters) {
+#foreach($column in $columns)
+#if($column.query)
+#set($AttrName=$column.javaField.substring(0,1).toUpperCase() + ${column.javaField.substring(1)})
+#if($column.queryType == "BETWEEN")
+        String beginDateTime = ${className}.getBeginTimeParam();
+        String endDateTime = ${className}.getEndTimeParam();
+#else
+        $column.javaType $column.javaField = ${className}.get$AttrName();
+#end
+#end
+#end
+
+#foreach($column in $columns)
+#if($column.query)
+#set($queryType=$column.queryType)
+#set($columnName=$column.columnName)
+#set($javaField=$column.javaField)
+#set($AttrName=$column.javaField.substring(0,1).toUpperCase() + ${column.javaField.substring(1)})
+#if($queryType == "EQ")
+        if(StringUtils.isNotEmpty($javaField)) {
+            inBuilder.append(" AND a.$columnName=:in$AttrName");
+            inParameters.addValue("in$AttrName", $javaField);
+        }
+#elseif($queryType == "NE")
+        if(StringUtils.isNotEmpty($javaField)) {
+            inBuilder.append(" AND a.$columnName!=:in$AttrName");
+            inParameters.addValue("in$AttrName", $javaField);
+        }
+#elseif($queryType == "GT")
+        if(StringUtils.isNotEmpty($javaField)) {
+            inBuilder.append(" AND a.$columnName>:in$AttrName");
+            inParameters.addValue("in$AttrName", $javaField);
+        }
+#elseif($queryType == "GTE")
+        if(StringUtils.isNotEmpty($javaField)) {
+            inBuilder.append(" AND a.$columnName>=:in$AttrName");
+            inParameters.addValue("in$AttrName", $javaField);
+        }
+#elseif($queryType == "LT")
+        if(StringUtils.isNotEmpty($javaField)) {
+            inBuilder.append(" AND a.$columnName<:in$AttrName");
+            inParameters.addValue("in$AttrName", $javaField);
+        }
+#elseif($queryType == "LTE")
+        if(StringUtils.isNotEmpty($javaField)) {
+            inBuilder.append(" AND a.$columnName<=:in$AttrName");
+            inParameters.addValue("in$AttrName", $javaField);
+        }
+#elseif($queryType == "LIKE")
+        if(StringUtils.isNotEmpty($javaField)) {
+            inBuilder.append(" AND a.$columnName LIKE CONCAT('%', :in$AttrName, '%')");
+            inParameters.addValue("in$AttrName", $javaField);
+        }
+#elseif($queryType == "BETWEEN")
+        if(StringUtils.isNotEmpty(beginDateTime)) {
+            inBuilder.append(" AND DATE_FORMAT(a.$columnName,'%y%m%d') >= DATE_FORMAT(:inBeginTime,'%y%m%d')");
+            inParameters.addValue("inBeginTime", beginDateTime);
+        }
+        if(StringUtils.isNotEmpty(endDateTime)) {
+            inBuilder.append(" AND DATE_FORMAT(a.$columnName,'%y%m%d') <= DATE_FORMAT(:inEndTime,'%y%m%d')");
+            inParameters.addValue("inEndTime", endDateTime);
+        }
+#end
+#end
+#end
+    }
+    /**
+     * 新增${functionName}
+     *
+     * @param ${className} ${functionName}
+     * @return 结果
+     */
+    public int insert${ClassName}(${ClassName} ${className}) {
+#foreach($column in $columns)
+#if($column.insert && ($column.columnName != $pkColumn.columnName || !$pkColumn.isIncrement))
+#set($AttrName=$column.javaField.substring(0,1).toUpperCase() + ${column.javaField.substring(1)})
+        $column.javaType $column.javaField = ${className}.get$AttrName(); // $column.columnComment
+#end
+#end
+
+#set($insertColumns="")
+#set($insertComas="")
+#foreach($column in $columns)
+#if($column.insert && ($column.columnName != $pkColumn.columnName || !$pkColumn.isIncrement))
+#set($AttrName=$column.javaField.substring(0,1).toUpperCase() + ${column.javaField.substring(1)})
+#set($insertColumns=$insertColumns+$column.columnName+",")
+#set($insertComas=$insertComas+":in$AttrName, ")
+#end
+#end
+#set($insertColumns=$insertColumns.substring(0,$insertColumns.lastIndexOf(',')))
+#set($insertComas=$insertComas.substring(0,$insertComas.lastIndexOf(',')))
+        String insertSql = "INSERT INTO ${tableName}($insertColumns) VALUES($insertComas)";
+
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+#foreach($column in $columns)
+#if($column.insert && ($column.columnName != $pkColumn.columnName || !$pkColumn.isIncrement))
+#set($AttrName=$column.javaField.substring(0,1).toUpperCase() + ${column.javaField.substring(1)})
+        parameters.addValue("in$AttrName", $column.javaField);
+#end
+#end
+
+        int[] insertResList = dbService.batchUpdate(insertSql, new MapSqlParameterSource[]{parameters});
+        return insertResList[0];
+    }
+
+    /**
+     * 修改${functionName}
+     *
+     * @param ${className} ${functionName}
+     * @return 结果
+     */
+    public int update${ClassName}(${ClassName} ${className}) {
+#foreach($column in $columns)
+#if($column.edit || $column.columnName == $pkColumn.columnName)
+#set($AttrName=$column.javaField.substring(0,1).toUpperCase() + ${column.javaField.substring(1)})
+        $column.javaType $column.javaField = ${className}.get$AttrName();
+#end
+#end
+
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+
+#set($updateColumns="")
+#foreach($column in $columns)
+#if($column.edit && $column.columnName != $pkColumn.columnName)
+#set($AttrName=$column.javaField.substring(0,1).toUpperCase() + ${column.javaField.substring(1)})
+#if($column.javaType == "String")
+        if(StringUtils.isNotEmpty($column.javaField)) {
+#else
+        if(StringUtils.isNotNull($column.javaField)) {
+#end
+#set($updateColumns=$updateColumns+" $column.columnName=:in$AttrName,")
+            parameters.addValue("in$AttrName", $column.javaField);
+        }
+#end
+#end
+#set($updateColumns=$updateColumns.substring(0,$updateColumns.lastIndexOf(',')))
+
+        String updateSql = "UPDATE ${tableName} SET$updateColumns WHERE $pkColumn.columnName=:in${pkColumn.capJavaField}";
+
+        parameters.addValue(":in${pkColumn.capJavaField}", $pkColumn.javaField);
+
+        int[] updatedResList = dbService.batchUpdate(updateSql, new MapSqlParameterSource[]{parameters});
+        return updatedResList[0];
+    }
+
+    /**
+     * 删除${functionName}
+     *
+     * @param ${pkColumn.javaField} ${functionName}主键
+     * @return 结果
+     */
+    public int delete${ClassName}By${pkColumn.capJavaField}(${pkColumn.javaType} ${pkColumn.javaField}) {
+        return this.delete${ClassName}By${pkColumn.capJavaField}s(new ${pkColumn.javaType}[]{${pkColumn.javaField}});
+    }
+
+    /**
+     * 批量删除${functionName}
+     *
+     * @param ${pkColumn.javaField}s 需要删除的数据主键集合
+     * @return 结果
+     */
+    public int delete${ClassName}By${pkColumn.capJavaField}s(${pkColumn.javaType}[] ${pkColumn.javaField}s) {
+        String deleteSql = "DELETE FROM ${tableName} WHERE $pkColumn.columnName=:in${pkColumn.capJavaField}";
+
+        MapSqlParameterSource[] parametersList = new MapSqlParameterSource[${pkColumn.javaField}s.length];
+        for (int i = 0; i < parametersList.length; i++) {
+            ${pkColumn.javaType} ${pkColumn.javaField} = ${pkColumn.javaField}s[i];
+            parametersList[i] = new MapSqlParameterSource("in${pkColumn.capJavaField}", ${pkColumn.javaField});
+        }
+
+        int[] deleteResList = dbService.batchUpdate(deleteSql, parametersList);
+        return deleteResList[0];
+    }
+#if($table.sub)
+
+    /**
+     * 通过${functionName}主键删除${subTable.functionName}信息
+     *
+     * @param ${pkColumn.javaField} ${functionName}ID
+     * @return 结果
+     */
+    public int delete${subClassName}By${subTableFkClassName}(${pkColumn.javaType} ${pkColumn.javaField}) {
+        return delete${subClassName}By${subTableFkClassName}s(new ${pkColumn.javaType}[]{${pkColumn.javaField}});
+    }
+
+    /**
+     * 批量删除${subTable.functionName}
+     *
+     * @param ${pkColumn.javaField}s 需要删除的数据主键集合
+     * @return 结果
+     */
+    public int delete${subClassName}By${subTableFkClassName}s(${pkColumn.javaType}[] ${pkColumn.javaField}s) {
+        String deleteSql = "DELETE FROM ${subTableName} WHERE ${subTableFkName}=:in${pkColumn.capJavaField}";
+
+        MapSqlParameterSource[] parametersList = new MapSqlParameterSource[${pkColumn.javaField}s.length];
+        for (int i = 0; i < parametersList.length; i++) {
+            ${pkColumn.javaType} ${pkColumn.javaField} = ${pkColumn.javaField}s[i];
+            parametersList[i] = new MapSqlParameterSource("in${pkColumn.capJavaField}", ${pkColumn.javaField});
+        }
+
+        int[] deleteResList = dbService.batchUpdate(deleteSql, parametersList);
+        return deleteResList[0];
+    }
+
+    /**
+     * 批量新增${subTable.functionName}
+     *
+     * @param ${subclassName}List ${subTable.functionName}列表
+     * @return 结果
+     */
+    public int batch${subClassName}(List<${subClassName}> ${subclassName}List) {
+#set($insertColumns="")
+#set($insertComas="")
+#foreach($column in $subTable.columns)
+#if($column.insert)
+#set($AttrName=$column.javaField.substring(0,1).toUpperCase() + ${column.javaField.substring(1)})
+#set($insertColumns=$insertColumns+"$column.columnName, ")
+#set($insertComas=$insertComas+":in$AttrName, ")
+#end
+#end
+#set($insertColumns=$insertColumns.substring(0,$insertColumns.lastIndexOf(',')))
+#set($insertComas=$insertComas.substring(0,$insertComas.lastIndexOf(',')))
+        String insertSql = "INSERT INTO${subTableName}($insertColumns) VALUES($insertComas)";
+
+        MapSqlParameterSource[] parametersList = new MapSqlParameterSource[${subclassName}List.size()];
+        for (int i = 0; i < parametersList.length; i++) {
+            ${subClassName} ${subclassName} = ${subclassName}List.get(i);
+
+            MapSqlParameterSource parameters = new MapSqlParameterSource();
+#foreach($column in $subTable.columns)
+#if($column.insert)
+#set($AttrName=$column.javaField.substring(0,1).toUpperCase() + ${column.javaField.substring(1)})
+            parameters.addValue("in$AttrName", ${subclassName}.get$AttrName());
+#end
+#end
+
+            parametersList[i] = parameters;
+        }
+
+        int[] insertResList = dbService.batchUpdate(insertSql, parametersList);
+        return insertResList[0];
+    }
+#end
+}
