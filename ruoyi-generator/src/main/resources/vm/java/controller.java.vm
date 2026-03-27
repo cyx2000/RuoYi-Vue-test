@@ -26,7 +26,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
 
 /**
  * ${functionName}Controller
- * 
+ *
  * @author ${author}
  * @date ${datetime}
  */
@@ -45,9 +45,8 @@ public class ${ClassName}Controller extends BaseController
 #if($table.crud || $table.sub)
     public TableDataInfo list(${ClassName} ${className})
     {
-        startPage();
-        List<${ClassName}> list = ${className}Service.select${ClassName}List(${className});
-        return getDataTable(list);
+        TableDataInfo pagedResp = ${className}Service.getPagedListResp(${className});
+        return pagedResp;
     }
 #elseif($table.tree)
     public AjaxResult list(${ClassName} ${className})
