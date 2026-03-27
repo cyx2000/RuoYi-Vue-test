@@ -147,6 +147,8 @@ public class VelocityUtils
         templates.add("vm/java/domain.java.vm");
         templates.add("vm/java/service.java.vm");
         templates.add("vm/java/serviceImpl.java.vm");
+        templates.add("vm/java/repository.java.vm");
+        templates.add("vm/java/repositoryImpl.java.vm");
         templates.add("vm/java/controller.java.vm");
         templates.add("vm/sql/sql.vm");
         templates.add(apiTemplate);
@@ -205,6 +207,14 @@ public class VelocityUtils
         else if (template.contains("serviceImpl.java.vm"))
         {
             fileName = StringUtils.format("{}/service/impl/{}ServiceImpl.java", javaPath, className);
+        }
+        else if (template.contains("repository.java.vm"))
+        {
+            fileName = StringUtils.format("{}/repository/{}Repository.java", javaPath, className);
+        }
+        else if (template.contains("repositoryImpl.java.vm"))
+        {
+            fileName = StringUtils.format("{}/repository/impl/{}RepositoryImpl.java", javaPath, className);
         }
         else if (template.contains("controller.java.vm"))
         {
