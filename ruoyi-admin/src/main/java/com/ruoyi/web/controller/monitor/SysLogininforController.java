@@ -22,7 +22,7 @@ import com.ruoyi.system.service.ISysLogininforService;
 
 /**
  * 系统访问记录
- * 
+ *
  * @author ruoyi
  */
 @RestController
@@ -39,9 +39,8 @@ public class SysLogininforController extends BaseController
     @GetMapping("/list")
     public TableDataInfo list(SysLogininfor logininfor)
     {
-        startPage();
-        List<SysLogininfor> list = logininforService.selectLogininforList(logininfor);
-        return getDataTable(list);
+        TableDataInfo pagedResp = logininforService.getPagedListResp(logininfor);
+        return pagedResp;
     }
 
     @Log(title = "登录日志", businessType = BusinessType.EXPORT)

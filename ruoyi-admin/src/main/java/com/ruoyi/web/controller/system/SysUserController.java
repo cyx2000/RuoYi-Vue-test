@@ -34,7 +34,7 @@ import com.ruoyi.system.service.ISysUserService;
 
 /**
  * 用户信息
- * 
+ *
  * @author ruoyi
  */
 @RestController
@@ -60,9 +60,8 @@ public class SysUserController extends BaseController
     @GetMapping("/list")
     public TableDataInfo list(SysUser user)
     {
-        startPage();
-        List<SysUser> list = userService.selectUserList(user);
-        return getDataTable(list);
+        TableDataInfo pagedResp = userService.getPagedListResp(user);
+        return pagedResp;
     }
 
     @Log(title = "用户管理", businessType = BusinessType.EXPORT)

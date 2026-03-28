@@ -1,13 +1,11 @@
 // 编译脚本
 buildscript {
     ext {
-        springBootVersion = "4.0.3" // Spring Boot Bom版本定义
-        springFrameworkVersion = "7.0.5" // Spring Framework Bom版本定义
+        springBootVersion = "4.0.4" // Spring Boot Bom版本定义
+        springFrameworkVersion = "7.0.6" // Spring Framework Bom版本定义
         druidDBPool = "1.2.28"
-        mybatis = "4.0.1"
         jacksonAnnotations = "2.21"
         oshi = "6.10.0"
-        pagehelper = "2.1.1"
         commonsIO = "2.21.0"
         servletApi = "6.1.0"
         jaxbApi = "2.3.1"
@@ -62,10 +60,8 @@ subprojects {
         }
         dependencies {
             dependency "com.alibaba:druid-spring-boot-4-starter:${druidDBPool}"
-            dependency "org.mybatis.spring.boot:mybatis-spring-boot-starter:${mybatis}"
             dependency "com.fasterxml.jackson.core:jackson-annotations:${jacksonAnnotations}"
             dependency "com.github.oshi:oshi-core:${oshi}"
-            dependency "com.github.pagehelper:pagehelper-spring-boot-starter:${pagehelper}"
             dependency "commons-io:commons-io:${commonsIO}"
             dependency "jakarta.servlet:jakarta.servlet-api:${servletApi}"
             dependency "javax.xml.bind:jaxb-api:${jaxbApi}"

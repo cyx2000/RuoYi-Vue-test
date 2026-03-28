@@ -24,7 +24,7 @@ import com.ruoyi.system.service.ISysDictTypeService;
 
 /**
  * 数据字典信息
- * 
+ *
  * @author ruoyi
  */
 @RestController
@@ -38,9 +38,8 @@ public class SysDictTypeController extends BaseController
     @GetMapping("/list")
     public TableDataInfo list(SysDictType dictType)
     {
-        startPage();
-        List<SysDictType> list = dictTypeService.selectDictTypeList(dictType);
-        return getDataTable(list);
+        TableDataInfo pagedResp = dictTypeService.getPagedListResp(dictType);
+        return pagedResp;
     }
 
     @Log(title = "字典类型", businessType = BusinessType.EXPORT)
