@@ -1,7 +1,6 @@
 package com.ruoyi.system.service.impl;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -372,9 +371,9 @@ public class SysUserServiceImpl implements ISysUserService
      * @param loginDate 登录时间
      * @return 结果
      */
-    public void updateLoginInfo(Long userId, String loginIp, Date loginDate)
+    public void updateLoginInfo(Long userId, String loginIp)
     {
-        userRepository.updateLoginInfo(userId, loginIp, loginDate);
+        userRepository.updateLoginInfo(userId, loginIp);
     }
 
     /**
