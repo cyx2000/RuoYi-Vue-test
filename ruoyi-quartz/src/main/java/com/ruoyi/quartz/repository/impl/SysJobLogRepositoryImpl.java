@@ -1,6 +1,6 @@
 package com.ruoyi.quartz.repository.impl;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.jdbc.core.SimplePropertyRowMapper;
@@ -123,8 +123,8 @@ public class SysJobLogRepositoryImpl implements SysJobLogRepository {
         String jLogMessage = jobLog.getJobMessage();
         String jLogStatus = jobLog.getStatus();
         String jLogExcep = StringUtils.isEmpty(jobLog.getExceptionInfo()) ? "" : jobLog.getExceptionInfo();
-        Date jLogStartTime = jobLog.getStartTime();
-        Date jLogEndTime = jobLog.getEndTime();
+        LocalDateTime jLogStartTime = jobLog.getStartTime();
+        LocalDateTime jLogEndTime = jobLog.getEndTime();
 
         String insertSql = "INSERT INTO sys_job_log(job_name, job_group, invoke_target, job_message, status, exception_info, start_time, end_time, create_time) VALUES(:inJLogName, :inJLogGro, :inJLogInv, :inJLogMess, :inJLogStatus, :inJLogExcep, :inJLogStart, :inJLogEnd, SYSDATE())";
 

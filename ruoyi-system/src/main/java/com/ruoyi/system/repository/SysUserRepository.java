@@ -1,6 +1,5 @@
 package com.ruoyi.system.repository;
 
-import java.util.Date;
 import java.util.List;
 
 import com.ruoyi.common.core.domain.entity.SysUser;
@@ -103,7 +102,7 @@ public interface SysUserRepository
      * @param loginDate 登录时间
      * @return 结果
      */
-    public int updateLoginInfo(Long userId, String loginIp, Date loginDate);
+    public int updateLoginInfo(Long userId, String loginIp);
 
     /**
      * 重置用户密码

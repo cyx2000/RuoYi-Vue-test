@@ -232,6 +232,7 @@ public class ${ClassName}RepositoryImpl
 #set($updateColumns=$updateColumns+" $column.columnName=SYSDATE(),")
 #end
 #end
+#if(!$updateColumns.isEmpty())
 #set($updateColumns=$updateColumns.substring(0,$updateColumns.lastIndexOf(',')))
 
         String updateSql = "UPDATE ${tableName} SET$updateColumns WHERE $pkColumn.columnName=:in${pkColumn.capJavaField}";
@@ -240,6 +241,7 @@ public class ${ClassName}RepositoryImpl
 
         int[] updatedResList = dbService.batchUpdate(updateSql, new MapSqlParameterSource[]{parameters});
         return updatedResList[0];
+#end
     }
 
     /**

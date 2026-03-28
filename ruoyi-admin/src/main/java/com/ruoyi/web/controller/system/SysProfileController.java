@@ -17,7 +17,7 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.core.domain.model.LoginUser;
 import com.ruoyi.common.enums.BusinessType;
-import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.DateTimeUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.file.FileUploadUtils;
@@ -28,7 +28,7 @@ import com.ruoyi.system.service.ISysUserService;
 
 /**
  * 个人信息 业务处理
- * 
+ *
  * @author ruoyi
  */
 @RestController
@@ -110,7 +110,7 @@ public class SysProfileController extends BaseController
         if (userService.resetUserPwd(userId, newPassword) > 0)
         {
             // 更新缓存用户密码&密码最后更新时间
-            loginUser.getUser().setPwdUpdateDate(DateUtils.getNowDate());
+            loginUser.getUser().setPwdUpdateDate(DateTimeUtils.getNowDateTime());
             loginUser.getUser().setPassword(newPassword);
             tokenService.setLoginUser(loginUser);
             return success();

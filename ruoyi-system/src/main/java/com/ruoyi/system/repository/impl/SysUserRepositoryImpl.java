@@ -1,7 +1,7 @@
 package com.ruoyi.system.repository.impl;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.jdbc.core.SimplePropertyRowMapper;
@@ -224,10 +224,10 @@ public class SysUserRepositoryImpl implements SysUserRepository {
         String userStatus = inRs.getString("status");
         String userDelFlag = inRs.getString("del_flag");
         String userLoginIp = inRs.getString("login_ip");
-        Date userLoginDate = inRs.getDate("login_date");
+        LocalDateTime userLoginDate = (LocalDateTime) inRs.getObject("login_date");
         String userRemark = inRs.getString("remark");
         String createBy = inRs.getString("create_by");
-        Date createTime = inRs.getDate("create_time");
+        LocalDateTime createTime = (LocalDateTime) inRs.getObject("create_time");
 
         inUser.setUserId(userId);
         inUser.setDeptId(deptId);
@@ -254,7 +254,7 @@ public class SysUserRepositoryImpl implements SysUserRepository {
         while (sqlRs.next()) {
             if(StringUtils.isNull(user.getUserId())) {
                 String userPwd = sqlRs.getString("password");
-                Date userPwdUpdateDate = sqlRs.getDate("pwd_update_date");
+                LocalDateTime userPwdUpdateDate = (LocalDateTime) sqlRs.getObject("pwd_update_date");
                 user.setPassword(userPwd);
                 user.setPwdUpdateDate(userPwdUpdateDate);
                 setUserParams(user, sqlRs);
@@ -307,11 +307,10 @@ public class SysUserRepositoryImpl implements SysUserRepository {
         String userSex =  user.getSex();
         String userPwd = user.getPassword();
         String userStatus = user.getStatus();
-        Date userPwdUpdateDate = user.getPwdUpdateDate();
         String userRemark = user.getRemark();
         String createBy = user.getCreateBy();
 
-        String insertSql = "INSERT INTO sys_user(dept_id, user_name, nick_name, email, avatar, phonenumber, sex, password, status, pwd_update_date, remark, create_by, create_time) VALUES(:inDeptId, :inUsername, :inUserNick, :inUserEmail, :inUserAvatar, :inUserPhone, :inUserSex, :inUserPwd, :inUserStatus, :inUserPwdUpdate, :inUserRemark, :inCreateBy, SYSDATE())";
+        String insertSql = "INSERT INTO sys_user(dept_id, user_name, nick_name, email, avatar, phonenumber, sex, password, status, pwd_update_date, remark, create_by, create_time) VALUES(:inDeptId, :inUsername, :inUserNick, :inUserEmail, :inUserAvatar, :inUserPhone, :inUserSex, :inUserPwd, :inUserStatus, SYSDATE(), :inUserRemark, :inCreateBy, SYSDATE())";
 
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("inDeptId", deptId);
@@ -323,7 +322,6 @@ public class SysUserRepositoryImpl implements SysUserRepository {
         parameters.addValue("inUserSex", userSex);
         parameters.addValue("inUserPwd", userPwd);
         parameters.addValue("inUserStatus", userStatus);
-        parameters.addValue("inUserPwdUpdate", userPwdUpdateDate);
         parameters.addValue("inUserRemark", userRemark);
         parameters.addValue("inCreateBy", createBy);
 
@@ -344,7 +342,6 @@ public class SysUserRepositoryImpl implements SysUserRepository {
         String userPwd = user.getPassword();
         String userStatus = user.getStatus();
         String userLoginIp = user.getLoginIp();
-        Date userLoginDate = user.getLoginDate();
         String userRemark = user.getRemark();
         String updateBy = user.getUpdateBy();
 
@@ -388,10 +385,6 @@ public class SysUserRepositoryImpl implements SysUserRepository {
             updateSqlBuffer.append(" login_ip=:inUserLogIp,");
             parameters.addValue("inUserLogIp", userLoginIp);
         }
-        if(StringUtils.isNotNull(userLoginDate)) {
-            updateSqlBuffer.append(" login_date=:inUserLogDate,");
-            parameters.addValue("inUserLogDate", userLoginDate);
-        }
         if(StringUtils.isNotEmpty(userRemark)) {
             updateSqlBuffer.append(" remark=:inUserRemark,");
             parameters.addValue("inUserRemark", userRemark);
@@ -431,7 +424,7 @@ public class SysUserRepositoryImpl implements SysUserRepository {
     }
 
     @Override
-    public int updateLoginInfo(Long userId, String loginIp, Date loginDate) {
+    public int updateLoginInfo(Long userId, String loginIp) {
         String updateSql = "UPDATE sys_user SET login_ip=:inUserLogIp, login_date=SYSDATE() WHERE user_id=:inUserId";
 
         MapSqlParameterSource parameters = new MapSqlParameterSource();
