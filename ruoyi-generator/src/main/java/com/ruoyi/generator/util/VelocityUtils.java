@@ -280,9 +280,9 @@ public class VelocityUtils
         }
         for (GenTableColumn column : columns)
         {
-            if (!column.isSuperColumn() && GenConstants.TYPE_DATE.equals(column.getJavaType()))
+            if (!column.isSuperColumn() && GenConstants.TYPE_DATETIME.equals(column.getJavaType()))
             {
-                importList.add("java.util.Date");
+                importList.add("java.time.LocalDateTime");
                 importList.add("com.fasterxml.jackson.annotation.JsonFormat");
             }
             else if (!column.isSuperColumn() && GenConstants.TYPE_BIGDECIMAL.equals(column.getJavaType()))
