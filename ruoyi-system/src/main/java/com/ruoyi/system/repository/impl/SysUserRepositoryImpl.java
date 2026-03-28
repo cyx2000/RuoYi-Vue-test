@@ -2,7 +2,6 @@ package com.ruoyi.system.repository.impl;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.jdbc.core.SimplePropertyRowMapper;
@@ -228,7 +227,7 @@ public class SysUserRepositoryImpl implements SysUserRepository {
         LocalDateTime userLoginDate = (LocalDateTime) inRs.getObject("login_date");
         String userRemark = inRs.getString("remark");
         String createBy = inRs.getString("create_by");
-        Date createTime = inRs.getDate("create_time");
+        LocalDateTime createTime = (LocalDateTime) inRs.getObject("create_time");
 
         inUser.setUserId(userId);
         inUser.setDeptId(deptId);
