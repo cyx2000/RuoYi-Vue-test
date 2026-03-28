@@ -169,32 +169,31 @@ public class ${ClassName}RepositoryImpl
      */
     public int insert${ClassName}(${ClassName} ${className}) {
 #foreach($column in $columns)
-#if($column.insert && ($column.columnName != $pkColumn.columnName || !$pkColumn.isIncrement))
+#if($column.insert && $column.columnName != "create_time" && ($column.columnName != $pkColumn.columnName || !$pkColumn.isIncrement))
 #set($AttrName=$column.javaField.substring(0,1).toUpperCase() + ${column.javaField.substring(1)})
         $column.javaType $column.javaField = ${className}.get$AttrName(); // $column.columnComment
 #end
 #end
 
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
 #set($insertColumns="")
 #set($insertComas="")
 #foreach($column in $columns)
 #if($column.insert && ($column.columnName != $pkColumn.columnName || !$pkColumn.isIncrement))
 #set($AttrName=$column.javaField.substring(0,1).toUpperCase() + ${column.javaField.substring(1)})
 #set($insertColumns=$insertColumns+$column.columnName+",")
+#if($column.columnName != "create_time")
 #set($insertComas=$insertComas+":in$AttrName, ")
+        parameters.addValue("in$AttrName", $column.javaField);
+#else
+#set($insertComas=$insertComas+"SYSDATE(), ")
+#end
 #end
 #end
 #set($insertColumns=$insertColumns.substring(0,$insertColumns.lastIndexOf(',')))
 #set($insertComas=$insertComas.substring(0,$insertComas.lastIndexOf(',')))
-        String insertSql = "INSERT INTO ${tableName}($insertColumns) VALUES($insertComas)";
 
-        MapSqlParameterSource parameters = new MapSqlParameterSource();
-#foreach($column in $columns)
-#if($column.insert && ($column.columnName != $pkColumn.columnName || !$pkColumn.isIncrement))
-#set($AttrName=$column.javaField.substring(0,1).toUpperCase() + ${column.javaField.substring(1)})
-        parameters.addValue("in$AttrName", $column.javaField);
-#end
-#end
+        String insertSql = "INSERT INTO ${tableName}($insertColumns) VALUES($insertComas)";
 
         int[] insertResList = dbService.batchUpdate(insertSql, new MapSqlParameterSource[]{parameters});
         return insertResList[0];
@@ -208,7 +207,7 @@ public class ${ClassName}RepositoryImpl
      */
     public int update${ClassName}(${ClassName} ${className}) {
 #foreach($column in $columns)
-#if($column.edit || $column.columnName == $pkColumn.columnName)
+#if(($column.edit || $column.columnName == $pkColumn.columnName) && $column.columnName != "update_time")
 #set($AttrName=$column.javaField.substring(0,1).toUpperCase() + ${column.javaField.substring(1)})
         $column.javaType $column.javaField = ${className}.get$AttrName();
 #end
@@ -218,16 +217,19 @@ public class ${ClassName}RepositoryImpl
 
 #set($updateColumns="")
 #foreach($column in $columns)
-#if($column.edit && $column.columnName != $pkColumn.columnName)
+#if($column.edit && $column.columnName != $pkColumn.columnName && $column.columnName != "update_time")
 #set($AttrName=$column.javaField.substring(0,1).toUpperCase() + ${column.javaField.substring(1)})
 #if($column.javaType == "String")
-        if(StringUtils.isNotEmpty($column.javaField)) {
+        if(StringUtils.isNotEmpty($column.javaField))
 #else
-        if(StringUtils.isNotNull($column.javaField)) {
+        if(StringUtils.isNotNull($column.javaField))
 #end
+        {
 #set($updateColumns=$updateColumns+" $column.columnName=:in$AttrName,")
             parameters.addValue("in$AttrName", $column.javaField);
         }
+#elseif($column.columnName == "update_time")
+#set($updateColumns=$updateColumns+" $column.columnName=SYSDATE(),")
 #end
 #end
 #set($updateColumns=$updateColumns.substring(0,$updateColumns.lastIndexOf(',')))
