@@ -55,6 +55,7 @@ public class SysUserRepositoryImpl implements SysUserRepository {
             String deptLeader = sqlRs.getString("leader");
 
             SysDept dept = new SysDept();
+            dept.setDeptId(user.getDeptId());
             dept.setDeptName(deptName);
             dept.setLeader(deptLeader);
             user.setDept(dept);
@@ -431,12 +432,11 @@ public class SysUserRepositoryImpl implements SysUserRepository {
 
     @Override
     public int updateLoginInfo(Long userId, String loginIp, Date loginDate) {
-        String updateSql = "UPDATE sys_user SET login_ip=:inUserLogIp, login_date=:inUserLogDate WHERE user_id=:inUserId";
+        String updateSql = "UPDATE sys_user SET login_ip=:inUserLogIp, login_date=SYSDATE() WHERE user_id=:inUserId";
 
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("inUserId", userId);
         parameters.addValue("inUserLogIp", loginIp);
-        parameters.addValue("inUserLogDate", loginDate);
 
         int[] updateResList = dbService.batchUpdate(updateSql, new MapSqlParameterSource[]{parameters});
         return updateResList[0];
