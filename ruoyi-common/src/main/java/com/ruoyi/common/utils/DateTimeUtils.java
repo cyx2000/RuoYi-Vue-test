@@ -20,4 +20,10 @@ public class DateTimeUtils {
         return duration.toDays();
     }
 
+    public static long differentMilliSeconds(LocalDateTime startTime, LocalDateTime endTime) {
+        Duration duration = Duration.between(startTime, endTime);
+
+        return duration.toMillis();
+    }
+
 }

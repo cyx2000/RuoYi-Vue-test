@@ -1,6 +1,7 @@
 package com.ruoyi.quartz.domain;
 
-import java.util.Date;
+import java.time.LocalDateTime;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -9,7 +10,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
 
 /**
  * 定时任务调度日志表 sys_job_log
- * 
+ *
  * @author ruoyi
  */
 public class SysJobLog extends BaseEntity
@@ -46,11 +47,11 @@ public class SysJobLog extends BaseEntity
 
     /** 开始时间 */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date startTime;
+    private LocalDateTime startTime;
 
     /** 结束时间 */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date endTime;
+    private LocalDateTime endTime;
 
     public Long getJobLogId()
     {
@@ -122,22 +123,22 @@ public class SysJobLog extends BaseEntity
         this.exceptionInfo = exceptionInfo;
     }
 
-    public Date getStartTime()
+    public LocalDateTime getStartTime()
     {
         return startTime;
     }
 
-    public void setStartTime(Date startTime)
+    public void setStartTime(LocalDateTime startTime)
     {
         this.startTime = startTime;
     }
-    
-    public Date getEndTime()
+
+    public LocalDateTime getEndTime()
     {
         return endTime;
     }
 
-    public void setEndTime(Date endTime)
+    public void setEndTime(LocalDateTime endTime)
     {
         this.endTime = endTime;
     }
