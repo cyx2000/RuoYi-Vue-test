@@ -82,11 +82,6 @@ public class ${ClassName}ServiceImpl implements I${ClassName}Service
     @Override
     public int insert${ClassName}(${ClassName} ${className})
     {
-#foreach ($column in $columns)
-#if($column.javaField == 'createTime')
-        ${className}.setCreateTime(DateUtils.getNowDate());
-#end
-#end
 #if($table.sub)
         int rows = ${className}Repository.insert${ClassName}(${className});
         insert${subClassName}(${className});
@@ -108,11 +103,6 @@ public class ${ClassName}ServiceImpl implements I${ClassName}Service
     @Override
     public int update${ClassName}(${ClassName} ${className})
     {
-#foreach ($column in $columns)
-#if($column.javaField == 'updateTime')
-        ${className}.setUpdateTime(DateUtils.getNowDate());
-#end
-#end
 #if($table.sub)
         ${className}Repository.delete${subClassName}By${subTableFkClassName}(${className}.get${pkColumn.capJavaField}());
         insert${subClassName}(${className});
