@@ -3,6 +3,11 @@ package com.ruoyi.common.utils;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
+/**
+ * 时间工具类
+ *
+ * @author winter123
+ */
 public class DateTimeUtils {
 
     public static LocalDateTime getNowDateTime() {
