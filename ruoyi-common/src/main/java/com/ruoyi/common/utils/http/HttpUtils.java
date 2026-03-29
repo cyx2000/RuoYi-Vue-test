@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
@@ -25,7 +26,7 @@ import org.springframework.http.MediaType;
 
 /**
  * 通用http发送方法
- * 
+ *
  * @author ruoyi
  */
 public class HttpUtils
@@ -71,7 +72,8 @@ public class HttpUtils
         {
             String urlNameString = StringUtils.isNotBlank(param) ? url + "?" + param : url;
             log.info("sendGet - {}", urlNameString);
-            URL realUrl = new URL(urlNameString);
+            URI uriObj = URI.create(urlNameString);
+            URL realUrl = uriObj.toURL();
             URLConnection connection = realUrl.openConnection();
             connection.setRequestProperty("accept", "*/*");
             connection.setRequestProperty("connection", "Keep-Alive");
@@ -132,7 +134,7 @@ public class HttpUtils
 
     /**
      * 向指定 URL 发送POST方法的请求
-     * 
+     *
      * @param url 发送请求的 URL
      * @param param 请求参数
      * @param contentType 内容类型
@@ -146,7 +148,8 @@ public class HttpUtils
         try
         {
             log.info("sendPost - {}", url);
-            URL realUrl = new URL(url);
+            URI uriObj = URI.create(url);
+            URL realUrl = uriObj.toURL();
             URLConnection conn = realUrl.openConnection();
             conn.setRequestProperty("accept", "*/*");
             conn.setRequestProperty("connection", "Keep-Alive");
@@ -217,7 +220,8 @@ public class HttpUtils
             log.info("sendSSLPost - {}", urlNameString);
             SSLContext sc = SSLContext.getInstance("SSL");
             sc.init(null, new TrustManager[] { new TrustAnyTrustManager() }, new java.security.SecureRandom());
-            URL console = new URL(urlNameString);
+            URI uriObj = URI.create(urlNameString);
+            URL console = uriObj.toURL();
             HttpsURLConnection conn = (HttpsURLConnection) console.openConnection();
             conn.setRequestProperty("accept", "*/*");
             conn.setRequestProperty("connection", "Keep-Alive");
