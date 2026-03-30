@@ -12,11 +12,17 @@ public class AuthenticationContextHolder
 {
     private static final ScopedValue<Authentication> contextHolder = ScopedValue.newInstance();
 
+    /**
+     * 获得登录认证后的结果
+     */
     public static Authentication getContext()
     {
         return contextHolder.get();
     }
 
+    /**
+     * 获得ScopedValue key
+     */
     public static ScopedValue<Authentication> getKey()
     {
         return contextHolder;
