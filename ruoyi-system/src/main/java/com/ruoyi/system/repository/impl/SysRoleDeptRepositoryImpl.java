@@ -3,13 +3,13 @@ package com.ruoyi.system.repository.impl;
 import java.util.List;
 
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
 import com.ruoyi.common.core.db.DBService;
 import com.ruoyi.system.domain.SysRoleDept;
 import com.ruoyi.system.repository.SysRoleDeptRepository;
 
-@Service
+@Repository
 public class SysRoleDeptRepositoryImpl implements SysRoleDeptRepository {
 
     private DBService dbService;

@@ -47,6 +47,10 @@ user:
 
 # Spring配置
 spring:
+  # 虚拟线程支持
+  threads:
+      virtual:
+        enabled: true
   # 资源信息
   messages:
     # 国际化资源文件路径
@@ -97,7 +101,7 @@ token:
   # 令牌自定义标识
   header: Authorization
   # 令牌密钥
-  secret: abcdefghijklmnopqrstuvwxyz
+  secret: Please-change-this-secret-on-prod-PLEASE-CHANGE
   # 令牌有效期（默认30分钟）
   expireTime: 30
 
@@ -110,9 +114,9 @@ springdoc:
     path: /swagger-ui.html
     tags-sorter: alpha
   group-configs:
-    - group: 'default'
-      display-name: '测试模块'
-      paths-to-match: '/**'
+    - group: "default"
+      display-name: "测试模块"
+      paths-to-match: "/**"
       packages-to-scan: com.ruoyi.web.controller.tool
 
 # 防盗链配置

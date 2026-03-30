@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.jdbc.core.SimplePropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
 import com.ruoyi.common.core.db.DBService;
 import com.ruoyi.common.core.db.parameter.NamedSqlParameterSource;
@@ -13,7 +13,7 @@ import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.system.domain.SysNotice;
 import com.ruoyi.system.repository.SysNoticeRepository;
 
-@Service
+@Repository
 public class SysNoticeRepositoryImpl implements SysNoticeRepository {
 
     private DBService dbService;

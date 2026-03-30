@@ -42,6 +42,7 @@ nbdist/
 *.xml.versionsBackup
 *.swp
 .vscode
+.zed
 
 !*/build/*.java
 !*/build/*.html

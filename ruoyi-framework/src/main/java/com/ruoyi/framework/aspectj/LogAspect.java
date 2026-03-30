@@ -5,13 +5,11 @@ import java.util.Map;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.AfterReturning;
-import org.aspectj.lang.annotation.AfterThrowing;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.NamedThreadLocal;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,6 +28,7 @@ import com.ruoyi.common.utils.json.JsonUtils;
 import com.ruoyi.framework.manager.AsyncManager;
 import com.ruoyi.framework.manager.factory.AsyncFactory;
 import com.ruoyi.system.domain.SysOperLog;
+import java.lang.ScopedValue;
 
 /**
  * 操作日志记录处理
@@ -46,44 +45,29 @@ public class LogAspect
     public static final String[] EXCLUDE_PROPERTIES = { "password", "oldPassword", "newPassword", "confirmPassword" };
 
     /** 计算操作消耗时间 */
-    private static final ThreadLocal<Long> TIME_THREADLOCAL = new NamedThreadLocal<Long>("Cost Time");
+    private static final ScopedValue<Long> OPER_START_TIME = ScopedValue.newInstance();
 
     /** 参数最大长度限制 */
     private static final int PARAM_MAX_LENGTH = 2000;
 
-    /**
-     * 处理请求前执行
-     */
-    @Before(value = "@annotation(controllerLog)")
-    public void doBefore(JoinPoint joinPoint, Log controllerLog)
-    {
-        TIME_THREADLOCAL.set(System.currentTimeMillis());
+    @Around(value = "@annotation(controllerLog)")
+    public void around(ProceedingJoinPoint point, Log controllerLog) throws Throwable {
+        ScopedValue.where(OPER_START_TIME, System.currentTimeMillis())
+            .run(new Runnable()
+        {
+            @Override
+            public void run() {
+                try {
+                    Object jsonResult = point.proceed();
+                    handleLog(point, controllerLog, null, jsonResult);
+                } catch (Throwable e) {
+                    handleLog(point, controllerLog, e, null);
+                }
+            }
+        });
     }
 
-    /**
-     * 处理完请求后执行
-     *
-     * @param joinPoint 切点
-     */
-    @AfterReturning(pointcut = "@annotation(controllerLog)", returning = "jsonResult")
-    public void doAfterReturning(JoinPoint joinPoint, Log controllerLog, Object jsonResult)
-    {
-        handleLog(joinPoint, controllerLog, null, jsonResult);
-    }
-
-    /**
-     * 拦截异常操作
-     *
-     * @param joinPoint 切点
-     * @param e 异常
-     */
-    @AfterThrowing(value = "@annotation(controllerLog)", throwing = "e")
-    public void doAfterThrowing(JoinPoint joinPoint, Log controllerLog, Exception e)
-    {
-        handleLog(joinPoint, controllerLog, e, null);
-    }
-
-    protected void handleLog(final JoinPoint joinPoint, Log controllerLog, final Exception e, Object jsonResult)
+    protected void handleLog(final JoinPoint joinPoint, Log controllerLog, final Throwable e, Object jsonResult)
     {
         try
         {
@@ -121,7 +105,7 @@ public class LogAspect
             // 处理设置注解上的参数
             getControllerMethodDescription(joinPoint, controllerLog, operLog, jsonResult);
             // 设置消耗时间
-            operLog.setCostTime(System.currentTimeMillis() - TIME_THREADLOCAL.get());
+            operLog.setCostTime(System.currentTimeMillis() - OPER_START_TIME.get());
             // 保存数据库
             AsyncManager.me().execute(AsyncFactory.recordOper(operLog));
         }
@@ -130,10 +114,6 @@ public class LogAspect
             // 记录本地异常日志
             log.error("异常信息:{}", exp.getMessage());
             exp.printStackTrace();
-        }
-        finally
-        {
-            TIME_THREADLOCAL.remove();
         }
     }
 

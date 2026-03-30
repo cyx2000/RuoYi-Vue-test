@@ -26,6 +26,8 @@ import com.ruoyi.framework.manager.factory.AsyncFactory;
 import com.ruoyi.framework.security.context.AuthenticationContextHolder;
 import com.ruoyi.system.service.ISysConfigService;
 import com.ruoyi.system.service.ISysUserService;
+import java.lang.ScopedValue;
+import java.lang.ScopedValue.CallableOp;
 
 /**
  * 登录校验方法
@@ -70,9 +72,15 @@ public class SysLoginService
         try
         {
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
-            AuthenticationContextHolder.setContext(authenticationToken);
-            // 该方法会去调用UserDetailsServiceImpl.loadUserByUsername
-            authentication = authenticationManager.authenticate(authenticationToken);
+
+            authentication = ScopedValue.where(AuthenticationContextHolder.getKey(), authenticationToken)
+                .call(new CallableOp<Authentication, Exception>()
+            {
+                @Override
+                public Authentication call() throws Exception {
+                    return authenticationManager.authenticate(authenticationToken);
+                }
+            });
         }
         catch (Exception e)
         {
@@ -86,10 +94,6 @@ public class SysLoginService
                 AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_FAIL, e.getMessage()));
                 throw new ServiceException(e.getMessage());
             }
-        }
-        finally
-        {
-            AuthenticationContextHolder.clearContext();
         }
         AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_SUCCESS, MessageUtils.message("user.login.success")));
         LoginUser loginUser = (LoginUser) authentication.getPrincipal();

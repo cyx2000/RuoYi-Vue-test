@@ -1,6 +1,9 @@
 package com.ruoyi.framework.aspectj;
 
 import java.util.Objects;
+import java.lang.ScopedValue;
+import java.lang.ScopedValue.CallableOp;
+
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -17,7 +20,7 @@ import com.ruoyi.framework.datasource.DynamicDataSourceContextHolder;
 
 /**
  * 多数据源处理
- * 
+ *
  * @author ruoyi
  */
 @Aspect
@@ -41,18 +44,16 @@ public class DataSourceAspect
 
         if (StringUtils.isNotNull(dataSource))
         {
-            DynamicDataSourceContextHolder.setDataSourceType(dataSource.value().name());
+            return ScopedValue.where(DynamicDataSourceContextHolder.getKey(), dataSource.value().name())
+                .call(new CallableOp<Object, Throwable>()
+            {
+                @Override
+                public Object call() throws Throwable {
+                    return point.proceed();
+                }
+            });
         }
-
-        try
-        {
-            return point.proceed();
-        }
-        finally
-        {
-            // 销毁数据源 在执行方法之后
-            DynamicDataSourceContextHolder.clearDataSourceType();
-        }
+        return point.proceed();
     }
 
     /**
