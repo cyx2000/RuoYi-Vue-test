@@ -16,7 +16,7 @@ import com.ruoyi.common.utils.spring.SpringUtils;
 import com.ruoyi.quartz.domain.SysJob;
 import com.ruoyi.quartz.domain.SysJobLog;
 import com.ruoyi.quartz.service.ISysJobLogService;
-
+import java.lang.ScopedValue;
 /**
  * 抽象quartz调用
  *
@@ -29,38 +29,33 @@ public abstract class AbstractQuartzJob implements Job
     /**
      * 线程本地变量
      */
-    private static ThreadLocal<LocalDateTime> threadLocal = new ThreadLocal<>();
+    private static final ScopedValue<LocalDateTime> START_TIME = ScopedValue.newInstance();
 
     @Override
     public void execute(JobExecutionContext context)
     {
         SysJob sysJob = new SysJob();
         BeanUtils.copyBeanProp(sysJob, context.getMergedJobDataMap().get(ScheduleConstants.TASK_PROPERTIES));
-        try
-        {
-            before(context, sysJob);
-            if (sysJob != null)
-            {
-                doExecute(context, sysJob);
-            }
-            after(context, sysJob, null);
-        }
-        catch (Exception e)
-        {
-            log.error("任务执行异常  - ：", e);
-            after(context, sysJob, e);
-        }
-    }
 
-    /**
-     * 执行前
-     *
-     * @param context 工作执行上下文对象
-     * @param sysJob 系统计划任务
-     */
-    protected void before(JobExecutionContext context, SysJob sysJob)
-    {
-        threadLocal.set(LocalDateTime.now());
+        LocalDateTime startTime = LocalDateTime.now();
+
+        ScopedValue.where(START_TIME, startTime)
+            .run(new Runnable()
+        {
+            @Override
+            public void run() {
+                try {
+                    if (sysJob != null)
+                    {
+                        doExecute(context, sysJob);
+                    }
+                    after(context, sysJob, null);
+                } catch (Exception e) {
+                    log.error("任务执行异常  - ：", e);
+                    after(context, sysJob, e);
+                }
+            }
+        });
     }
 
     /**
@@ -71,8 +66,7 @@ public abstract class AbstractQuartzJob implements Job
      */
     protected void after(JobExecutionContext context, SysJob sysJob, Exception e)
     {
-        LocalDateTime startTime = threadLocal.get();
-        threadLocal.remove();
+        LocalDateTime startTime = START_TIME.get();
 
         final SysJobLog sysJobLog = new SysJobLog();
         sysJobLog.setJobName(sysJob.getJobName());
