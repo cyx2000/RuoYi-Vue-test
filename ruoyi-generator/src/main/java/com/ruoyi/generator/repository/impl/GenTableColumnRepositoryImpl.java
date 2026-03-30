@@ -5,14 +5,14 @@ import java.util.List;
 
 import org.springframework.jdbc.core.SimplePropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
 import com.ruoyi.common.core.db.DBService;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.generator.domain.GenTableColumn;
 import com.ruoyi.generator.repository.GenTableColumnRepository;
 
-@Service
+@Repository
 public class GenTableColumnRepositoryImpl implements GenTableColumnRepository {
 
     private DBService dbService;

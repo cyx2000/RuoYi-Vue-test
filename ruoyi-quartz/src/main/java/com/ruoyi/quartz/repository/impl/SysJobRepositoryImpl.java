@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.jdbc.core.SimplePropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
 import com.ruoyi.common.core.db.DBService;
 import com.ruoyi.common.core.page.TableDataInfo;
@@ -12,7 +12,7 @@ import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.quartz.domain.SysJob;
 import com.ruoyi.quartz.repository.SysJobRepository;
 
-@Service
+@Repository
 public class SysJobRepositoryImpl implements SysJobRepository {
 
     private DBService dbService;
