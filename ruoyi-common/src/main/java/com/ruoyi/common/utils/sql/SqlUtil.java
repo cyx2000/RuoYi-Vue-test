@@ -53,10 +53,11 @@ public class SqlUtil {
         if (StringUtils.isEmpty(value)) {
             return;
         }
+        String normalizedValue = value.replaceAll("\\p{Z}|\\s", "");
         String[] sqlKeywords = StringUtils.split(SQL_REGEX, "\\|");
         for (String sqlKeyword : sqlKeywords) {
-            if (StringUtils.indexOfIgnoreCase(value, sqlKeyword) > -1) {
-                throw new UtilException("参数存在SQL注入风险");
+            if (StringUtils.indexOfIgnoreCase(normalizedValue, sqlKeyword) > -1) {
+                throw new UtilException("请求参数包含敏感关键词'" + sqlKeyword + "'，可能存在安全风险");
             }
         }
     }

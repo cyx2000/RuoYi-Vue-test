@@ -31,7 +31,7 @@ public class GenTableRepositoryImpl implements GenTableRepository {
 
     @Override
     public TableDataInfo selectGenTableList(GenTable genTable) {
-        String sql = "SELECT table_id, table_name, table_comment, sub_table_name, sub_table_fk_name, class_name, tpl_category, tpl_web_type, package_name, module_name, business_name, function_name, function_author, gen_type, gen_path, options, create_by, create_time, update_by, update_time, remark FROM gen_table WHERE 1=1";
+        String sql = "SELECT table_id, table_name, table_comment, sub_table_name, sub_table_fk_name, class_name, tpl_category, tpl_web_type, package_name, module_name, business_name, function_name, function_author, form_col_num, gen_type, gen_path, options, create_by, create_time, update_by, update_time, remark FROM gen_table WHERE 1=1";
 
         StringBuilder sqlBuilder = new StringBuilder();
         MapSqlParameterSource parameters = new MapSqlParameterSource();
@@ -111,7 +111,7 @@ public class GenTableRepositoryImpl implements GenTableRepository {
 
     @Override
     public List<GenTable> selectGenTableAll() {
-        String sql = "SELECT t.table_id, t.table_name, t.table_comment, t.sub_table_name, t.sub_table_fk_name, t.class_name, t.tpl_category, t.tpl_web_type, t.package_name, t.module_name, t.business_name, t.function_name, t.function_author, t.options, t.remark FROM gen_table t";
+        String sql = "SELECT t.table_id, t.table_name, t.table_comment, t.sub_table_name, t.sub_table_fk_name, t.class_name, t.tpl_category, t.tpl_web_type, t.package_name, t.module_name, t.business_name, t.function_name, t.function_author, t.form_col_num, t.options, t.remark FROM gen_table t";
 
         List<GenTable> list = queryList(null, sql);
 
@@ -132,7 +132,7 @@ public class GenTableRepositoryImpl implements GenTableRepository {
 
     @Override
     public GenTable selectGenTableById(Long tableId) {
-        String sql = "SELECT t.table_id, t.table_name, t.table_comment, t.sub_table_name, t.sub_table_fk_name, t.class_name, t.tpl_category, t.tpl_web_type, t.package_name, t.module_name, t.business_name, t.function_name, t.function_author, t.gen_type, t.gen_path, t.options, t.remark FROM gen_table t WHERE t.table_id=:inTaId";
+        String sql = "SELECT t.table_id, t.table_name, t.table_comment, t.sub_table_name, t.sub_table_fk_name, t.class_name, t.tpl_category, t.tpl_web_type, t.package_name, t.module_name, t.business_name, t.function_name, t.function_author, t.form_col_num, t.gen_type, t.gen_path, t.options, t.remark FROM gen_table t WHERE t.table_id=:inTaId";
 
         MapSqlParameterSource parameters = new MapSqlParameterSource("inTaId", tableId);
 
@@ -148,7 +148,7 @@ public class GenTableRepositoryImpl implements GenTableRepository {
 
     @Override
     public GenTable selectGenTableByName(String tableName) {
-        String sql = "SELECT t.table_id, t.table_name, t.table_comment, t.sub_table_name, t.sub_table_fk_name, t.class_name, t.tpl_category, t.tpl_web_type, t.package_name, t.module_name, t.business_name, t.function_name, t.function_author, t.gen_type, t.gen_path, t.options, t.remark FROM gen_table t WHERE t.table_name=:inTaName";
+        String sql = "SELECT t.table_id, t.table_name, t.table_comment, t.sub_table_name, t.sub_table_fk_name, t.class_name, t.tpl_category, t.tpl_web_type, t.package_name, t.module_name, t.business_name, t.function_name, t.function_author, t.form_col_num, t.gen_type, t.gen_path, t.options, t.remark FROM gen_table t WHERE t.table_name=:inTaName";
 
         MapSqlParameterSource parameters = new MapSqlParameterSource("inTaName", tableName);
 
@@ -176,12 +176,13 @@ public class GenTableRepositoryImpl implements GenTableRepository {
         String tableBusinessName = genTable.getBusinessName();
         String tableFuncName = genTable.getFunctionName();
         String tableFuncAuthor = genTable.getFunctionAuthor();
+        Short tableFormNum = genTable.getFormColNum();
         String tableGenType = StringUtils.isEmpty(genTable.getGenType()) ? "0" : genTable.getGenType();
         String tableGenPath = StringUtils.isEmpty(genTable.getGenPath()) ? "/" : genTable.getGenPath();
         String tableRemark = StringUtils.isEmpty(genTable.getRemark()) ? "" : genTable.getRemark();
         String createBy = genTable.getCreateBy();
 
-        String insertSql = "INSERT INTO gen_table(table_name, table_comment, class_name, tpl_category, tpl_web_type, package_name, module_name, business_name, function_name, function_author, gen_type, gen_path, remark, create_by, create_time) VALUES(:inTaName, :inTaComm, :inTaClass, :inTaCateg, :inTaWebTyp, :inTaPack, :inTaModule, :inTaBusi, :inTaFuName, :inTaFuAuthor, :inTaGeTyp, :inTaGePath, :inTaRemark, :inCreateBy, SYSDATE())";
+        String insertSql = "INSERT INTO gen_table(table_name, table_comment, class_name, tpl_category, tpl_web_type, package_name, module_name, business_name, function_name, function_author, form_col_num, gen_type, gen_path, remark, create_by, create_time) VALUES(:inTaName, :inTaComm, :inTaClass, :inTaCateg, :inTaWebTyp, :inTaPack, :inTaModule, :inTaBusi, :inTaFuName, :inTaFuAuthor, :inTaForNum, :inTaGeTyp, :inTaGePath, :inTaRemark, :inCreateBy, SYSDATE())";
 
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("inTaName", tableName);
@@ -194,6 +195,7 @@ public class GenTableRepositoryImpl implements GenTableRepository {
         parameters.addValue("inTaBusi", tableBusinessName);
         parameters.addValue("inTaFuName", tableFuncName);
         parameters.addValue("inTaFuAuthor", tableFuncAuthor);
+        parameters.addValue("inTaForNum", tableFormNum);
         parameters.addValue("inTaGeTyp", tableGenType);
         parameters.addValue("inTaGePath", tableGenPath);
         parameters.addValue("inTaRemark", tableRemark);
@@ -212,6 +214,7 @@ public class GenTableRepositoryImpl implements GenTableRepository {
         String tableSubFkName   = genTable.getSubTableFkName();
         String tableClass = genTable.getClassName();
         String tableFuncAuthor = genTable.getFunctionAuthor();
+        Short tableFormNum = genTable.getFormColNum();
         String tableGenType = genTable.getGenType();
         String tableGenPath = genTable.getGenPath();
         String tableCategory = genTable.getTplCategory();
@@ -251,6 +254,10 @@ public class GenTableRepositoryImpl implements GenTableRepository {
         if(StringUtils.isNotEmpty(tableFuncAuthor)) {
             updateBuffer.append(" function_author=:inTaFuAuthor,");
             parameters.addValue("inTaFuAuthor", tableFuncAuthor);
+        }
+        if(StringUtils.isNotNull(tableFormNum)) {
+            updateBuffer.append(" tableFormNum=:inTaForNum,");
+            parameters.addValue("inTaForNum", tableFormNum);
         }
         if(StringUtils.isNotEmpty(tableGenType)) {
             updateBuffer.append(" gen_type=:inTaGeTyp,");
