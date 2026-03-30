@@ -18,7 +18,7 @@ import com.ruoyi.system.service.ISysOperLogService;
 
 /**
  * 异步工厂（产生任务用）
- * 
+ *
  * @author ruoyi
  */
 public class AsyncFactory
@@ -27,7 +27,7 @@ public class AsyncFactory
 
     /**
      * 记录登录信息
-     * 
+     *
      * @param username 用户名
      * @param status 状态
      * @param message 消息
@@ -74,15 +74,16 @@ public class AsyncFactory
                 {
                     logininfor.setStatus(Constants.FAIL);
                 }
-                // 插入数据
-                SpringUtils.getBean(ISysLogininforService.class).insertLogininfor(logininfor);
+
+                // 使用虚拟线程插入数据
+                Thread.startVirtualThread(() -> SpringUtils.getBean(ISysLogininforService.class).insertLogininfor(logininfor));
             }
         };
     }
 
     /**
      * 操作日志记录
-     * 
+     *
      * @param operLog 操作日志信息
      * @return 任务task
      */
@@ -95,7 +96,9 @@ public class AsyncFactory
             {
                 // 远程查询操作地点
                 operLog.setOperLocation(AddressUtils.getRealAddressByIP(operLog.getOperIp()));
-                SpringUtils.getBean(ISysOperLogService.class).insertOperlog(operLog);
+
+                // 使用虚拟线程插入数据
+                Thread.startVirtualThread(() ->SpringUtils.getBean(ISysOperLogService.class).insertOperlog(operLog));
             }
         };
     }
