@@ -29,6 +29,7 @@ import com.ruoyi.framework.manager.AsyncManager;
 import com.ruoyi.framework.manager.factory.AsyncFactory;
 import com.ruoyi.system.domain.SysOperLog;
 import java.lang.ScopedValue;
+import java.lang.ScopedValue.CallableOp;
 
 /**
  * 操作日志记录处理
@@ -51,17 +52,19 @@ public class LogAspect
     private static final int PARAM_MAX_LENGTH = 2000;
 
     @Around(value = "@annotation(controllerLog)")
-    public void around(ProceedingJoinPoint point, Log controllerLog) throws Throwable {
-        ScopedValue.where(OPER_START_TIME, System.currentTimeMillis())
-            .run(new Runnable()
+    public Object around(ProceedingJoinPoint point, Log controllerLog) throws Throwable {
+        return ScopedValue.where(OPER_START_TIME, System.currentTimeMillis())
+            .call(new CallableOp<Object, Throwable>()
         {
             @Override
-            public void run() {
+            public Object call() throws Throwable {
                 try {
                     Object jsonResult = point.proceed();
                     handleLog(point, controllerLog, null, jsonResult);
+                    return jsonResult;
                 } catch (Throwable e) {
                     handleLog(point, controllerLog, e, null);
+                    throw e;
                 }
             }
         });
