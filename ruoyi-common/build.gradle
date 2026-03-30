@@ -14,7 +14,7 @@ dependencies {
     api 'commons-io:commons-io' // io常用工具类
     implementation 'org.apache.poi:poi-ooxml' // excel工具
     api 'org.springframework.boot:spring-boot-starter-data-redis' // redis 缓存操作
-    api 'org.springframework.boot:spring-boot-starter-data-jdbc' // jdbc 数据库操作
+    api ('org.springframework.boot:spring-boot-starter-data-jdbc') { exclude group: "com.zaxxer" } // jdbc 数据库操作
     implementation 'org.springframework.boot:spring-boot-starter-cache' // 缓存
     implementation 'nl.basjes.parse.useragent:yauaa' // 解析客户端操作系统、浏览器等
     api 'jakarta.servlet:jakarta.servlet-api' // servlet包
