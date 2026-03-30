@@ -4,14 +4,14 @@ import java.util.List;
 
 import org.springframework.jdbc.core.SimplePropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
 import com.ruoyi.common.core.db.DBService;
 import com.ruoyi.system.domain.SysNotice;
 import com.ruoyi.system.domain.SysNoticeRead;
 import com.ruoyi.system.repository.SysNoticeReadRepository;
 
-@Service
+@Repository
 public class SysNoticeReadRepositoryImpl implements SysNoticeReadRepository {
 
     private DBService dbService;

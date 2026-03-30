@@ -7,7 +7,7 @@ import java.util.List;
 import org.springframework.jdbc.core.SimplePropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
 import com.ruoyi.common.core.db.DBService;
 import com.ruoyi.common.core.domain.entity.SysDept;
@@ -17,7 +17,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.system.repository.SysUserRepository;
 
-@Service
+@Repository
 public class SysUserRepositoryImpl implements SysUserRepository {
 
     private DBService dbService;
