@@ -77,12 +77,9 @@ public class SysDictTypeRepositoryImpl implements SysDictTypeRepository {
             inBuilder.append(" AND dict_type=:inDictType");
             inParameters.addValue("inDictType", dictType);
         }
-        if(StringUtils.isNotEmpty(beginDateTime)) {
-            inBuilder.append(" AND DATE_FORMAT(create_time,'%Y%m%d') >= DATE_FORMAT(:inBeginTime,'%Y%m%d')");
+        if(StringUtils.isNotEmpty(beginDateTime) && StringUtils.isNotEmpty(endDateTime)) {
+            inBuilder.append(" AND create_time BETWEEN :inBeginTime AND :inEndTime");
             inParameters.addValue("inBeginTime", beginDateTime);
-        }
-        if(StringUtils.isNotEmpty(endDateTime)) {
-            inBuilder.append(" AND DATE_FORMAT(create_time,'%Y%m%d') <= DATE_FORMAT(:inEndTime,'%Y%m%d')");
             inParameters.addValue("inEndTime", endDateTime);
         }
     }

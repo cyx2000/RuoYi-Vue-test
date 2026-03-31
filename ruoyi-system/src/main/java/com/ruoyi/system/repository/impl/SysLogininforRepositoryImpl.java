@@ -109,12 +109,9 @@ public class SysLogininforRepositoryImpl implements SysLogininforRepository {
             inBuilder.append(" AND user_name LIKE CONCAT('%', :inUsername, '%')");
             inParameters.addValue("inUsername", username);
         }
-        if(StringUtils.isNotEmpty(beginDateTime)) {
-            inBuilder.append(" AND login_time >= :inBeginTime");
+        if(StringUtils.isNotEmpty(beginDateTime) && StringUtils.isNotEmpty(endDateTime)) {
+            inBuilder.append(" AND login_time BETWEEN :inBeginTime AND :inEndTime");
             inParameters.addValue("inBeginTime", beginDateTime);
-        }
-        if(StringUtils.isNotEmpty(endDateTime)) {
-            inBuilder.append(" AND login_time <= :inEndTime");
             inParameters.addValue("inEndTime", endDateTime);
         }
     }

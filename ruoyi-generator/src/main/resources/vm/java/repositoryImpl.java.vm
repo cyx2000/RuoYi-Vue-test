@@ -149,12 +149,9 @@ public class ${ClassName}RepositoryImpl
             inParameters.addValue("in$AttrName", $javaField);
         }
 #elseif($queryType == "BETWEEN")
-        if(StringUtils.isNotEmpty(beginDateTime)) {
-            inBuilder.append(" AND DATE_FORMAT(a.$columnName,'%y%m%d') >= DATE_FORMAT(:inBeginTime,'%y%m%d')");
+        if(StringUtils.isNotEmpty(beginDateTime) && StringUtils.isNotEmpty(endDateTime)) {
+            inBuilder.append(" AND a.$columnName BETWEEN :inBeginTime AND :inEndTime");
             inParameters.addValue("inBeginTime", beginDateTime);
-        }
-        if(StringUtils.isNotEmpty(endDateTime)) {
-            inBuilder.append(" AND DATE_FORMAT(a.$columnName,'%y%m%d') <= DATE_FORMAT(:inEndTime,'%y%m%d')");
             inParameters.addValue("inEndTime", endDateTime);
         }
 #end

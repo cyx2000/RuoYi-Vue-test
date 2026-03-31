@@ -140,12 +140,9 @@ public class SysOperLogRepositoryImpl implements SysOperLogRepository {
             inBuilder.append(" AND oper_name LIKE CONCAT('%', :inOperName, '%')");
             inParameters.addValue("inOperName", operName);
         }
-        if(StringUtils.isNotEmpty(beginDateTime)) {
-            inBuilder.append(" AND oper_time >= :inBeginTime");
+        if(StringUtils.isNotEmpty(beginDateTime) && StringUtils.isNotEmpty(endDateTime)) {
+            inBuilder.append(" AND oper_time BETWEEN :inBeginTime AND :inEndTime");
             inParameters.addValue("inBeginTime", beginDateTime);
-        }
-        if(StringUtils.isNotEmpty(endDateTime)) {
-            inBuilder.append(" AND oper_time <= :inEndTime");
             inParameters.addValue("inEndTime", endDateTime);
         }
     }

@@ -77,12 +77,9 @@ public class SysConfigRepositoryImpl implements SysConfigRepository {
             inBuilder.append(" AND scfg.config_key LIKE CONCAT('%', :inConfigKey, '%')");
             inParameters.addValue("inConfigKey", configKey);
         }
-        if(StringUtils.isNotEmpty(beginDateTime)) {
-            inBuilder.append(" AND DATE_FORMAT(scfg.create_time,'%Y%m%d') >= DATE_FORMAT(:inBeginTime,'%Y%m%d')");
+        if(StringUtils.isNotEmpty(beginDateTime) && StringUtils.isNotEmpty(endDateTime)) {
+            inBuilder.append(" AND scfg.create_time BETWEEN :inBeginTime AND :inEndTime");
             inParameters.addValue("inBeginTime", beginDateTime);
-        }
-        if(StringUtils.isNotEmpty(endDateTime)) {
-            inBuilder.append(" AND DATE_FORMAT(scfg.create_time,'%Y%m%d') <= DATE_FORMAT(:inEndTime,'%Y%m%d')");
             inParameters.addValue("inEndTime", endDateTime);
         }
 
