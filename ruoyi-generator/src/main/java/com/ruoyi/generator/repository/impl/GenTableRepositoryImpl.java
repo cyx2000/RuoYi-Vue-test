@@ -176,7 +176,7 @@ public class GenTableRepositoryImpl implements GenTableRepository {
         String tableBusinessName = genTable.getBusinessName();
         String tableFuncName = genTable.getFunctionName();
         String tableFuncAuthor = genTable.getFunctionAuthor();
-        Short tableFormNum = genTable.getFormColNum();
+        Short tableFormNum = StringUtils.isNull(genTable.getFormColNum()) ? 1 : genTable.getFormColNum();
         String tableGenType = StringUtils.isEmpty(genTable.getGenType()) ? "0" : genTable.getGenType();
         String tableGenPath = StringUtils.isEmpty(genTable.getGenPath()) ? "/" : genTable.getGenPath();
         String tableRemark = StringUtils.isEmpty(genTable.getRemark()) ? "" : genTable.getRemark();
@@ -256,7 +256,7 @@ public class GenTableRepositoryImpl implements GenTableRepository {
             parameters.addValue("inTaFuAuthor", tableFuncAuthor);
         }
         if(StringUtils.isNotNull(tableFormNum)) {
-            updateBuffer.append(" tableFormNum=:inTaForNum,");
+            updateBuffer.append(" form_col_num=:inTaForNum,");
             parameters.addValue("inTaForNum", tableFormNum);
         }
         if(StringUtils.isNotEmpty(tableGenType)) {
