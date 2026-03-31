@@ -81,12 +81,9 @@ public class SysRoleRepositoryImpl implements SysRoleRepository{
             inBuilder.append(" AND r.role_key LIKE CONCAT('%', :inRoleKey, '%')");
             inParameters.addValue("inRoleKey", roleKey);
         }
-        if(StringUtils.isNotEmpty(beginDateTime)) {
-            inBuilder.append(" AND DATE_FORMAT(r.create_time,'%Y%m%d') >= DATE_FORMAT(:inBeginTime,'%Y%m%d')");
+        if(StringUtils.isNotEmpty(beginDateTime) && StringUtils.isNotEmpty(endDateTime)) {
+            inBuilder.append(" AND r.create_time BETWEEN :inBeginTime AND :inEndTime");
             inParameters.addValue("inBeginTime", beginDateTime);
-        }
-        if(StringUtils.isNotEmpty(endDateTime)) {
-            inBuilder.append(" AND DATE_FORMAT(r.create_time,'%Y%m%d') <= DATE_FORMAT(:inEndTime,'%Y%m%d')");
             inParameters.addValue("inEndTime", endDateTime);
         }
 
