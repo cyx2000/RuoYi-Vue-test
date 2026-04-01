@@ -6,6 +6,8 @@ import java.util.List;
 import org.springframework.jdbc.core.SimplePropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ruoyi.common.core.db.DBService;
 import com.ruoyi.common.core.db.parameter.NamedSqlParameterSource;
@@ -162,6 +164,7 @@ public class GenTableRepositoryImpl implements GenTableRepository {
     }
 
     @Override
+    @Transactional(propagation=Propagation.MANDATORY)
     public long insertGenTable(GenTable genTable) {
         String tableName = genTable.getTableName();
         String tableComment  = genTable.getTableComment();
@@ -203,6 +206,7 @@ public class GenTableRepositoryImpl implements GenTableRepository {
     }
 
     @Override
+    @Transactional(propagation=Propagation.MANDATORY)
     public int updateGenTable(GenTable genTable) {
         Long tableId = genTable.getTableId();
         String tableName = genTable.getTableName();
@@ -307,6 +311,7 @@ public class GenTableRepositoryImpl implements GenTableRepository {
     }
 
     @Override
+    @Transactional(propagation=Propagation.MANDATORY)
     public int deleteGenTableByIds(Long[] tableIds) {
         String deleteSql = "DELETE FROM gen_table WHERE table_id=:inTaId";
 
@@ -322,6 +327,7 @@ public class GenTableRepositoryImpl implements GenTableRepository {
     }
 
     @Override
+    @Transactional(propagation=Propagation.MANDATORY)
     public int createTable(String sql) {
         int exec = dbService.execute(sql);
         return exec;

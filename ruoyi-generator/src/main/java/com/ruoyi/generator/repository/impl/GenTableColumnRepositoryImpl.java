@@ -6,6 +6,8 @@ import java.util.List;
 import org.springframework.jdbc.core.SimplePropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ruoyi.common.core.db.DBService;
 import com.ruoyi.common.utils.StringUtils;
@@ -45,6 +47,7 @@ public class GenTableColumnRepositoryImpl implements GenTableColumnRepository {
     }
 
     @Override
+    @Transactional(propagation=Propagation.MANDATORY)
     public int[] batchInsertGenTableColumn(List<GenTableColumn> genTableColumns) {
         String insertSql = "INSERT INTO gen_table_column(table_id, column_name, column_comment, column_type, java_type, java_field, is_pk, is_increment, is_required, is_insert, is_edit, is_list, is_query, query_type, html_type, dict_type, sort, create_by, create_time) VALUES(:inTaId, :inTColName, :inTColComm, :inTColTyp, :inTJaTyp, :inTJaFie, :inTIsPk, :inTIsIncr, :inTIsRequ, :inTIsInsert, :inTIsEdit, :inTIsList, :inTIsQuery, :inTQueTyp, :inTHtmlTyp, :inTDictTyp, :inTSort, :inCreateBy, SYSDATE())";
 
@@ -100,11 +103,13 @@ public class GenTableColumnRepositoryImpl implements GenTableColumnRepository {
     }
 
     @Override
+    @Transactional(propagation=Propagation.MANDATORY)
     public int insertGenTableColumn(GenTableColumn genTableColumn) {
         return this.batchInsertGenTableColumn(Arrays.asList(genTableColumn))[0];
     }
 
     @Override
+    @Transactional(propagation=Propagation.MANDATORY)
     public int updateGenTableColumn(GenTableColumn genTableColumn) {
         Long tColumnId = genTableColumn.getColumnId();
         String tColumnComment = genTableColumn.getColumnComment();
@@ -184,6 +189,7 @@ public class GenTableColumnRepositoryImpl implements GenTableColumnRepository {
     }
 
     @Override
+    @Transactional(propagation=Propagation.MANDATORY)
     public int deleteGenTableColumns(List<GenTableColumn> genTableColumns) {
         String deleteSql = "DELETE FROM gen_table_column WHERE column_id=:inTColuId";
 
@@ -200,6 +206,7 @@ public class GenTableColumnRepositoryImpl implements GenTableColumnRepository {
     }
 
     @Override
+    @Transactional(propagation=Propagation.MANDATORY)
     public int deleteGenTableColumnByIds(Long[] tableIds) {
         String deleteSql = "DELETE FROM gen_table_column WHERE table_id=:inTaId";
 
