@@ -21,6 +21,7 @@ import com.ruoyi.common.core.db.parameter.NamedSqlParameterSource;
 import com.ruoyi.common.core.page.PageDomain;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.core.page.TableSupport;
+import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.sql.SqlUtil;
 
@@ -205,8 +206,7 @@ public class DBService {
 		try {
 			namedJdbc.getJdbcTemplate().execute(sql);
 		} catch (Exception e) {
-			exc = 0;
-			LOGGER.error(e.getMessage());
+            throw new ServiceException(e.getMessage());
 		}
 		return exc;
 	}
@@ -225,9 +225,8 @@ public class DBService {
 
             return keyHolder.getKey().longValue();
 		} catch (Exception e) {
-			LOGGER.error(e.getMessage());
+            throw new ServiceException(e.getMessage());
 		}
-        return -1L;
 	}
 
     /**
@@ -240,9 +239,8 @@ public class DBService {
 		try {
 			return namedJdbc.batchUpdate(sql, paramSourceList);
 		} catch (Exception e) {
-			LOGGER.error(e.getMessage());
+            throw new ServiceException(e.getMessage());
 		}
-		return new int[]{0};
 	}
 
     public NamedParameterJdbcTemplate getNamedJdbc() {
