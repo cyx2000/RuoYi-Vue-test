@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.jdbc.core.SimplePropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ruoyi.common.core.db.DBService;
 import com.ruoyi.common.core.domain.entity.SysDictType;
@@ -151,6 +152,7 @@ public class SysDictTypeRepositoryImpl implements SysDictTypeRepository {
     }
 
     @Override
+    @Transactional
     public int updateDictType(SysDictType dictType) {
         Long dictId = dictType.getDictId();
         String dictTyName = dictType.getDictName();

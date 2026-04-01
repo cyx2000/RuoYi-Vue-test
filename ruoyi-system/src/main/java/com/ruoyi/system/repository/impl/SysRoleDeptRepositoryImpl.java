@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ruoyi.common.core.db.DBService;
 import com.ruoyi.system.domain.SysRoleDept;
@@ -19,11 +20,13 @@ public class SysRoleDeptRepositoryImpl implements SysRoleDeptRepository {
     }
 
     @Override
+    @Transactional
     public int deleteRoleDeptByRoleId(Long roleId) {
         return this.deleteRoleDept(new Long[]{roleId});
     }
 
     @Override
+    @Transactional
     public int deleteRoleDept(Long[] roleIds) {
         String deleteSql = "DELETE FROM sys_role_dept WHERE role_id=:inRoleId";
 
@@ -49,6 +52,7 @@ public class SysRoleDeptRepositoryImpl implements SysRoleDeptRepository {
     }
 
     @Override
+    @Transactional
     public int batchRoleDept(List<SysRoleDept> roleDeptList) {
         String insertSql = "INSERT INTO sys_role_dept(role_id, dept_id) VALUES(:inRoleId, :inDeptID)";
 

@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.jdbc.core.SimplePropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ruoyi.common.core.db.DBService;
 import com.ruoyi.common.core.domain.entity.SysDept;
@@ -165,6 +166,7 @@ public class SysDeptRepositoryImpl implements SysDeptRepository {
     }
 
     @Override
+    @Transactional
     public int updateDept(SysDept dept) {
         Long deptId = dept.getDeptId();
         Long parentId = dept.getParentId();
