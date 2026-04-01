@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.jdbc.core.SimplePropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ruoyi.common.core.db.DBService;
 import com.ruoyi.common.core.page.TableDataInfo;
@@ -98,11 +99,13 @@ public class SysJobRepositoryImpl implements SysJobRepository {
     }
 
     @Override
+    @Transactional
     public int deleteJobById(Long jobId) {
         return this.deleteJobByIds(new Long[]{jobId});
     }
 
     @Override
+    @Transactional
     public int deleteJobByIds(Long[] jobIds) {
         String deleteSql = "DELETE FROM sys_job WHERE job_id=:inJobId";
 
@@ -118,6 +121,7 @@ public class SysJobRepositoryImpl implements SysJobRepository {
     }
 
     @Override
+    @Transactional
     public int updateJob(SysJob job) {
         Long jobId = job.getJobId();
         String jobName = job.getJobName();
@@ -177,6 +181,7 @@ public class SysJobRepositoryImpl implements SysJobRepository {
     }
 
     @Override
+    @Transactional
     public int insertJob(SysJob job) {
         String jobName = job.getJobName();
         String jobGroup = job.getJobGroup();

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ruoyi.common.core.db.DBService;
 import com.ruoyi.system.domain.SysUserPost;
@@ -19,6 +20,7 @@ public class SysUserPostRepositoryImpl implements SysUserPostRepository {
     }
 
     @Override
+    @Transactional
     public int deleteUserPostByUserId(Long userId) {
         return this.deleteUserPost(new Long[]{userId});
     }
@@ -34,6 +36,7 @@ public class SysUserPostRepositoryImpl implements SysUserPostRepository {
     }
 
     @Override
+    @Transactional
     public int deleteUserPost(Long[] userIds) {
         String deleteSql = "DELETE FROM sys_user_post WHERE user_id=:inUserId";
 
@@ -49,6 +52,7 @@ public class SysUserPostRepositoryImpl implements SysUserPostRepository {
     }
 
     @Override
+    @Transactional
     public int batchUserPost(List<SysUserPost> userPostList) {
         String insertSql = "INSERT INTO sys_user_post(user_id, post_id) VALUES(:inUserId, :inPostId)";
 

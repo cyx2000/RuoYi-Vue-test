@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.SimplePropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ruoyi.common.core.db.DBService;
 import com.ruoyi.common.core.domain.entity.SysDept;
@@ -294,6 +295,7 @@ public class SysUserRepositoryImpl implements SysUserRepository {
     }
 
     @Override
+    @Transactional
     public int insertUser(SysUser user) {
         Long deptId = user.getDeptId();
         String username = user.getUserName();
@@ -328,6 +330,7 @@ public class SysUserRepositoryImpl implements SysUserRepository {
     }
 
     @Override
+    @Transactional
     public int updateUser(SysUser user) {
         Long userId = user.getUserId();
         Long deptId = user.getDeptId();
@@ -445,11 +448,13 @@ public class SysUserRepositoryImpl implements SysUserRepository {
     }
 
     @Override
+    @Transactional
     public int deleteUserById(Long userId) {
         return this.deleteUserByIds(new Long[]{userId});
     }
 
     @Override
+    @Transactional
     public int deleteUserByIds(Long[] userIds) {
         String deleteSql = "UPDATE sys_user SET del_flag = '2' WHERE user_id=:inUserId";
 

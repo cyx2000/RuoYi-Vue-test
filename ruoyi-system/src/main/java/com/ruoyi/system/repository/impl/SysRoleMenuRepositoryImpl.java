@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ruoyi.common.core.db.DBService;
 import com.ruoyi.system.domain.SysRoleMenu;
@@ -29,11 +30,13 @@ public class SysRoleMenuRepositoryImpl implements SysRoleMenuRepository {
     }
 
     @Override
+    @Transactional
     public int deleteRoleMenuByRoleId(Long roleId) {
         return this.deleteRoleMenu(new Long[]{roleId});
     }
 
     @Override
+    @Transactional
     public int deleteRoleMenu(Long[] roleIds) {
         String deleteSql = "DELETE FROM sys_role_menu WHERE role_id=:inRoleId";
 
@@ -49,6 +52,7 @@ public class SysRoleMenuRepositoryImpl implements SysRoleMenuRepository {
     }
 
     @Override
+    @Transactional
     public int batchRoleMenu(List<SysRoleMenu> roleMenuList) {
         String insertSql = "INSERT INTO sys_role_menu(role_id, menu_id) VALUES(:inRoleId, :inMenuID)";
 

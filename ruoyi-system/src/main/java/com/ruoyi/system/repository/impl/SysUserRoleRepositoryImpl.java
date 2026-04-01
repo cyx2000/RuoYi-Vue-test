@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ruoyi.common.core.db.DBService;
 import com.ruoyi.system.domain.SysUserRole;
@@ -19,11 +20,13 @@ public class SysUserRoleRepositoryImpl implements SysUserRoleRepository {
     }
 
     @Override
+    @Transactional
     public int deleteUserRoleByUserId(Long userId) {
         return this.deleteUserRole(new Long[]{userId});
     }
 
     @Override
+    @Transactional
     public int deleteUserRole(Long[] userIds) {
         String deleteSql = "DELETE FROM sys_user_role WHERE user_id=:inUserId";
 
@@ -49,6 +52,7 @@ public class SysUserRoleRepositoryImpl implements SysUserRoleRepository {
     }
 
     @Override
+    @Transactional
     public int batchUserRole(List<SysUserRole> userRoleList) {
         String insertSql = "INSERT INTO sys_user_role(role_id, user_id) VALUES(:inRoleId, :inUserID)";
 
@@ -71,11 +75,13 @@ public class SysUserRoleRepositoryImpl implements SysUserRoleRepository {
     }
 
     @Override
+    @Transactional
     public int deleteUserRoleInfo(SysUserRole userRole) {
         return this.deleteUserRoleInfos(userRole.getRoleId(), new Long[]{userRole.getUserId()});
     }
 
     @Override
+    @Transactional
     public int deleteUserRoleInfos(Long roleId, Long[] userIds) {
         String deleteSql = "DELETE FROM sys_user_role WHERE user_id=:inUserID AND role_id=:inRoleId";
 

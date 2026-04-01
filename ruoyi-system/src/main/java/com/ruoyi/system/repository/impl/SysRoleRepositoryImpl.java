@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.jdbc.core.SimplePropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ruoyi.common.core.db.DBService;
 import com.ruoyi.common.core.db.parameter.NamedSqlParameterSource;
@@ -156,6 +157,7 @@ public class SysRoleRepositoryImpl implements SysRoleRepository{
     }
 
     @Override
+    @Transactional
     public int updateRole(SysRole role) {
         Long roleId = role.getRoleId();
         String roleName = role.getRoleName();
@@ -215,6 +217,7 @@ public class SysRoleRepositoryImpl implements SysRoleRepository{
     }
 
     @Override
+    @Transactional
     public int insertRole(SysRole role) {
         String roleName = role.getRoleName();
         String roleKey = role.getRoleKey();
@@ -244,11 +247,13 @@ public class SysRoleRepositoryImpl implements SysRoleRepository{
     }
 
     @Override
+    @Transactional
     public int deleteRoleById(Long roleId) {
         return this.deleteRoleByIds(new Long[]{roleId});
     }
 
     @Override
+    @Transactional
     public int deleteRoleByIds(Long[] roleIds) {
         String deleteSql = "UPDATE sys_role SET del_flag = '2' WHERE role_id=:inRoleId";
 

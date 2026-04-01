@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.jdbc.core.SimplePropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ruoyi.common.core.db.DBService;
 import com.ruoyi.common.core.db.parameter.NamedSqlParameterSource;
@@ -194,6 +195,7 @@ public class SysMenuRepositoryImpl implements SysMenuRepository{
     }
 
     @Override
+    @Transactional
     public int updateMenu(SysMenu menu) {
         Long menuId = menu.getMenuId();
         String menuName = menu.getMenuName();
@@ -288,6 +290,7 @@ public class SysMenuRepositoryImpl implements SysMenuRepository{
     }
 
     @Override
+    @Transactional
     public void updateMenuSort(SysMenu menu) {
         String updateSql = "UPDATE sys_menu SET order_num=:inMenuOrder WHERE menu_id=:inMenuId";
 
