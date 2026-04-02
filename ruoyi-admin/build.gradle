@@ -17,6 +17,8 @@ dependencies {
     implementation project(':ruoyi-quartz')
     implementation project(':ruoyi-generator')
 
+    implementation project(':modules:wwune-i18n')
+
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui' // spring-doc
     runtimeOnly 'com.mysql:mysql-connector-j' // Mysql驱动包
 
