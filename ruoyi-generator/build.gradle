@@ -6,7 +6,7 @@
 dependencies {
     compileOnly project(':ruoyi-common')
 
-    implementation "com.alibaba:druid-spring-boot-4-starter" // 阿里数据库连接池
+    compileOnly "com.alibaba:druid-spring-boot-4-starter" // 阿里数据库连接池
     implementation "org.apache.velocity:velocity-engine-core" // velocity代码生成使用模板
 }
 

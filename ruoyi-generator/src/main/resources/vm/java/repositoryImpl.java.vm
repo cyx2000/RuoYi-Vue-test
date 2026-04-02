@@ -10,6 +10,7 @@ import com.ruoyi.common.core.db.DBService;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.utils.StringUtils;
 import ${packageName}.domain.${ClassName};
+import ${packageName}.repository.${ClassName}Repository;
 #if($table.sub)
 import ${packageName}.domain.${subClassName};
 #end
