@@ -113,33 +113,39 @@ public class ${ClassName}RepositoryImpl implements ${ClassName}Repository
 #set($columnName=$column.columnName)
 #set($javaField=$column.javaField)
 #set($AttrName=$column.javaField.substring(0,1).toUpperCase() + ${column.javaField.substring(1)})
+#set($Check="")
+#if($column.javaType == 'String' )
+#set($Check="isNotEmpty")
+#else
+#set($Check="isNotNull")
+#end
 #if($queryType == "EQ")
-        if(StringUtils.isNotEmpty($javaField)) {
+        if(StringUtils.$Check($javaField)) {
             inBuilder.append(" AND a.$columnName=:in$AttrName");
             inParameters.addValue("in$AttrName", $javaField);
         }
 #elseif($queryType == "NE")
-        if(StringUtils.isNotEmpty($javaField)) {
+        if(StringUtils.$Check($javaField)) {
             inBuilder.append(" AND a.$columnName!=:in$AttrName");
             inParameters.addValue("in$AttrName", $javaField);
         }
 #elseif($queryType == "GT")
-        if(StringUtils.isNotEmpty($javaField)) {
+        if(StringUtils.$Check($javaField)) {
             inBuilder.append(" AND a.$columnName>:in$AttrName");
             inParameters.addValue("in$AttrName", $javaField);
         }
 #elseif($queryType == "GTE")
-        if(StringUtils.isNotEmpty($javaField)) {
+        if(StringUtils.$Check($javaField)) {
             inBuilder.append(" AND a.$columnName>=:in$AttrName");
             inParameters.addValue("in$AttrName", $javaField);
         }
 #elseif($queryType == "LT")
-        if(StringUtils.isNotEmpty($javaField)) {
+        if(StringUtils.$Check($javaField)) {
             inBuilder.append(" AND a.$columnName<:in$AttrName");
             inParameters.addValue("in$AttrName", $javaField);
         }
 #elseif($queryType == "LTE")
-        if(StringUtils.isNotEmpty($javaField)) {
+        if(StringUtils.$Check($javaField)) {
             inBuilder.append(" AND a.$columnName<=:in$AttrName");
             inParameters.addValue("in$AttrName", $javaField);
         }
