@@ -76,6 +76,7 @@ public class LangLanguageController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody LangLanguage langLanguage)
     {
+        langLanguage.setCreateBy(getUsername());
         return toAjax(langLanguageService.insertLangLanguage(langLanguage));
     }
 
