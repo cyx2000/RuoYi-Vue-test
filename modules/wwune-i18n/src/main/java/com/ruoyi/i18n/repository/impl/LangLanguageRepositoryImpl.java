@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 
 import com.ruoyi.common.core.db.DBService;
+import com.ruoyi.common.core.db.parameter.NamedSqlParameterSource;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.i18n.domain.LangLanguage;
@@ -56,8 +57,9 @@ public class LangLanguageRepositoryImpl implements LangLanguageRepository
      * @return 语言集合
      */
     public List<LangLanguage> selectLangLanguageList(LangLanguage langLanguage) {
+        String sql = baseSelectSql + " ORDER BY a.sort ASC";
 
-        return queryList(null, baseSelectSql);
+        return queryList(null, sql);
     }
 
     /**
@@ -72,7 +74,9 @@ public class LangLanguageRepositoryImpl implements LangLanguageRepository
         TableDataInfo pagedResp = dbService.getPagedRespInfo(selectCountSql, null);
 
         StringBuilder sqlBuilder = new StringBuilder();
-        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        NamedSqlParameterSource parameters = new NamedSqlParameterSource();
+
+        parameters.setDefaultOrderByStr("a.sort ASC");
 
         dbService.buildPagedSqlAndSetParameters(sqlBuilder, parameters);
 
