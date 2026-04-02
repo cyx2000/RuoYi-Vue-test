@@ -162,7 +162,7 @@ public class GenTableServiceImpl implements IGenTableService
     @Override
     public boolean createTable(String sql)
     {
-        return genTableRepository.createTable(sql) == 0;
+        return genTableRepository.createTable(sql) == 1;
     }
 
     /**
