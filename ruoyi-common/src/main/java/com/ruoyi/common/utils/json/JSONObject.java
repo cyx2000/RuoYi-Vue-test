@@ -41,6 +41,12 @@ public class JSONObject extends LinkedHashMap<String, Object> {
         if(value instanceof String strValue) {
             return strValue;
         }
+        if(value instanceof Integer intValue) {
+            return intValue.toString();
+        }
+        if(value instanceof Long longValue) {
+            return longValue.toString();
+        }
         return null;
     }
 
