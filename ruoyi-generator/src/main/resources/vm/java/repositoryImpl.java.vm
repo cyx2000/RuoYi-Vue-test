@@ -21,7 +21,7 @@ import ${packageName}.domain.${subClassName};
  * @date ${datetime}
  */
 @Repository
-public class ${ClassName}RepositoryImpl
+public class ${ClassName}RepositoryImpl implements ${ClassName}Repository
 {
     private DBService dbService;
 
