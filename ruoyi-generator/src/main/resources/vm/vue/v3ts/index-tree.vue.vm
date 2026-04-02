@@ -108,7 +108,7 @@
 #elseif($column.list && $column.htmlType == "datetime")
       <el-table-column label="${comment}" align="center" prop="${javaField}" width="180">
         <template #default="scope">
-          <span>{{ parseTime(scope.row.${javaField}, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.${javaField}) }}</span>
         </template>
       </el-table-column>
 #elseif($column.list && $column.htmlType == "imageUpload")
@@ -337,8 +337,8 @@ const daterange${AttrName} = ref([])
 const data = reactive({
   form: {} as ${ClassName},
   queryParams: {
-    #foreach ($column in $columns)
-#if($column.query)
+#foreach ($column in $columns)
+#if($column.query && $column.htmlType != "datetime")
     $column.javaField: undefined#if($foreach.count != $columns.size()),#end
 #end
 #end
@@ -367,16 +367,9 @@ function getList() {
   loading.value = true
 #foreach ($column in $columns)
 #if($column.htmlType == "datetime" && $column.queryType == "BETWEEN")
-  queryParams.value.params = {}
-#break
-#end
-#end
-#foreach ($column in $columns)
-#if($column.htmlType == "datetime" && $column.queryType == "BETWEEN")
 #set($AttrName=$column.javaField.substring(0,1).toUpperCase() + ${column.javaField.substring(1)})
   if (null != daterange${AttrName}.value && '' != daterange${AttrName}.value) {
-    queryParams.value.params["begin${AttrName}"] = daterange${AttrName}.value[0]
-    queryParams.value.params["end${AttrName}"] = daterange${AttrName}.value[1]
+    queryParams.value = proxy.addDateRange(queryParams.value, daterange${AttrName}.value)
   }
 #end
 #end
