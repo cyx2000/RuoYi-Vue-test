@@ -241,7 +241,7 @@ public class ${ClassName}RepositoryImpl implements ${ClassName}Repository
 
         String updateSql = "UPDATE ${tableName} SET$updateColumns WHERE $pkColumn.columnName=:in${pkColumn.capJavaField}";
 
-        parameters.addValue(":in${pkColumn.capJavaField}", $pkColumn.javaField);
+        parameters.addValue("in${pkColumn.capJavaField}", $pkColumn.javaField);
 
         int[] updatedResList = dbService.batchUpdate(updateSql, new MapSqlParameterSource[]{parameters});
         return updatedResList[0];
