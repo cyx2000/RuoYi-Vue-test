@@ -1,5 +1,6 @@
 package com.ruoyi.generator.repository.impl;
 
+import java.sql.Types;
 import java.util.Arrays;
 import java.util.List;
 
@@ -232,6 +233,23 @@ public class GenTableRepositoryImpl implements GenTableRepository {
 
         MapSqlParameterSource parameters = new MapSqlParameterSource();
 
+        if(StringUtils.equals(tableCategory, "sub"))
+        {
+            if(StringUtils.isNotEmpty(tableSubName)) {
+                updateBuffer.append(" sub_table_name=:inTaSub,");
+                parameters.addValue("inTaSub", tableSubName);
+            }
+            if(StringUtils.isNotEmpty(tableSubFkName)) {
+                updateBuffer.append(" sub_table_fk_name=:inTaSubFk,");
+                parameters.addValue("inTaSubFk", tableSubFkName, Types.NULL);
+            }
+        } else if(StringUtils.isNotNull(tableSubName)) {
+            updateBuffer.append(" sub_table_name=:inTaSub,");
+            parameters.addValue("inTaSub", null, Types.NULL);
+            updateBuffer.append(" sub_table_fk_name=:inTaSubFk,");
+            parameters.addValue("inTaSubFk", null, Types.NULL);
+        }
+
         if(StringUtils.isNotEmpty(tableName)) {
             updateBuffer.append(" table_name=:inTaName,");
             parameters.addValue("inTaName", tableName);
@@ -239,14 +257,6 @@ public class GenTableRepositoryImpl implements GenTableRepository {
         if(StringUtils.isNotEmpty(tableComment)) {
             updateBuffer.append(" table_comment=:inTaComm,");
             parameters.addValue("inTaComm", tableComment);
-        }
-        if(StringUtils.isNotEmpty(tableSubName)) {
-            updateBuffer.append(" sub_table_name=:inTaSub,");
-            parameters.addValue("inTaSub", tableSubName);
-        }
-        if(StringUtils.isNotEmpty(tableSubFkName)) {
-            updateBuffer.append(" sub_table_fk_name=:inTaSubFk,");
-            parameters.addValue("inTaSubFk", tableSubFkName);
         }
         if(StringUtils.isNotEmpty(tableClass)) {
             updateBuffer.append(" class_name=:inTaClass,");
