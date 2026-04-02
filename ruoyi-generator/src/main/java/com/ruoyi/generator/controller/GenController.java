@@ -166,6 +166,8 @@ public class GenController extends BaseController
     public AjaxResult editSave(@Validated @RequestBody GenTable genTable)
     {
         genTableService.validateEdit(genTable);
+        String operName = SecurityUtils.getUsername();
+        genTable.setUpdateBy(operName);
         genTableService.updateGenTable(genTable);
         return success();
     }
