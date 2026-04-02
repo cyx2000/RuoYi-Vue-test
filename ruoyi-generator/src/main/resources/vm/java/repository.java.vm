@@ -32,6 +32,7 @@ public interface ${ClassName}Repository
      */
     public List<${ClassName}> select${ClassName}List(${ClassName} ${className});
 #if($table.crud || $table.sub)
+
     /**
      * 根据条件分页查询${functionName}列表
      *
@@ -40,6 +41,7 @@ public interface ${ClassName}Repository
      */
     public TableDataInfo getPagedListResp(${ClassName} ${className});
 #end
+
     /**
      * 新增${functionName}
      *
