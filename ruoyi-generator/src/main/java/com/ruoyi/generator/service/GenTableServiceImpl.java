@@ -134,6 +134,7 @@ public class GenTableServiceImpl implements IGenTableService
         {
             for (GenTableColumn genTableColumn : genTable.getColumns())
             {
+                genTableColumn.setUpdateBy(genTable.getUpdateBy());
                 genTableColumnRepository.updateGenTableColumn(genTableColumn);
             }
         }

@@ -167,8 +167,8 @@ public class GenTableColumnRepositoryImpl implements GenTableColumnRepository {
             parameters.addValue("inTQueTyp", tQueryType);
         }
         if(StringUtils.isNotEmpty(tHtmlType)) {
-            updateBuffer.append(" html_type=:inTColComm,");
-            parameters.addValue("inTColComm", tHtmlType);
+            updateBuffer.append(" html_type=:inTHtmlTyp,");
+            parameters.addValue("inTHtmlTyp", tHtmlType);
         }
         if(StringUtils.isNotEmpty(tDictType)) {
             updateBuffer.append(" dict_type=:inTDictTyp,");
