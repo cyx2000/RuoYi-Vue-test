@@ -1,0 +1,5 @@
+dependencies {
+    compileOnly project(':ruoyi-common')
+}
+
+description = 'wwune-i18n'

@@ -9,3 +9,5 @@ include(':ruoyi-generator')
 include(':ruoyi-framework')
 include(':ruoyi-common')
 include(':ruoyi-quartz')
+
+include(':modules:wwune-i18n')
