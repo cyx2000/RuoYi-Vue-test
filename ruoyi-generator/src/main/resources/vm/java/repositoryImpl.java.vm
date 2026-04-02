@@ -80,7 +80,7 @@ public class ${ClassName}RepositoryImpl
 
         setListSqlAndParams(${className}, sqlBuilder, parameters);
 
-        String selectCountSql = "SELECT COUNT(1) FROM $column.columnName a WHERE 1=1";
+        String selectCountSql = "SELECT COUNT(1) FROM ${tableName} a WHERE 1=1";
         String queryCountSql = selectCountSql + sqlBuilder.toString();
 
         TableDataInfo pagedResp = dbService.getPagedRespInfo(queryCountSql, parameters);
