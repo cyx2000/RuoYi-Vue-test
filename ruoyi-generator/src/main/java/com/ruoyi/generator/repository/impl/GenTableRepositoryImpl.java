@@ -327,7 +327,7 @@ public class GenTableRepositoryImpl implements GenTableRepository {
     }
 
     @Override
-    @Transactional(propagation=Propagation.MANDATORY)
+    @Transactional()
     public int createTable(String sql) {
         int exec = dbService.execute(sql);
         return exec;
