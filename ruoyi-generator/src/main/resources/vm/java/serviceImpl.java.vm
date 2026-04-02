@@ -32,6 +32,11 @@ public class ${ClassName}ServiceImpl implements I${ClassName}Service
     @Resource
     private ${ClassName}Repository ${className}Repository;
 
+#if($table.sub)
+    @Resource
+    private ${subClassName}Repository ${subclassName}Repository;
+#end
+
     /**
      * 查询${functionName}
      *
@@ -84,7 +89,9 @@ public class ${ClassName}ServiceImpl implements I${ClassName}Service
     {
 #if($table.sub)
         int rows = ${className}Repository.insert${ClassName}(${className});
-        insert${subClassName}(${className});
+        ${subClassName} ${subclassName} = new ${subClassName}();
+        // TODO 设置对应的数据
+        ${subclassName}Repository.insert${subClassName}(${subclassName});
         return rows;
 #else
         return ${className}Repository.insert${ClassName}(${className});
@@ -105,7 +112,9 @@ public class ${ClassName}ServiceImpl implements I${ClassName}Service
     {
 #if($table.sub)
         ${className}Repository.delete${subClassName}By${subTableFkClassName}(${className}.get${pkColumn.capJavaField}());
-        insert${subClassName}(${className});
+        ${subClassName} ${subclassName} = new ${subClassName}();
+        // TODO 设置对应的数据
+        ${subclassName}Repository.insert${subClassName}(${subclassName});
 #end
         return ${className}Repository.update${ClassName}(${className});
     }
