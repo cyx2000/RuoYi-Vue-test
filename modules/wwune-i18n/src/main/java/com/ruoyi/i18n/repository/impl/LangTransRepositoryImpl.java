@@ -156,7 +156,7 @@ public class LangTransRepositoryImpl implements LangTransRepository
 
         String updateSql = "UPDATE lang_trans SET tag_id=:inTagId, trans_text=:inTransText, update_by=:inUpdateBy, update_time=SYSDATE() WHERE lang_id=:inLangId";
 
-        parameters.addValue(":inLangId", langId);
+        parameters.addValue("inLangId", langId);
 
         int[] updatedResList = dbService.batchUpdate(updateSql, new MapSqlParameterSource[]{parameters});
         return updatedResList[0];

@@ -153,7 +153,7 @@ public class LangLanguageRepositoryImpl implements LangLanguageRepository
 
         String updateSql = "UPDATE lang_language SET lang_tag=:inLangTag, sort=:inSort, status=:inStatus, is_default=:inIsDefault, remark=:inRemark WHERE lang_id=:inLangId";
 
-        parameters.addValue(":inLangId", langId);
+        parameters.addValue("inLangId", langId);
 
         int[] updatedResList = dbService.batchUpdate(updateSql, new MapSqlParameterSource[]{parameters});
         return updatedResList[0];
