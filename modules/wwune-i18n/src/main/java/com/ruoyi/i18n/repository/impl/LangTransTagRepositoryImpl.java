@@ -168,39 +168,46 @@ public class LangTransTagRepositoryImpl implements LangTransTagRepository
         Integer status = langTransTag.getStatus();
         String updateBy = langTransTag.getUpdateBy();
 
+        StringBuffer updateBuffer = new StringBuffer("UPDATE lang_trans_tag SET");
         MapSqlParameterSource parameters = new MapSqlParameterSource();
 
         if(StringUtils.isNotEmpty(tagType))
         {
+            updateBuffer.append(" tag_type=:inTagType,");
             parameters.addValue("inTagType", tagType);
         }
         if(StringUtils.isNotEmpty(module))
         {
+            updateBuffer.append(" module=:inModule,");
             parameters.addValue("inModule", module);
         }
         if(StringUtils.isNotEmpty(label))
         {
+            updateBuffer.append(" label=:inLabel,");
             parameters.addValue("inLabel", label);
         }
         if(StringUtils.isNotEmpty(toApp))
         {
+            updateBuffer.append(" to_app=:inToApp,");
             parameters.addValue("inToApp", toApp);
         }
         if(StringUtils.isNotNull(status))
         {
+            updateBuffer.append(" status=:inStatus,");
             parameters.addValue("inStatus", status);
         }
-        if(StringUtils.isNotEmpty(updateBy))
-        {
+
+        int res = 0;
+        if(parameters.hasValues()) {
+            updateBuffer.append(" update_by=:inUpdateBy, update_time=SYSDATE() WHERE tag_id=:inTagId");
+
+            parameters.addValue("inTagId", tagId);
             parameters.addValue("inUpdateBy", updateBy);
+
+            int[] updatedResList = dbService.batchUpdate(updateBuffer.toString(), new MapSqlParameterSource[]{parameters});
+            res = updatedResList[0];
         }
-
-        String updateSql = "UPDATE lang_trans_tag SET tag_type=:inTagType, module=:inModule, label=:inLabel, to_app=:inToApp, status=:inStatus, update_by=:inUpdateBy, update_time=SYSDATE() WHERE tag_id=:inTagId";
-
-        parameters.addValue("inTagId", tagId);
-
-        int[] updatedResList = dbService.batchUpdate(updateSql, new MapSqlParameterSource[]{parameters});
-        return updatedResList[0];
+        return res;
     }
 
     /**
