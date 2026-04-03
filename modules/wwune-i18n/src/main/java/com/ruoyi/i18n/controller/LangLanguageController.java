@@ -37,7 +37,7 @@ public class LangLanguageController extends BaseController
     /**
      * 分页查询语言列表
      */
-    @PreAuthorize("@ss.hasPermi('i18n:language:list')")
+    @PreAuthorize("@ss.hasPermi('i18n:translang:list')")
     @GetMapping("/list")
     public TableDataInfo list(LangLanguage langLanguage)
     {
@@ -48,7 +48,7 @@ public class LangLanguageController extends BaseController
     /**
      * 导出语言列表
      */
-    @PreAuthorize("@ss.hasPermi('i18n:language:export')")
+    @PreAuthorize("@ss.hasPermi('i18n:translang:export')")
     @Log(title = "语言", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(HttpServletResponse response, LangLanguage langLanguage)
@@ -61,7 +61,7 @@ public class LangLanguageController extends BaseController
     /**
      * 获取语言详细信息
      */
-    @PreAuthorize("@ss.hasPermi('i18n:language:query')")
+    @PreAuthorize("@ss.hasPermi('i18n:translang:query')")
     @GetMapping(value = "/{langId}")
     public AjaxResult getInfo(@PathVariable("langId") Integer langId)
     {
@@ -71,7 +71,7 @@ public class LangLanguageController extends BaseController
     /**
      * 新增语言
      */
-    @PreAuthorize("@ss.hasPermi('i18n:language:add')")
+    @PreAuthorize("@ss.hasPermi('i18n:translang:add')")
     @Log(title = "语言", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody LangLanguage langLanguage)
@@ -83,7 +83,7 @@ public class LangLanguageController extends BaseController
     /**
      * 修改语言
      */
-    @PreAuthorize("@ss.hasPermi('i18n:language:edit')")
+    @PreAuthorize("@ss.hasPermi('i18n:translang:edit')")
     @Log(title = "语言", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody LangLanguage langLanguage)
@@ -94,7 +94,7 @@ public class LangLanguageController extends BaseController
     /**
      * 删除语言
      */
-    @PreAuthorize("@ss.hasPermi('i18n:language:remove')")
+    @PreAuthorize("@ss.hasPermi('i18n:translang:remove')")
     @Log(title = "语言", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{langIds}")
     public AjaxResult remove(@PathVariable Integer[] langIds)

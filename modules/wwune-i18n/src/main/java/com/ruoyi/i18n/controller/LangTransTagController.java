@@ -37,7 +37,7 @@ public class LangTransTagController extends BaseController
     /**
      * 查询翻译标签列表
      */
-    @PreAuthorize("@ss.hasPermi('i18n:transtag:list')")
+    @PreAuthorize("@ss.hasPermi('i18n:translang:list')")
     @GetMapping("/list")
     public TableDataInfo list(LangTransTag langTransTag)
     {
@@ -48,7 +48,7 @@ public class LangTransTagController extends BaseController
     /**
      * 导出翻译标签列表
      */
-    @PreAuthorize("@ss.hasPermi('i18n:transtag:export')")
+    @PreAuthorize("@ss.hasPermi('i18n:translang:export')")
     @Log(title = "翻译标签", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(HttpServletResponse response, LangTransTag langTransTag)
@@ -61,7 +61,7 @@ public class LangTransTagController extends BaseController
     /**
      * 获取翻译标签详细信息
      */
-    @PreAuthorize("@ss.hasPermi('i18n:transtag:query')")
+    @PreAuthorize("@ss.hasPermi('i18n:translang:query')")
     @GetMapping(value = "/{tagId}")
     public AjaxResult getInfo(@PathVariable("tagId") Integer tagId)
     {
@@ -71,7 +71,7 @@ public class LangTransTagController extends BaseController
     /**
      * 新增翻译标签
      */
-    @PreAuthorize("@ss.hasPermi('i18n:transtag:add')")
+    @PreAuthorize("@ss.hasPermi('i18n:translang:add')")
     @Log(title = "翻译标签", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody LangTransTag langTransTag)
@@ -83,7 +83,7 @@ public class LangTransTagController extends BaseController
     /**
      * 修改翻译标签
      */
-    @PreAuthorize("@ss.hasPermi('i18n:transtag:edit')")
+    @PreAuthorize("@ss.hasPermi('i18n:translang:edit')")
     @Log(title = "翻译标签", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody LangTransTag langTransTag)
@@ -95,7 +95,7 @@ public class LangTransTagController extends BaseController
     /**
      * 删除翻译标签
      */
-    @PreAuthorize("@ss.hasPermi('i18n:transtag:remove')")
+    @PreAuthorize("@ss.hasPermi('i18n:translang:remove')")
     @Log(title = "翻译标签", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{tagIds}")
     public AjaxResult remove(@PathVariable Integer[] tagIds)
