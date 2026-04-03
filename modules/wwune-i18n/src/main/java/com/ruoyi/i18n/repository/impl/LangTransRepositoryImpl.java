@@ -91,10 +91,20 @@ public class LangTransRepositoryImpl implements LangTransRepository
     }
 
     private void setListSqlAndParams(final LangTrans langTrans, StringBuilder inBuilder, MapSqlParameterSource inParameters) {
+        Integer langId= langTrans.getLangId();
+        Integer tagId = langTrans.getTagId();
         String createBy = langTrans.getCreateBy();
         String beginDateTime = langTrans.getBeginTimeParam();
         String endDateTime = langTrans.getEndTimeParam();
 
+        if(StringUtils.isNotNull(langId)) {
+            inBuilder.append(" AND a.lang_id=:inLangId");
+            inParameters.addValue("inLangId", langId);
+        }
+        if(StringUtils.isNotNull(tagId)) {
+            inBuilder.append(" AND a.tag_id=:inTagId");
+            inParameters.addValue("inTagId", tagId);
+        }
         if(StringUtils.isNotEmpty(createBy)) {
             inBuilder.append(" AND a.create_by=:inCreateBy");
             inParameters.addValue("inCreateBy", createBy);
@@ -112,16 +122,18 @@ public class LangTransRepositoryImpl implements LangTransRepository
      * @return 结果
      */
     public int insertLangTrans(LangTrans langTrans) {
+        Integer longId = langTrans.getLangId(); // 语言序号
         Integer tagId = langTrans.getTagId(); // 标签序号
         String transText = langTrans.getTransText(); // 翻译文本
         String createBy = langTrans.getCreateBy(); // 创建者
 
         MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("inLangId", longId);
         parameters.addValue("inTagId", tagId);
         parameters.addValue("inTransText", transText);
         parameters.addValue("inCreateBy", createBy);
 
-        String insertSql = "INSERT INTO lang_trans(tag_id,trans_text,create_by,create_time) VALUES(:inTagId, :inTransText, :inCreateBy, SYSDATE())";
+        String insertSql = "INSERT INTO lang_trans(lang_id, tag_id,trans_text,create_by,create_time) VALUES(:inLangId, :inTagId, :inTransText, :inCreateBy, SYSDATE())";
 
         int[] insertResList = dbService.batchUpdate(insertSql, new MapSqlParameterSource[]{parameters});
         return insertResList[0];
