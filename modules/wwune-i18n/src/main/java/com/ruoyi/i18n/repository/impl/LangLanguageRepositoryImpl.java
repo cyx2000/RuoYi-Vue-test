@@ -24,7 +24,7 @@ public class LangLanguageRepositoryImpl implements LangLanguageRepository
 {
     private DBService dbService;
 
-    private String baseSelectSql = "SELECT a.lang_id, a.lang_tag, a.sort, a.status, a.is_default, a.remark, a.create_by, a.create_time FROM lang_language a WHERE 1=1";
+    private String baseSelectSql = "SELECT a.lang_id, a.lang_tag, a.sort, a.status, a.is_default, a.remark, a.create_by, a.create_time, a.update_by, a.update_time FROM lang_language a WHERE 1=1";
 
     public LangLanguageRepositoryImpl(DBService inDbService) {
         this.dbService = inDbService;
@@ -127,36 +127,48 @@ public class LangLanguageRepositoryImpl implements LangLanguageRepository
         Integer status = langLanguage.getStatus();
         String isDefault = langLanguage.getIsDefault();
         String remark = langLanguage.getRemark();
+        String updateBy = langLanguage.getUpdateBy();
 
+        StringBuffer updateBuffer = new StringBuffer("UPDATE lang_language SET");
         MapSqlParameterSource parameters = new MapSqlParameterSource();
 
         if(StringUtils.isNotEmpty(langTag))
         {
+            updateBuffer.append(" lang_tag=:inLangTag,");
             parameters.addValue("inLangTag", langTag);
         }
         if(StringUtils.isNotNull(sort))
         {
+            updateBuffer.append(" sort=:inSort,");
             parameters.addValue("inSort", sort);
         }
         if(StringUtils.isNotNull(status))
         {
+            updateBuffer.append(" status=:inStatus,");
             parameters.addValue("inStatus", status);
         }
         if(StringUtils.isNotEmpty(isDefault))
         {
+            updateBuffer.append(" is_default=:inIsDefault,");
             parameters.addValue("inIsDefault", isDefault);
         }
         if(StringUtils.isNotEmpty(remark))
         {
+            updateBuffer.append(" remark=:inRemark,");
             parameters.addValue("inRemark", remark);
         }
 
-        String updateSql = "UPDATE lang_language SET lang_tag=:inLangTag, sort=:inSort, status=:inStatus, is_default=:inIsDefault, remark=:inRemark WHERE lang_id=:inLangId";
+        int res = 0;
+        if(parameters.hasValues()) {
+            updateBuffer.append(" update_by=:inUpdateBy, update_time=SYSDATE() WHERE lang_id=:inLangId");
 
-        parameters.addValue("inLangId", langId);
+            parameters.addValue("inLangId", langId);
+            parameters.addValue("inUpdateBy", updateBy);
 
-        int[] updatedResList = dbService.batchUpdate(updateSql, new MapSqlParameterSource[]{parameters});
-        return updatedResList[0];
+            int[] updatedResList = dbService.batchUpdate(updateBuffer.toString(), new MapSqlParameterSource[]{parameters});
+            res = updatedResList[0];
+        }
+        return res;
     }
 
     /**

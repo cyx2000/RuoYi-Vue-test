@@ -88,6 +88,7 @@ public class LangLanguageController extends BaseController
     @PutMapping
     public AjaxResult edit(@RequestBody LangLanguage langLanguage)
     {
+        langLanguage.setUpdateBy(getUsername());
         return toAjax(langLanguageService.updateLangLanguage(langLanguage));
     }
 
