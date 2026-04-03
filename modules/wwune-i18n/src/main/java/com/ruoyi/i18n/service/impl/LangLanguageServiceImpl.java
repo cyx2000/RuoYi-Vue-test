@@ -5,6 +5,8 @@ import java.util.List;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import com.ruoyi.common.core.page.TableDataInfo;
+import com.ruoyi.common.exception.ServiceException;
+import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.i18n.repository.LangLanguageRepository;
 import com.ruoyi.i18n.domain.LangLanguage;
 import com.ruoyi.i18n.service.ILangLanguageService;
@@ -67,6 +69,12 @@ public class LangLanguageServiceImpl implements ILangLanguageService
     @Override
     public int insertLangLanguage(LangLanguage langLanguage)
     {
+        LangLanguage lang = langLanguageRepository.selectLangLanguageByLangTag(langLanguage.getLangTag());
+        if(StringUtils.isNotNull(lang)) {
+            // TODO 国际化，面向客户端
+            throw new ServiceException("语言标签已存在，无法创建");
+        }
+        langLanguage.setStatus(1);
         return langLanguageRepository.insertLangLanguage(langLanguage);
     }
 
