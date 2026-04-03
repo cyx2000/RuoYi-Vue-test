@@ -242,8 +242,9 @@ public class SysRoleRepositoryImpl implements SysRoleRepository{
         parameters.addValue("inRoleRemark", roleRemark);
         parameters.addValue("inCreateBy", createBy);
 
-        int[] insertResList = dbService.batchUpdate(insertSql, new MapSqlParameterSource[]{parameters});
-        return insertResList[0];
+        long pk = dbService.insertAndReturnPk(insertSql, parameters);
+        role.setRoleId(pk);
+        return 1;
     }
 
     @Override
