@@ -11,7 +11,14 @@ export interface ${BusinessName}QueryParams extends PageDomain {
   #set($type = "boolean")
 #end
   /** ${column.columnComment} */
+#if(${column.javaField.contains("Time")})
+  params?: {
+    beginTime?: string;
+    endTime?: string;
+  };
+#else
   ${column.javaField}?: ${type};
+#end
 #end
 #end
 }
