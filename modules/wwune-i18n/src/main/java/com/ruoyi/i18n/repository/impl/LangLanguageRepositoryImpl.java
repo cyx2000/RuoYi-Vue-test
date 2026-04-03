@@ -51,6 +51,22 @@ public class LangLanguageRepositoryImpl implements LangLanguageRepository
     }
 
     /**
+     * 查询语言
+     *
+     * @param langTag 语言标签
+     * @return 语言
+     */
+    @Override
+    public LangLanguage selectLangLanguageByLangTag(String langTag) {
+       String sql = baseSelectSql + " AND a.lang_tag=:inLangTag";
+
+        MapSqlParameterSource parameters = new MapSqlParameterSource("inLangTag", langTag);
+
+        LangLanguage queryObj = dbService.queryForObject(sql, parameters, new SimplePropertyRowMapper<>(LangLanguage.class));
+        return queryObj;
+    }
+
+    /**
      * 查询语言列表
      *
      * @param langLanguage 语言

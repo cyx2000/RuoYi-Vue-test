@@ -22,6 +22,14 @@ public interface LangLanguageRepository
     public LangLanguage selectLangLanguageByLangId(Integer langId);
 
     /**
+     * 查询语言
+     *
+     * @param langTag 语言标签
+     * @return 语言
+     */
+    public LangLanguage selectLangLanguageByLangTag(String langTag);
+
+    /**
      * 查询语言列表
      *
      * @param langLanguage 语言
