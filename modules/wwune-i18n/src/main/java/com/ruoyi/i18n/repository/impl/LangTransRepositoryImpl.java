@@ -156,23 +156,16 @@ public class LangTransRepositoryImpl implements LangTransRepository
         String transText = langTrans.getTransText();
         String updateBy = langTrans.getUpdateBy();
 
+        if (StringUtils.isEmpty(transText)) {
+            return 0;
+        }
+
+        String updateSql = "UPDATE lang_trans SET trans_text=:inTransText, update_by=:inUpdateBy, update_time=SYSDATE() WHERE lang_id=:inLangId AND tag_id=:inTagId";
+
         MapSqlParameterSource parameters = new MapSqlParameterSource();
-
-        if(StringUtils.isNotNull(tagId))
-        {
-            parameters.addValue("inTagId", tagId);
-        }
-        if(StringUtils.isNotEmpty(transText))
-        {
-            parameters.addValue("inTransText", transText);
-        }
-        if(StringUtils.isNotEmpty(updateBy))
-        {
-            parameters.addValue("inUpdateBy", updateBy);
-        }
-
-        String updateSql = "UPDATE lang_trans SET tag_id=:inTagId, trans_text=:inTransText, update_by=:inUpdateBy, update_time=SYSDATE() WHERE lang_id=:inLangId";
-
+        parameters.addValue("inTransText", transText);
+        parameters.addValue("inUpdateBy", updateBy);
+        parameters.addValue("inTagId", tagId);
         parameters.addValue("inLangId", langId);
 
         int[] updatedResList = dbService.batchUpdate(updateSql, new MapSqlParameterSource[]{parameters});
