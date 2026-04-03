@@ -217,11 +217,12 @@ public class ${ClassName}RepositoryImpl implements ${ClassName}Repository
 #end
 #end
 
+        StringBuffer updateBuffer = new StringBuffer("UPDATE ${tableName} SET");
         MapSqlParameterSource parameters = new MapSqlParameterSource();
 
 #set($updateColumns="")
 #foreach($column in $columns)
-#if($column.edit && $column.columnName != $pkColumn.columnName && $column.columnName != "update_time")
+#if($column.edit && !$column.pk && !${column.columnName.startsWith("update")})
 #set($AttrName=$column.javaField.substring(0,1).toUpperCase() + ${column.javaField.substring(1)})
 #if($column.javaType == "String")
         if(StringUtils.isNotEmpty($column.javaField))
@@ -229,21 +230,26 @@ public class ${ClassName}RepositoryImpl implements ${ClassName}Repository
         if(StringUtils.isNotNull($column.javaField))
 #end
         {
-#set($updateColumns=$updateColumns+" $column.columnName=:in$AttrName,")
+            updateBuffer.append(" $column.columnName=:in$AttrName,");
             parameters.addValue("in$AttrName", $column.javaField);
         }
 #elseif($column.columnName == "update_time")
 #set($updateColumns=$updateColumns+" $column.columnName=SYSDATE(),")
+#elseif($column.columnName == "update_by")
+#set($updateColumns=$updateColumns+" update_by=:inUpdateBy,")
 #end
 #end
 #if(!$updateColumns.isEmpty())
 #set($updateColumns=$updateColumns.substring(0,$updateColumns.lastIndexOf(',')))
 
-        String updateSql = "UPDATE ${tableName} SET$updateColumns WHERE $pkColumn.columnName=:in${pkColumn.capJavaField}";
+        updateBuffer.append("$updateColumns WHERE $pkColumn.columnName=:in${pkColumn.capJavaField}");
 
         parameters.addValue("in${pkColumn.capJavaField}", $pkColumn.javaField);
+#if(${updateColumns.contains("update_by")})
+        parameters.addValue("inUpdateBy", updateBy);
+#end
 
-        int[] updatedResList = dbService.batchUpdate(updateSql, new MapSqlParameterSource[]{parameters});
+        int[] updatedResList = dbService.batchUpdate(updateBuffer.toString(), new MapSqlParameterSource[]{parameters});
         return updatedResList[0];
 #end
     }
