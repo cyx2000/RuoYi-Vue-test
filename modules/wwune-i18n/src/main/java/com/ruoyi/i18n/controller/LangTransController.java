@@ -76,6 +76,7 @@ public class LangTransController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody LangTrans langTrans)
     {
+        langTrans.setCreateBy(getUsername());
         return toAjax(langTransService.insertLangTrans(langTrans));
     }
 
@@ -87,6 +88,7 @@ public class LangTransController extends BaseController
     @PutMapping
     public AjaxResult edit(@RequestBody LangTrans langTrans)
     {
+        langTrans.setUpdateBy(getUsername());
         return toAjax(langTransService.updateLangTrans(langTrans));
     }
 
