@@ -25,13 +25,13 @@ public class LangTransServiceImpl implements ILangTransService
     /**
      * 查询翻译文本
      *
-     * @param langId 翻译文本主键
+     * @param langTrans 翻译文本
      * @return 翻译文本
      */
     @Override
-    public LangTrans selectLangTransByLangId(Integer langId)
+    public LangTrans selectLangTransById(LangTrans langTrans)
     {
-        return langTransRepository.selectLangTransByLangId(langId);
+        return langTransRepository.selectLangTransById(langTrans);
     }
 
     /**

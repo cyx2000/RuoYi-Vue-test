@@ -37,13 +37,18 @@ public class LangTransRepositoryImpl implements LangTransRepository
     /**
      * 查询翻译文本
      *
-     * @param langId 翻译文本主键
+     * @param langTrans 翻译文本
      * @return 翻译文本
      */
-    public LangTrans selectLangTransByLangId(Integer langId) {
-        String sql = baseSelectSql + " AND a.lang_id=:inLangId";
+    public LangTrans selectLangTransById(LangTrans langTrans) {
+        Integer langId = langTrans.getLangId();
+        Integer tagId = langTrans.getTagId();
 
-        MapSqlParameterSource parameters = new MapSqlParameterSource("inLangId", langId);
+        String sql = baseSelectSql + " AND a.lang_id=:inLangId AND a.tag_id=:inTagId";
+
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("inLangId", langId);
+        parameters.addValue("inTagId", tagId);
 
         LangTrans queryObj = dbService.queryForObject(sql, parameters, new SimplePropertyRowMapper<>(LangTrans.class));
         return queryObj;

@@ -16,10 +16,10 @@ public interface ILangTransService
     /**
      * 查询翻译文本
      *
-     * @param langId 语言主键
-     * @return 分页的翻译文本结果
+     * @param langTrans 翻译文本
+     * @return 翻译文本结果
      */
-    public LangTrans selectLangTransByLangId(Integer langId);
+    public LangTrans selectLangTransById(LangTrans langTrans);
 
     /**
      * 根据条件分页查询翻译文本列表

@@ -62,10 +62,10 @@ public class LangTransController extends BaseController
      * 获取翻译文本详细信息
      */
     @PreAuthorize("@ss.hasPermi('i18n:translang:query')")
-    @GetMapping(value = "/{langId}")
-    public AjaxResult getInfo(@PathVariable("langId") Integer langId)
+    @GetMapping()
+    public AjaxResult getInfo(LangTrans langTrans)
     {
-        return success(langTransService.selectLangTransByLangId(langId));
+        return success(langTransService.selectLangTransById(langTrans));
     }
 
     /**

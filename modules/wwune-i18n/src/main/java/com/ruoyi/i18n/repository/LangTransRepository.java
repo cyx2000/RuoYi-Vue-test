@@ -16,10 +16,10 @@ public interface LangTransRepository
     /**
      * 查询翻译文本
      *
-     * @param langId 翻译文本主键
+     * @param langTrans 翻译文本
      * @return 翻译文本
      */
-    public LangTrans selectLangTransByLangId(Integer langId);
+    public LangTrans selectLangTransById(LangTrans langTrans);
 
     /**
      * 查询翻译文本列表
