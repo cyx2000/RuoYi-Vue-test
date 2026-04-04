@@ -756,7 +756,7 @@ public class ExcelUtil<T>
                     this.createHeadCell(excel, row, column++);
                 }
             }
-            if (Type.EXPORT.equals(type))
+            if (StringUtils.isNotEmpty(this.list))
             {
                 fillExcelData(index);
                 addStatisticsRow();
