@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
 
 /**
@@ -18,23 +17,18 @@ public class LangLanguage extends BaseEntity
     private static final long serialVersionUID = 1L;
 
     /** 语言序号 */
-    @Excel(name = "语言序号")
     private Integer langId;
 
     /** 语言标签 */
-    @Excel(name = "语言标签")
     private String langTag;
 
     /** 展示顺序 */
-    @Excel(name = "展示顺序")
     private Integer sort;
 
     /** 语言状态（0正常 1停用 2删除 3是删除和停用） */
-    @Excel(name = "语言状态", readConverterExp = "0=正常,1=停用,2=删除,3=是删除和停用")
     private Integer status;
 
     /** 默认语言（0不是默认，1是默认） */
-    @Excel(name = "默认语言", readConverterExp = "0=不是默认，1是默认")
     private String isDefault;
 
     /** 翻译标签列表 */

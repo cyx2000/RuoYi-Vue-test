@@ -1,8 +1,6 @@
 package com.ruoyi.i18n.controller;
 
-import java.util.List;
 import jakarta.annotation.Resource;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,7 +16,6 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.i18n.domain.LangLanguage;
 import com.ruoyi.i18n.service.ILangLanguageService;
-import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
 
 /**
@@ -43,19 +40,6 @@ public class LangLanguageController extends BaseController
     {
         TableDataInfo pagedResp = langLanguageService.getPagedListResp(langLanguage);
         return pagedResp;
-    }
-
-    /**
-     * 导出语言列表
-     */
-    @PreAuthorize("@ss.hasPermi('i18n:translang:export')")
-    @Log(title = "语言", businessType = BusinessType.EXPORT)
-    @PostMapping("/export")
-    public void export(HttpServletResponse response, LangLanguage langLanguage)
-    {
-        List<LangLanguage> list = langLanguageService.selectLangLanguageList(langLanguage);
-        ExcelUtil<LangLanguage> util = new ExcelUtil<LangLanguage>(LangLanguage.class);
-        util.exportExcel(response, list, "语言数据");
     }
 
     /**
