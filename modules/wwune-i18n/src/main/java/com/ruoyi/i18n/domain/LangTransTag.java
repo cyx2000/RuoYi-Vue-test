@@ -4,6 +4,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
+import com.ruoyi.common.utils.StringUtils;
 
 /**
  * 翻译标签对象 lang_trans_tag
@@ -97,6 +98,19 @@ public class LangTransTag extends BaseEntity
     public Integer getStatus()
     {
         return status;
+    }
+
+    public String getTransTag() {
+        StringBuilder strBuilder = new StringBuilder(this.getTagType());
+
+        strBuilder.append(".");
+        if (StringUtils.isNotEmpty(this.getModule())) {
+            strBuilder.append(this.getModule())
+                .append(".");
+        }
+        strBuilder.append(this.getLabel());
+
+        return strBuilder.toString();
     }
 
     @Override
