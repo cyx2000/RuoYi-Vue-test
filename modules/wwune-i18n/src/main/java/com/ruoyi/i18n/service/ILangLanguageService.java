@@ -22,6 +22,14 @@ public interface ILangLanguageService
     public LangLanguage selectLangLanguageByLangId(Integer langId);
 
     /**
+     * 查询语言及翻译标签列表
+     *
+     * @param langId 语言主键
+     * @return 语言
+     */
+    public LangLanguage selectLangLanguageAndTransTagsByLangId(Integer langId);
+
+    /**
      * 分页查询语言列表
      *
      * @param langLanguage 语言

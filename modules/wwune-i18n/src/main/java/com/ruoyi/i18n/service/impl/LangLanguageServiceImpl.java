@@ -8,7 +8,9 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.i18n.repository.LangLanguageRepository;
+import com.ruoyi.i18n.repository.LangTransTagRepository;
 import com.ruoyi.i18n.domain.LangLanguage;
+import com.ruoyi.i18n.domain.LangTransTag;
 import com.ruoyi.i18n.service.ILangLanguageService;
 
 /**
@@ -23,6 +25,8 @@ public class LangLanguageServiceImpl implements ILangLanguageService
     @Resource
     private LangLanguageRepository langLanguageRepository;
 
+    @Resource
+    private LangTransTagRepository langTransTagRepository;
 
     /**
      * 查询语言
@@ -34,6 +38,24 @@ public class LangLanguageServiceImpl implements ILangLanguageService
     public LangLanguage selectLangLanguageByLangId(Integer langId)
     {
         return langLanguageRepository.selectLangLanguageByLangId(langId);
+    }
+
+    /**
+     * 查询语言及翻译标签列表
+     *
+     * @param langId 语言主键
+     * @return 语言
+     */
+    @Override
+    public LangLanguage selectLangLanguageAndTransTagsByLangId(Integer langId) {
+        LangLanguage lang = selectLangLanguageByLangId(langId);
+        if (StringUtils.isNotNull(lang))
+        {
+            List<LangTransTag> transtags = langTransTagRepository.selectLangTransTagList(new LangTransTag());
+
+            lang.setTranstags(transtags);
+        }
+        return lang;
     }
 
     /**

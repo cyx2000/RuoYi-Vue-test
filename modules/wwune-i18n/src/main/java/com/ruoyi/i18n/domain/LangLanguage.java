@@ -1,5 +1,7 @@
 package com.ruoyi.i18n.domain;
 
+import java.util.List;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
@@ -34,6 +36,9 @@ public class LangLanguage extends BaseEntity
     /** 默认语言（0不是默认，1是默认） */
     @Excel(name = "默认语言", readConverterExp = "0=不是默认，1是默认")
     private String isDefault;
+
+    /** 翻译标签列表 */
+    private List<LangTransTag> transtags;
 
     public void setLangId(Integer langId)
     {
@@ -83,6 +88,14 @@ public class LangLanguage extends BaseEntity
     public String getIsDefault()
     {
         return isDefault;
+    }
+
+    public List<LangTransTag> getTranstags() {
+        return transtags;
+    }
+
+    public void setTranstags(List<LangTransTag> transtags) {
+        this.transtags = transtags;
     }
 
     @Override
