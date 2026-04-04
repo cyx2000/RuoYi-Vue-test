@@ -598,7 +598,7 @@ public class ExcelUtil<T>
     }
 
     /**
-     * 对list数据源将其里面的数据导入到excel表单
+     * 构造空数据的excel表单模板
      *
      * @param sheetName 工作表的名称
      * @return 结果
@@ -609,7 +609,7 @@ public class ExcelUtil<T>
     }
 
     /**
-     * 对list数据源将其里面的数据导入到excel表单
+     * 构造空数据的excel表单模板
      *
      * @param sheetName 工作表的名称
      * @param title 标题
@@ -622,7 +622,7 @@ public class ExcelUtil<T>
     }
 
     /**
-     * 对list数据源将其里面的数据导入到excel表单
+     * 构造空数据的excel表单模板
      *
      * @param sheetName 工作表的名称
      * @return 结果
@@ -633,7 +633,7 @@ public class ExcelUtil<T>
     }
 
     /**
-     * 对list数据源将其里面的数据导入到excel表单
+     * 构造空数据的excel表单模板
      *
      * @param sheetName 工作表的名称
      * @param title 标题
@@ -641,9 +641,35 @@ public class ExcelUtil<T>
      */
     public void importTemplateExcel(HttpServletResponse response, String sheetName, String title)
     {
+        importTemplateExcel(response, null,  sheetName, title);
+    }
+
+    /**
+     * 使用list数据构造excel表单模板
+     *
+     * @param list 数据
+     * @param sheetName 工作表的名称
+     * @param title 标题
+     * @return 结果
+     */
+    public void importTemplateExcel(HttpServletResponse response, List<T> list, String sheetName)
+    {
+        importTemplateExcel(response, list, sheetName, StringUtils.EMPTY);
+    }
+
+    /**
+     * 使用list数据构造excel表单模板
+     *
+     * @param list 数据
+     * @param sheetName 工作表的名称
+     * @param title 标题
+     * @return 结果
+     */
+    public void importTemplateExcel(HttpServletResponse response, List<T> list, String sheetName, String title)
+    {
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         response.setCharacterEncoding("utf-8");
-        this.init(null, sheetName, title, Type.IMPORT);
+        this.init(list, sheetName, title, Type.IMPORT);
         exportExcel(response);
     }
 
