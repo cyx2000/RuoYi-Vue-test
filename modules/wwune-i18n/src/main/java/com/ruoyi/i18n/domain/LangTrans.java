@@ -3,6 +3,7 @@ package com.ruoyi.i18n.domain;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
+import com.ruoyi.common.annotation.Excels;
 import com.ruoyi.common.core.domain.BaseEntity;
 
 /**
@@ -16,16 +17,24 @@ public class LangTrans extends BaseEntity
     private static final long serialVersionUID = 1L;
 
     /** 语言序号 */
-    @Excel(name = "语言序号")
     private Integer langId;
 
     /** 标签序号 */
-    @Excel(name = "标签序号")
     private Integer tagId;
 
     /** 翻译文本 */
     @Excel(name = "翻译文本")
     private String transText;
+
+    /** 语言 */
+    @Excels({
+        @Excel(name = "语言标签", targetAttr = "langTag")
+    })
+    private LangLanguage language;
+
+    /** 翻译标签 */
+    @Excel(name = "翻译标签")
+    private String transtag;
 
     public void setLangId(Integer langId)
     {
@@ -55,6 +64,22 @@ public class LangTrans extends BaseEntity
     public String getTransText()
     {
         return transText;
+    }
+
+    public LangLanguage getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(LangLanguage language) {
+        this.language = language;
+    }
+
+    public String getTranstag() {
+        return transtag;
+    }
+
+    public void setTranstag(String transtag) {
+        this.transtag = transtag;
     }
 
     @Override

@@ -1,6 +1,11 @@
 package com.ruoyi.i18n.controller;
 
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletResponse;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,7 +19,12 @@ import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.enums.BusinessType;
+import com.ruoyi.common.exception.ServiceException;
+import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.i18n.domain.LangLanguage;
+import com.ruoyi.i18n.domain.LangTrans;
+import com.ruoyi.i18n.domain.LangTransTag;
 import com.ruoyi.i18n.service.ILangLanguageService;
 import com.ruoyi.common.core.page.TableDataInfo;
 
@@ -50,6 +60,34 @@ public class LangLanguageController extends BaseController
     public AjaxResult getInfo(@PathVariable("langId") Integer langId)
     {
         return success(langLanguageService.selectLangLanguageByLangId(langId));
+    }
+
+    @PostMapping("/importTemplate/{langId}")
+    public void importTemplate(HttpServletResponse response, @PathVariable("langId") Integer langId)
+    {
+        LangLanguage lang = langLanguageService.selectLangLanguageAndTransTagsByLangId(langId);
+
+        if (StringUtils.isNotNull(lang)) {
+            LangLanguage targetLang = new LangLanguage();
+            targetLang.setLangTag(lang.getLangTag());
+
+            List<LangTrans> transtexts = new ArrayList<>();
+
+            List<LangTransTag> transtags = lang.getTranstags();
+            for (LangTransTag transtag: transtags) {
+                LangTrans transtext = new LangTrans();
+                transtext.setTranstag(transtag.getTransTag());
+                transtext.setLanguage(targetLang);
+
+                transtexts.add(transtext);
+            }
+
+            ExcelUtil<LangTrans> util = new ExcelUtil<LangTrans>(LangTrans.class);
+
+            util.importTemplateExcel(response, transtexts, "翻译文本");
+        } else {
+            throw new ServiceException("导入不存在的语言");
+        }
     }
 
     /**
