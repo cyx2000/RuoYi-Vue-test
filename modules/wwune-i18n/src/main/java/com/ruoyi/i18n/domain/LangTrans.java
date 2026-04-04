@@ -22,10 +22,6 @@ public class LangTrans extends BaseEntity
     /** 标签序号 */
     private Integer tagId;
 
-    /** 翻译文本 */
-    @Excel(name = "翻译文本")
-    private String transText;
-
     /** 语言 */
     @Excels({
         @Excel(name = "语言标签", targetAttr = "langTag")
@@ -35,6 +31,10 @@ public class LangTrans extends BaseEntity
     /** 翻译标签 */
     @Excel(name = "翻译标签")
     private String transtag;
+
+    /** 翻译文本 */
+    @Excel(name = "翻译文本")
+    private String transText;
 
     public void setLangId(Integer langId)
     {
