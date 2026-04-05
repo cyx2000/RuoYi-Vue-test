@@ -17,7 +17,7 @@ import com.ruoyi.common.utils.StringUtils;
 
 /**
  * 反射工具类. 提供调用getter/setter方法, 访问私有变量, 调用私有方法, 获取泛型类型Class, 被AOP过的真实类等工具函数.
- * 
+ *
  * @author ruoyi
  */
 @SuppressWarnings("rawtypes")
@@ -41,8 +41,7 @@ public class ReflectUtils
         Object object = obj;
         for (String name : StringUtils.split(propertyName, "."))
         {
-            String getterMethodName = GETTER_PREFIX + StringUtils.capitalize(name);
-            object = invokeMethod(object, getterMethodName, new Class[] {}, new Object[] {});
+            object = invokeGetMethodByName(object, StringUtils.capitalize(name), new Object[] {});
         }
         return (E) object;
     }
@@ -59,8 +58,7 @@ public class ReflectUtils
         {
             if (i < names.length - 1)
             {
-                String getterMethodName = GETTER_PREFIX + StringUtils.capitalize(names[i]);
-                object = invokeMethod(object, getterMethodName, new Class[] {}, new Object[] {});
+                object = invokeGetMethodByName(object, StringUtils.capitalize(names[i]), new Object[] {});
             }
             else
             {
@@ -219,6 +217,16 @@ public class ReflectUtils
         }
     }
 
+    /**
+     * 直接调用对象指定属性的get方法, 无视private/protected修饰符，
+     * 用于一次性调用的情况，否则应使用getAccessibleMethodByName()函数获得Method后反复调用.
+     * 只匹配函数名，如果有多个同名函数调用第一个。
+     */
+    public static <E> E invokeGetMethodByName(final Object obj, final String name, final Object[] args)
+    {
+        String getMethodName = GETTER_PREFIX + name;
+        return invokeMethod(obj, getMethodName, new Class[] {}, args);
+    }
     /**
      * 循环向上转型, 获取对象的DeclaredField, 并强制设置为可访问.
      * 如向上转型到Object仍无法找到, 返回null.
