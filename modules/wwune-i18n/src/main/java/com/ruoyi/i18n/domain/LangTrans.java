@@ -5,6 +5,9 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.annotation.Excels;
 import com.ruoyi.common.core.domain.BaseEntity;
+import com.ruoyi.common.xss.Xss;
+
+import jakarta.validation.constraints.NotBlank;
 
 /**
  * 翻译文本对象 lang_trans
@@ -61,6 +64,8 @@ public class LangTrans extends BaseEntity
         this.transText = transText;
     }
 
+    @Xss(message = "翻译文本不能包含脚本字符")
+    @NotBlank(message = "翻译文本不能为空")
     public String getTransText()
     {
         return transText;
@@ -74,6 +79,8 @@ public class LangTrans extends BaseEntity
         this.language = language;
     }
 
+    @Xss(message = "翻译标签不能包含脚本字符")
+    @NotBlank(message = "翻译标签不能为空")
     public String getTranstag() {
         return transtag;
     }
