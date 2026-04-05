@@ -1607,9 +1607,16 @@ public class ExcelUtil<T>
         if (StringUtils.isNotNull(o) && StringUtils.isNotEmpty(name))
         {
             Class<?> clazz = o.getClass();
-            Field field = clazz.getDeclaredField(name);
-            field.setAccessible(true);
-            o = field.get(o);
+            try {
+                Field field = clazz.getDeclaredField(name);
+                field.setAccessible(true);
+                o = field.get(o);
+            } catch (NoSuchFieldException e) {
+                o = ReflectUtils.invokeGetMethodByName(o, name, new Object[]{});
+            } catch (Exception e) {
+                throw e;
+            }
+
         }
         return o;
     }
