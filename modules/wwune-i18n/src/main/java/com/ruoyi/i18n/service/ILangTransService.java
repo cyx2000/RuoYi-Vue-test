@@ -22,6 +22,13 @@ public interface ILangTransService
     public LangTrans selectLangTransById(LangTrans langTrans);
 
     /**
+     * 查询数据内容是否正确，并设置对应的标签id
+     *
+     * @param transtext 翻译文本
+     */
+    public void checkTransTextAndSetId(LangTrans transtext) throws Exception;
+
+    /**
      * 根据条件分页查询翻译文本列表
      *
      * @param langTrans 翻译文本
@@ -68,4 +75,14 @@ public interface ILangTransService
      * @return 结果
      */
     public int deleteLangTransByLangId(Integer langId);
+
+    /**
+     * 导入翻译文本数据
+     *
+     * @param transtextList 翻译文本列表
+     * @param isUpdateSupport 是否更新支持，如果已存在，则进行更新数据
+     * @param operName 操作用户
+     * @return 信息
+     */
+    public void importTransTexts(List<LangTrans> transtextList, String operName, Integer langId);
 }

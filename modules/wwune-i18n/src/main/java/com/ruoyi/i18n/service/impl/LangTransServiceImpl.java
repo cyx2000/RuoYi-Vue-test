@@ -3,10 +3,19 @@ package com.ruoyi.i18n.service.impl;
 import java.util.List;
 
 import jakarta.annotation.Resource;
+import jakarta.validation.Validator;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import com.ruoyi.common.core.page.TableDataInfo;
+import com.ruoyi.common.exception.ServiceException;
+import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.common.utils.bean.BeanValidators;
 import com.ruoyi.i18n.repository.LangTransRepository;
+import com.ruoyi.i18n.repository.LangTransTagRepository;
 import com.ruoyi.i18n.domain.LangTrans;
+import com.ruoyi.i18n.domain.LangTransTag;
 import com.ruoyi.i18n.service.ILangTransService;
 
 /**
@@ -18,9 +27,16 @@ import com.ruoyi.i18n.service.ILangTransService;
 @Service
 public class LangTransServiceImpl implements ILangTransService
 {
+    private static final Logger LOGGER = LoggerFactory.getLogger(LangTransServiceImpl.class);
+
     @Resource
     private LangTransRepository langTransRepository;
 
+    @Resource
+    private LangTransTagRepository langTransTagRepository;
+
+    @Resource
+    protected Validator validator;
 
     /**
      * 查询翻译文本
@@ -32,6 +48,36 @@ public class LangTransServiceImpl implements ILangTransService
     public LangTrans selectLangTransById(LangTrans langTrans)
     {
         return langTransRepository.selectLangTransById(langTrans);
+    }
+
+    /**
+     * 查询数据内容是否正确，并设置对应的标签id
+     *
+     * @param transtext 翻译文本
+     */
+    public void checkTransTextAndSetId(LangTrans transtext) throws Exception
+    {
+        BeanValidators.validateWithException(validator, transtext);
+
+        LangTransTag targetTag = transtext.getTranstag();
+
+        BeanValidators.validateWithException(validator, targetTag);
+
+        LangTransTag existTag = langTransTagRepository.selectLangTransTag(targetTag);
+
+        if (StringUtils.isNull(existTag))
+        {
+            throw new ServiceException("不存在该翻译标签" );
+        }
+
+        transtext.setTagId(existTag.getTagId());
+
+        LangTrans existText = langTransRepository.selectLangTransById(transtext);
+
+        if (StringUtils.isNotNull(existText))
+        {
+            throw new ServiceException("已经在数据库中的翻译文本，无法导入" );
+        }
     }
 
     /**
@@ -104,5 +150,52 @@ public class LangTransServiceImpl implements ILangTransService
     public int deleteLangTransByLangId(Integer langId)
     {
         return langTransRepository.deleteLangTransByLangId(langId);
+    }
+
+    /**
+     * 导入翻译文本数据
+     *
+     * @param transtextList 翻译文本列表
+     * @param isUpdateSupport 是否更新支持，如果已存在，则进行更新数据
+     * @param operName 操作用户
+     * @return 信息
+     */
+    public void importTransTexts(List<LangTrans> transtextList, String operName, Integer langId)
+    {
+        if (StringUtils.isEmpty(transtextList))
+        {
+            throw new ServiceException("导入的数据不能为空！");
+        }
+
+        int failureNum = 0;
+        StringBuilder failureMsg = new StringBuilder();
+
+        for (int i = 0; i < transtextList.size(); i++)
+        {
+            LangTrans transtext = transtextList.get(i);
+
+            transtext.setLangId(langId);
+
+            try
+            {
+                this.checkTransTextAndSetId(transtext);
+
+                transtext.setCreateBy(operName);
+
+                langTransRepository.insertLangTrans(transtext);
+
+            } catch (Exception e) {
+                failureNum++;
+                String msg = "<br/>第 " + (i+1) + " 条数据：";
+                failureMsg.append(msg + e.getMessage());
+                LOGGER.error(msg, e);
+            }
+        }
+
+        if (failureNum > 0)
+        {
+            failureMsg.insert(0, "一共有 " + failureNum + " 条错误数据，如下：");
+            throw new ServiceException(failureMsg.toString());
+        }
     }
 }
