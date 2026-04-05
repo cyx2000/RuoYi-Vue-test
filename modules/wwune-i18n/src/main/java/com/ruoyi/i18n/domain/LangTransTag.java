@@ -39,10 +39,6 @@ public class LangTransTag extends BaseEntity
     @Excel(name = "发给客户端", readConverterExp = "0=不是，1是")
     private String toApp;
 
-    /** 语言状态（0正常 1停用 2删除 3是删除和停用） */
-    @Excel(name = "语言状态", readConverterExp = "0=正常,1=停用,2=删除,3=是删除和停用")
-    private Integer status;
-
     public void setTagId(Integer tagId)
     {
         this.tagId = tagId;
@@ -98,16 +94,6 @@ public class LangTransTag extends BaseEntity
         return toApp;
     }
 
-    public void setStatus(Integer status)
-    {
-        this.status = status;
-    }
-
-    public Integer getStatus()
-    {
-        return status;
-    }
-
     public String getTransTag() {
         StringBuilder strBuilder = new StringBuilder(this.getTagType());
 
@@ -143,7 +129,6 @@ public class LangTransTag extends BaseEntity
             .append("module", getModule())
             .append("label", getLabel())
             .append("toApp", getToApp())
-            .append("status", getStatus())
             .append("createBy", getCreateBy())
             .append("createTime", getCreateTime())
             .append("updateBy", getUpdateBy())

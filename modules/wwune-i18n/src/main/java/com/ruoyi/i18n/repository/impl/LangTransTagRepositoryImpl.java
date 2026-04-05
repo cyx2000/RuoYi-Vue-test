@@ -23,7 +23,7 @@ public class LangTransTagRepositoryImpl implements LangTransTagRepository
 {
     private DBService dbService;
 
-    private String baseSelectSql = "SELECT a.tag_id, a.tag_type, a.module, a.label, a.to_app, a.status, a.create_by, a.create_time, a.update_by, a.update_time FROM lang_trans_tag a WHERE 1=1";
+    private String baseSelectSql = "SELECT a.tag_id, a.tag_type, a.module, a.label, a.to_app, a.create_by, a.create_time, a.update_by, a.update_time FROM lang_trans_tag a WHERE 1=1";
 
     public LangTransTagRepositoryImpl(DBService inDbService) {
         this.dbService = inDbService;
@@ -152,7 +152,6 @@ public class LangTransTagRepositoryImpl implements LangTransTagRepository
         String module = langTransTag.getModule(); // 模块（比如exception，write）
         String label = langTransTag.getLabel(); // 标签（比如serli，最后拼成java.excep.serli）
         String toApp = langTransTag.getToApp(); // 发给客户端（0不是，1是）
-        Integer status = langTransTag.getStatus(); // 语言状态（0正常 1停用 2删除 3是删除和停用）
         String createBy = langTransTag.getCreateBy(); // 创建者
 
         MapSqlParameterSource parameters = new MapSqlParameterSource();
@@ -160,10 +159,9 @@ public class LangTransTagRepositoryImpl implements LangTransTagRepository
         parameters.addValue("inModule", module);
         parameters.addValue("inLabel", label);
         parameters.addValue("inToApp", toApp);
-        parameters.addValue("inStatus", status);
         parameters.addValue("inCreateBy", createBy);
 
-        String insertSql = "INSERT INTO lang_trans_tag(tag_type,module,label,to_app,status,create_by,create_time) VALUES(:inTagType, :inModule, :inLabel, :inToApp, :inStatus, :inCreateBy, SYSDATE())";
+        String insertSql = "INSERT INTO lang_trans_tag(tag_type,module,label,to_app,create_by,create_time) VALUES(:inTagType, :inModule, :inLabel, :inToApp, :inCreateBy, SYSDATE())";
 
         int[] insertResList = dbService.batchUpdate(insertSql, new MapSqlParameterSource[]{parameters});
         return insertResList[0];
@@ -181,7 +179,6 @@ public class LangTransTagRepositoryImpl implements LangTransTagRepository
         String module = langTransTag.getModule();
         String label = langTransTag.getLabel();
         String toApp = langTransTag.getToApp();
-        Integer status = langTransTag.getStatus();
         String updateBy = langTransTag.getUpdateBy();
 
         StringBuffer updateBuffer = new StringBuffer("UPDATE lang_trans_tag SET");
@@ -206,11 +203,6 @@ public class LangTransTagRepositoryImpl implements LangTransTagRepository
         {
             updateBuffer.append(" to_app=:inToApp,");
             parameters.addValue("inToApp", toApp);
-        }
-        if(StringUtils.isNotNull(status))
-        {
-            updateBuffer.append(" status=:inStatus,");
-            parameters.addValue("inStatus", status);
         }
 
         int res = 0;
