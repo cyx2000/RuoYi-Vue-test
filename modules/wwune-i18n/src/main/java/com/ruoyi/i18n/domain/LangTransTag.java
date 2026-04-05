@@ -24,19 +24,19 @@ public class LangTransTag extends BaseEntity
     private Integer tagId;
 
     /** 类型（比如java，file） */
-    @Excel(name = "类型", readConverterExp = "比=如java，file")
+    @Excel(name = "类型")
     private String tagType;
 
     /** 模块（比如exception，write） */
-    @Excel(name = "模块", readConverterExp = "比=如exception，write")
+    @Excel(name = "模块")
     private String module;
 
     /** 标签（比如serli，最后拼成java.excep.serli） */
-    @Excel(name = "标签", readConverterExp = "比=如serli，最后拼成java.excep.serli")
+    @Excel(name = "标签")
     private String label;
 
     /** 发给客户端（0不是，1是） */
-    @Excel(name = "发给客户端", readConverterExp = "0=不是，1是")
+    @Excel(name = "发给客户端", readConverterExp = "0=否,1=是")
     private String toApp;
 
     public void setTagId(Integer tagId)
