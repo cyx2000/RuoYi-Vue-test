@@ -50,6 +50,22 @@ public class LangTransTagRepositoryImpl implements LangTransTagRepository
     }
 
     /**
+     * 根据条件查询翻译标签
+     *
+     * @param langTransTag 翻译标签
+     * @return 翻译标签
+     */
+    public LangTransTag selectLangTransTag(LangTransTag langTransTag) {
+        StringBuilder sqlBuilder = new StringBuilder(baseSelectSql);
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+
+        setListSqlAndParams(langTransTag, sqlBuilder, parameters);
+
+        LangTransTag queryObj = dbService.queryForObject(sqlBuilder.toString(), parameters, new SimplePropertyRowMapper<>(LangTransTag.class));
+        return queryObj;
+    }
+
+    /**
      * 根据条件查询翻译标签列表
      *
      * @param langTransTag 翻译标签
@@ -100,15 +116,15 @@ public class LangTransTagRepositoryImpl implements LangTransTagRepository
         String endDateTime = langTransTag.getEndTimeParam();
 
         if(StringUtils.isNotEmpty(tagType)) {
-            inBuilder.append(" AND a.tag_type LIKE CONCAT('%', :inTagType, '%')");
+            inBuilder.append(" AND a.tag_type=:inTagType");
             inParameters.addValue("inTagType", tagType);
         }
         if(StringUtils.isNotEmpty(module)) {
-            inBuilder.append(" AND a.module LIKE CONCAT('%', :inModule, '%')");
+            inBuilder.append(" AND a.module=:inModule");
             inParameters.addValue("inModule", module);
         }
         if(StringUtils.isNotEmpty(label)) {
-            inBuilder.append(" AND a.label LIKE CONCAT('%', :inLabel, '%')");
+            inBuilder.append(" AND a.label=:inLabel");
             inParameters.addValue("inLabel", label);
         }
         if(StringUtils.isNotEmpty(toApp)) {

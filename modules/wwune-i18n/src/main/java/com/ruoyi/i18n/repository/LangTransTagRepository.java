@@ -22,6 +22,14 @@ public interface LangTransTagRepository
     public LangTransTag selectLangTransTagByTagId(Integer tagId);
 
     /**
+     * 根据条件查询翻译标签
+     *
+     * @param langTransTag 翻译标签
+     * @return 翻译标签
+     */
+    public LangTransTag selectLangTransTag(LangTransTag langTransTag);
+
+    /**
      * 查询翻译标签列表
      *
      * @param langTransTag 翻译标签
