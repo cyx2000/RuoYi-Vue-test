@@ -76,7 +76,7 @@ public class LangLanguageController extends BaseController
             List<LangTransTag> transtags = lang.getTranstags();
             for (LangTransTag transtag: transtags) {
                 LangTrans transtext = new LangTrans();
-                transtext.setTranstag(transtag.getTransTag());
+                transtext.setTranstag(transtag);
                 transtext.setLanguage(targetLang);
 
                 transtexts.add(transtext);

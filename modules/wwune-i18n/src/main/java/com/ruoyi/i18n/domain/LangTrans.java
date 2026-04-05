@@ -32,8 +32,10 @@ public class LangTrans extends BaseEntity
     private LangLanguage language;
 
     /** 翻译标签 */
-    @Excel(name = "翻译标签")
-    private String transtag;
+    @Excels({
+        @Excel(name = "翻译标签", targetAttr = "TransTag")
+    })
+    private LangTransTag transtag;
 
     /** 翻译文本 */
     @Excel(name = "翻译文本")
@@ -79,13 +81,11 @@ public class LangTrans extends BaseEntity
         this.language = language;
     }
 
-    @Xss(message = "翻译标签不能包含脚本字符")
-    @NotBlank(message = "翻译标签不能为空")
-    public String getTranstag() {
+    public LangTransTag getTranstag() {
         return transtag;
     }
 
-    public void setTranstag(String transtag) {
+    public void setTranstag(LangTransTag transtag) {
         this.transtag = transtag;
     }
 
