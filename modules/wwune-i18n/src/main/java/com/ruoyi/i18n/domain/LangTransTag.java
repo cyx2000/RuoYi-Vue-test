@@ -6,6 +6,9 @@ import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
 import com.ruoyi.common.utils.StringUtils;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
 /**
  * 翻译标签对象 lang_trans_tag
  *
@@ -55,6 +58,8 @@ public class LangTransTag extends BaseEntity
         this.tagType = tagType;
     }
 
+    @Size(max = 20, message = "标签类型不能多于20字符")
+    @NotBlank(message = "标签类型不能为空")
     public String getTagType()
     {
         return tagType;
@@ -65,6 +70,7 @@ public class LangTransTag extends BaseEntity
         this.module = module;
     }
 
+    @Size(max = 20, message = "标签模块不能多于20字符")
     public String getModule()
     {
         return module;
@@ -75,6 +81,8 @@ public class LangTransTag extends BaseEntity
         this.label = label;
     }
 
+    @Size(max = 20, message = "标签内容不能多于20字符")
+    @NotBlank(message = "标签内容不能为空")
     public String getLabel()
     {
         return label;
@@ -111,6 +119,20 @@ public class LangTransTag extends BaseEntity
         strBuilder.append(this.getLabel());
 
         return strBuilder.toString();
+    }
+
+    public void setTransTag(String inTag) {
+        String[] spliList = StringUtils.split(inTag, ".");
+
+        if (spliList.length > 2)
+        {
+            this.setTagType(spliList[0]);
+            this.setModule(spliList[1]);
+            this.setLabel(spliList[2]);
+        } else if(spliList.length > 1) {
+            this.setTagType(spliList[0]);
+            this.setLabel(spliList[1]);
+        }
     }
 
     @Override
