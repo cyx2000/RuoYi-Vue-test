@@ -532,6 +532,11 @@ public class ExcelUtil<T>
                             }
                             val = StringUtils.stripEnd(propertyString.toString(), SEPARATOR);
                         }
+                        else {
+                            Object filedObj = fieldType.getDeclaredConstructor().newInstance();
+
+                            ReflectUtils.setFieldValue(entity, field.getName(), filedObj);;
+                        }
                         ReflectUtils.invokeSetter(entity, propertyName, val);
                     }
                 }
