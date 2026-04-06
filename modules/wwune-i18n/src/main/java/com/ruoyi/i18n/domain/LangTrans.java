@@ -26,9 +26,6 @@ public class LangTrans extends BaseEntity
     private Integer tagId;
 
     /** 语言 */
-    @Excels({
-        @Excel(name = "语言标签", targetAttr = "langTag")
-    })
     private LangLanguage language;
 
     /** 翻译标签 */

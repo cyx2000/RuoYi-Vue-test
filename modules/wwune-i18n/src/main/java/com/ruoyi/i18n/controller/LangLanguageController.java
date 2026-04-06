@@ -100,17 +100,14 @@ public class LangLanguageController extends BaseController
     {
         LangLanguage lang = langLanguageService.selectLangLanguageAndTransTagsByLangId(langId);
 
-        if (StringUtils.isNotNull(lang)) {
-            LangLanguage targetLang = new LangLanguage();
-            targetLang.setLangTag(lang.getLangTag());
-
+        if (StringUtils.isNotNull(lang))
+        {
             List<LangTrans> transtexts = new ArrayList<>();
 
             List<LangTransTag> transtags = lang.getTranstags();
             for (LangTransTag transtag: transtags) {
                 LangTrans transtext = new LangTrans();
                 transtext.setTranstag(transtag);
-                transtext.setLanguage(targetLang);
 
                 transtexts.add(transtext);
             }
