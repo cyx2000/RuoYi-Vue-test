@@ -65,8 +65,7 @@ spring:
       # 设置总上传的文件大小
       max-request-size: 20MB
   jackson:
-    time-zone: GMT+8
-    date-format: yyyy-MM-dd HH:mm:ss
+    default-property-inclusion: non_null
   # 服务模块
   devtools:
     restart:

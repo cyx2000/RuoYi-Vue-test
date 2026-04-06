@@ -2,7 +2,6 @@ package com.ruoyi.system.domain;
 
 import java.time.LocalDateTime;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.annotation.Excel.ColumnType;
 import com.ruoyi.common.core.domain.BaseEntity;
@@ -80,7 +79,6 @@ public class SysOperLog extends BaseEntity
     private String errorMsg;
 
     /** 操作时间 */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Excel(name = "操作时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime operTime;
 
