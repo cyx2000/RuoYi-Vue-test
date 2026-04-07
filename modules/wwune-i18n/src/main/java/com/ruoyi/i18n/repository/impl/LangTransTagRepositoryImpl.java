@@ -1,9 +1,11 @@
 package com.ruoyi.i18n.repository.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.jdbc.core.SimplePropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
 
 import com.ruoyi.common.core.db.DBService;
@@ -78,6 +80,31 @@ public class LangTransTagRepositoryImpl implements LangTransTagRepository
         setListSqlAndParams(langTransTag, sqlBuilder, parameters);
 
         return queryList(parameters, sqlBuilder.toString());
+    }
+
+    /**
+     * 根据条件查询模块下的翻译标签id列表
+     *
+     * @param langTransTag 翻译标签
+     * @return 翻译标签id集合
+     */
+    @Override
+    public List<Integer> selectModuleLangTransTagIds(LangTransTag langTransTag)
+    {
+        StringBuilder sqlBuilder = new StringBuilder("SELECT a.tag_id FROM lang_trans_tag a WHERE 1=1");
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+
+        setListSqlAndParams(langTransTag, sqlBuilder, parameters);
+
+        SqlRowSet rs = dbService.getNamedJdbc().queryForRowSet(sqlBuilder.toString(), parameters);
+
+        List<Integer> ids = new ArrayList<>();
+
+        while (rs.next()) {
+            ids.add(rs.getInt("tag_id"));
+        }
+
+        return ids;
     }
 
     /**
