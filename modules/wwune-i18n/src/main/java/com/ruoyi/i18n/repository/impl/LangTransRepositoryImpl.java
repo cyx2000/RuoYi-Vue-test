@@ -1,15 +1,18 @@
 package com.ruoyi.i18n.repository.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.jdbc.core.SimplePropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
 
 import com.ruoyi.common.core.db.DBService;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.i18n.domain.LangTrans;
+import com.ruoyi.i18n.domain.LangTransTag;
 import com.ruoyi.i18n.repository.LangTransRepository;
 
 /**
@@ -52,6 +55,41 @@ public class LangTransRepositoryImpl implements LangTransRepository
 
         LangTrans queryObj = dbService.queryForObject(sql, parameters, new SimplePropertyRowMapper<>(LangTrans.class));
         return queryObj;
+    }
+
+    /**
+     * 查询指定语言的标签模块下翻译文本列表
+     *
+     * @param langId 语言id
+     * @param transtagIds 翻译标签id列表
+     * @return 翻译文本集合
+     */
+    @Override
+    public List<LangTrans> selectLangTransListByIds(Integer langId, List<Integer> transtagIds)
+    {
+        String sql = "SELECT a.trans_text, a.tag_id, b.label FROM lang_trans a LEFT JOIN lang_trans_tag b ON a.tag_id=b.tag_id WHERE a.lang_id=:inLangid AND a.tag_id IN (:inTagIds)";
+
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("inLangid", langId);
+        parameters.addValue("inTagIds", transtagIds);
+
+        SqlRowSet rs = dbService.getNamedJdbc().queryForRowSet(sql, parameters);
+
+        List<LangTrans> reList = new ArrayList<>();
+
+        while (rs.next()) {
+            LangTransTag transtag = new LangTransTag();
+            transtag.setTagId(rs.getInt("tag_id"));
+            transtag.setLabel(rs.getString("label"));
+
+            LangTrans transtext = new LangTrans();
+            transtext.setTranstag(transtag);
+            transtext.setTransText(rs.getString("trans_text"));
+
+            reList.add(transtext);
+        }
+
+        return reList;
     }
 
     /**

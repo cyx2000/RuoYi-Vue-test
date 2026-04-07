@@ -30,6 +30,15 @@ public interface LangTransRepository
     public List<LangTrans> selectLangTransList(LangTrans langTrans);
 
     /**
+     * 查询指定语言的标签模块下翻译文本列表
+     *
+     * @param langId 语言id
+     * @param transtagIds 翻译标签id列表
+     * @return 翻译文本集合
+     */
+    public List<LangTrans> selectLangTransListByIds(Integer langId, List<Integer> transtagIds);
+
+    /**
      * 根据条件分页查询翻译文本列表
      *
      * @param langTrans 翻译文本
