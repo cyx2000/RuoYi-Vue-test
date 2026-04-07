@@ -1,6 +1,8 @@
 package com.ruoyi.i18n.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import jakarta.annotation.Resource;
 import jakarta.validation.Validator;
@@ -9,11 +11,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import com.ruoyi.common.core.page.TableDataInfo;
+import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.exception.ServiceException;
+import com.ruoyi.common.i18n.LocaleContextHolder;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.bean.BeanValidators;
+import com.ruoyi.i18n.repository.LangLanguageRepository;
 import com.ruoyi.i18n.repository.LangTransRepository;
 import com.ruoyi.i18n.repository.LangTransTagRepository;
+import com.ruoyi.i18n.domain.LangLanguage;
 import com.ruoyi.i18n.domain.LangTrans;
 import com.ruoyi.i18n.domain.LangTransTag;
 import com.ruoyi.i18n.service.ILangTransService;
@@ -36,7 +42,13 @@ public class LangTransServiceImpl implements ILangTransService
     private LangTransTagRepository langTransTagRepository;
 
     @Resource
+    private LangLanguageRepository langLanguageRepository;
+
+    @Resource
     protected Validator validator;
+
+    @Resource
+    RedisCache redisCache;
 
     /**
      * 查询翻译文本
@@ -48,6 +60,108 @@ public class LangTransServiceImpl implements ILangTransService
     public LangTrans selectLangTransById(LangTrans langTrans)
     {
         return langTransRepository.selectLangTransById(langTrans);
+    }
+
+    /**
+     * 根据语言和模块从数据库查询翻译文本列表
+     *
+     * @param moduleKey 如："java.exp"
+     * @return 翻译文本列表
+     */
+    @Override
+    public List<LangTrans> selectLangTransListByModuleKey(String moduleKey)
+    {
+        String lang = LocaleContextHolder.getLocale().getLanguage();
+
+        LangLanguage targetLanguage = langLanguageRepository.selectLangLanguageByLangTag(lang);
+
+        LangTransTag tanstag = new LangTransTag();
+        tanstag.setModuleTag(moduleKey);
+
+        List<Integer> moduleTransTagIds = langTransTagRepository.selectModuleLangTransTagIds(tanstag);
+
+        if (StringUtils.isEmpty(moduleTransTagIds)) {
+            throw new ServiceException("错误的标签");
+        }
+
+        List<LangTrans> moduleTransTexts = langTransRepository.selectLangTransListByIds(targetLanguage.getLangId(), moduleTransTagIds);
+
+        return moduleTransTexts;
+    }
+
+    /**
+     * 根据语言和模块从redis查询翻译文本列表
+     *
+     * @param moduleKey 如："java.exp"
+     * @return 翻译文本列表
+     */
+    @Override
+    public List<LangTrans> tryGetModuleTransTextFromRedis(String moduleKey)
+    {
+        List<String> labels = redisCache.getCacheList(moduleKey);
+
+        String lang = LocaleContextHolder.getLocale().getLanguage();
+
+        List<LangTrans> transtexts = new ArrayList<>(labels.size());
+
+        if (StringUtils.isNotEmpty(labels))
+        {
+            String langMuduleKey = lang + ":" + moduleKey;
+
+            if (redisCache.hasKey(langMuduleKey + "." + labels.getFirst()))
+            {
+                for (String label : labels)
+                {
+                    LangTrans transtext = redisCache.getCacheObject(langMuduleKey + "." + label);
+                    if (StringUtils.isNotNull(transtext))
+                    {
+                        transtexts.clear();
+                        break;
+                    }
+
+                    transtexts.add(transtext);
+                }
+            }
+        }
+        if (StringUtils.isEmpty(transtexts))
+        {
+            return tryLoadModuleTransTextToRedis(moduleKey);
+        }
+        return transtexts;
+    }
+
+    /**
+     * 根据语言和模块从数据库查询翻译文本后加载到redis
+     *
+     * @param moduleKey 如："java.exp"
+     * @return 翻译文本列表
+     */
+    @Override
+    public List<LangTrans> tryLoadModuleTransTextToRedis(String moduleKey)
+    {
+        List<LangTrans> moduleTransTexts = this.selectLangTransListByModuleKey(moduleKey);
+
+        String lang = LocaleContextHolder.getLocale().getLanguage();
+
+        String langMuduleKey = lang + ":" + moduleKey;
+
+        List<String> labels = new ArrayList<>();
+        for (LangTrans langTrans : moduleTransTexts) {
+            String label = langTrans.getTranstag().getLabel();
+            String redisKey = langMuduleKey + "." + label;
+
+            labels.add(label);
+
+            // TODO 缓存时间配置化，当前为5分钟
+            redisCache.setCacheObject(redisKey, langTrans, 5, TimeUnit.MINUTES);
+        }
+
+        redisCache.setCacheList(moduleKey, labels);
+
+        // TODO 缓存时间配置化，当前为5分钟
+        redisCache.expire(moduleKey, 5L, TimeUnit.MINUTES);
+
+        return moduleTransTexts;
     }
 
     /**
@@ -160,6 +274,7 @@ public class LangTransServiceImpl implements ILangTransService
      * @param operName 操作用户
      * @return 信息
      */
+    @Override
     public void importTransTexts(List<LangTrans> transtextList, String operName, Integer langId)
     {
         if (StringUtils.isEmpty(transtextList))

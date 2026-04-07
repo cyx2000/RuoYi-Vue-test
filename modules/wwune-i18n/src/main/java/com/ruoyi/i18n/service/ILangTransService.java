@@ -22,6 +22,30 @@ public interface ILangTransService
     public LangTrans selectLangTransById(LangTrans langTrans);
 
     /**
+     * 根据语言和模块从数据库查询翻译文本列表
+     *
+     * @param moduleKey 如："java.exp"
+     * @return 翻译文本列表
+     */
+    public List<LangTrans> selectLangTransListByModuleKey(String moduleKey);
+
+    /**
+     * 根据语言和模块从redis查询翻译文本列表
+     *
+     * @param moduleKey 如："java.exp"
+     * @return 翻译文本列表
+     */
+    public List<LangTrans> tryGetModuleTransTextFromRedis(String moduleKey);
+
+    /**
+     * 根据语言和模块从数据库查询翻译文本后加载到redis
+     *
+     * @param moduleKey 如："java.exp"
+     * @return 翻译文本列表
+     */
+    public List<LangTrans> tryLoadModuleTransTextToRedis(String moduleKey);
+
+    /**
      * 查询数据内容是否正确，并设置对应的标签id
      *
      * @param transtext 翻译文本

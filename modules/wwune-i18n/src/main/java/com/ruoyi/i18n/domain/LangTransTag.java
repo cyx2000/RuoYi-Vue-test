@@ -2,6 +2,8 @@ package com.ruoyi.i18n.domain;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
 import com.ruoyi.common.utils.StringUtils;
@@ -94,7 +96,9 @@ public class LangTransTag extends BaseEntity
         return toApp;
     }
 
-    public String getTransTag() {
+    @JsonIgnore // redis序列化会调用所有get方法，忽略序列化，this.getTagType()可能为null
+    public String getTransTag()
+    {
         StringBuilder strBuilder = new StringBuilder(this.getTagType());
 
         strBuilder.append(".");
@@ -107,7 +111,9 @@ public class LangTransTag extends BaseEntity
         return strBuilder.toString();
     }
 
-    public void setTransTag(String inTag) {
+    @JsonIgnore
+    public void setTransTag(String inTag)
+    {
         String[] spliList = StringUtils.split(inTag, ".");
 
         if (spliList.length > 2)
@@ -118,6 +124,18 @@ public class LangTransTag extends BaseEntity
         } else if(spliList.length > 1) {
             this.setTagType(spliList[0]);
             this.setLabel(spliList[1]);
+        }
+    }
+
+    @JsonIgnore
+    public void setModuleTag(String inModuleKey)
+    {
+        String[] spliList = StringUtils.split(inModuleKey, ".");
+
+        this.setTagType(spliList[0]);
+        if (spliList.length ==  2)
+        {
+            this.setModule(spliList[1]);
         }
     }
 
