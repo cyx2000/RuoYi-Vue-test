@@ -32,7 +32,8 @@ public class ${ClassName}RepositoryImpl implements ${ClassName}Repository
         this.dbService = inDbService;
     }
 
-    protected List<${ClassName}> queryList(final MapSqlParameterSource parameters, final String querySql) {
+    protected List<${ClassName}> queryList(final MapSqlParameterSource parameters, final String querySql)
+    {
         List<${ClassName}> list = dbService.queryForList(querySql, parameters, new SimplePropertyRowMapper<>(${ClassName}.class));
         return list;
     }
@@ -43,7 +44,9 @@ public class ${ClassName}RepositoryImpl implements ${ClassName}Repository
      * @param ${pkColumn.javaField} ${functionName}主键
      * @return ${functionName}
      */
-    public ${ClassName} select${ClassName}By${pkColumn.capJavaField}(${pkColumn.javaType} ${pkColumn.javaField}) {
+    @Override
+    public ${ClassName} select${ClassName}By${pkColumn.capJavaField}(${pkColumn.javaType} ${pkColumn.javaField})
+    {
         String sql = baseSelectSql + " AND a.${pkColumn.columnName}=:in${pkColumn.capJavaField}";
 
         MapSqlParameterSource parameters = new MapSqlParameterSource("in${pkColumn.capJavaField}", ${pkColumn.javaField});
@@ -58,7 +61,9 @@ public class ${ClassName}RepositoryImpl implements ${ClassName}Repository
      * @param ${className} ${functionName}
      * @return ${functionName}集合
      */
-    public List<${ClassName}> select${ClassName}List(${ClassName} ${className}) {
+    @Override
+    public List<${ClassName}> select${ClassName}List(${ClassName} ${className})
+    {
         StringBuilder sqlBuilder = new StringBuilder(baseSelectSql);
         MapSqlParameterSource parameters = new MapSqlParameterSource();
 
@@ -74,8 +79,9 @@ public class ${ClassName}RepositoryImpl implements ${ClassName}Repository
      * @param ${className} ${functionName}
      * @return 分页完成的${functionName}集合
      */
-    public TableDataInfo getPagedListResp(${ClassName} ${className}) {
-
+    @Override
+    public TableDataInfo getPagedListResp(${ClassName} ${className})
+    {
         StringBuilder sqlBuilder = new StringBuilder();
         MapSqlParameterSource parameters = new MapSqlParameterSource();
 
@@ -95,7 +101,8 @@ public class ${ClassName}RepositoryImpl implements ${ClassName}Repository
     }
 #end
 
-    private void setListSqlAndParams(final ${ClassName} ${className}, StringBuilder inBuilder, MapSqlParameterSource inParameters) {
+    private void setListSqlAndParams(final ${ClassName} ${className}, StringBuilder inBuilder, MapSqlParameterSource inParameters)
+    {
 #foreach($column in $columns)
 #if($column.query)
 #set($AttrName=$column.javaField.substring(0,1).toUpperCase() + ${column.javaField.substring(1)})
@@ -121,42 +128,50 @@ public class ${ClassName}RepositoryImpl implements ${ClassName}Repository
 #set($Check="isNotNull")
 #end
 #if($queryType == "EQ")
-        if(StringUtils.$Check($javaField)) {
+        if(StringUtils.$Check($javaField))
+        {
             inBuilder.append(" AND a.$columnName=:in$AttrName");
             inParameters.addValue("in$AttrName", $javaField);
         }
 #elseif($queryType == "NE")
-        if(StringUtils.$Check($javaField)) {
+        if(StringUtils.$Check($javaField))
+        {
             inBuilder.append(" AND a.$columnName!=:in$AttrName");
             inParameters.addValue("in$AttrName", $javaField);
         }
 #elseif($queryType == "GT")
-        if(StringUtils.$Check($javaField)) {
+        if(StringUtils.$Check($javaField))
+        {
             inBuilder.append(" AND a.$columnName>:in$AttrName");
             inParameters.addValue("in$AttrName", $javaField);
         }
 #elseif($queryType == "GTE")
-        if(StringUtils.$Check($javaField)) {
+        if(StringUtils.$Check($javaField))
+        {
             inBuilder.append(" AND a.$columnName>=:in$AttrName");
             inParameters.addValue("in$AttrName", $javaField);
         }
 #elseif($queryType == "LT")
-        if(StringUtils.$Check($javaField)) {
+        if(StringUtils.$Check($javaField))
+        {
             inBuilder.append(" AND a.$columnName<:in$AttrName");
             inParameters.addValue("in$AttrName", $javaField);
         }
 #elseif($queryType == "LTE")
-        if(StringUtils.$Check($javaField)) {
+        if(StringUtils.$Check($javaField))
+        {
             inBuilder.append(" AND a.$columnName<=:in$AttrName");
             inParameters.addValue("in$AttrName", $javaField);
         }
 #elseif($queryType == "LIKE")
-        if(StringUtils.isNotEmpty($javaField)) {
+        if(StringUtils.isNotEmpty($javaField))
+        {
             inBuilder.append(" AND a.$columnName LIKE CONCAT('%', :in$AttrName, '%')");
             inParameters.addValue("in$AttrName", $javaField);
         }
 #elseif($queryType == "BETWEEN")
-        if(StringUtils.isNotEmpty(beginDateTime) && StringUtils.isNotEmpty(endDateTime)) {
+        if(StringUtils.isNotEmpty(beginDateTime) && StringUtils.isNotEmpty(endDateTime))
+        {
             inBuilder.append(" AND a.$columnName BETWEEN :inBeginTime AND :inEndTime");
             inParameters.addValue("inBeginTime", beginDateTime);
             inParameters.addValue("inEndTime", endDateTime);
@@ -171,7 +186,9 @@ public class ${ClassName}RepositoryImpl implements ${ClassName}Repository
      * @param ${className} ${functionName}
      * @return 结果
      */
-    public int insert${ClassName}(${ClassName} ${className}) {
+    @Override
+    public int insert${ClassName}(${ClassName} ${className})
+    {
 #foreach($column in $columns)
 #if($column.insert && $column.columnName != "create_time" && ($column.columnName != $pkColumn.columnName || !$pkColumn.isIncrement))
 #set($AttrName=$column.javaField.substring(0,1).toUpperCase() + ${column.javaField.substring(1)})
@@ -209,7 +226,9 @@ public class ${ClassName}RepositoryImpl implements ${ClassName}Repository
      * @param ${className} ${functionName}
      * @return 结果
      */
-    public int update${ClassName}(${ClassName} ${className}) {
+    @Override
+    public int update${ClassName}(${ClassName} ${className})
+    {
 #foreach($column in $columns)
 #if(($column.edit || $column.columnName == $pkColumn.columnName) && $column.columnName != "update_time")
 #set($AttrName=$column.javaField.substring(0,1).toUpperCase() + ${column.javaField.substring(1)})
@@ -260,7 +279,9 @@ public class ${ClassName}RepositoryImpl implements ${ClassName}Repository
      * @param ${pkColumn.javaField} ${functionName}主键
      * @return 结果
      */
-    public int delete${ClassName}By${pkColumn.capJavaField}(${pkColumn.javaType} ${pkColumn.javaField}) {
+    @Override
+    public int delete${ClassName}By${pkColumn.capJavaField}(${pkColumn.javaType} ${pkColumn.javaField})
+    {
         return this.delete${ClassName}By${pkColumn.capJavaField}s(new ${pkColumn.javaType}[]{${pkColumn.javaField}});
     }
 
@@ -270,11 +291,14 @@ public class ${ClassName}RepositoryImpl implements ${ClassName}Repository
      * @param ${pkColumn.javaField}s 需要删除的数据主键集合
      * @return 结果
      */
-    public int delete${ClassName}By${pkColumn.capJavaField}s(${pkColumn.javaType}[] ${pkColumn.javaField}s) {
+    @Override
+    public int delete${ClassName}By${pkColumn.capJavaField}s(${pkColumn.javaType}[] ${pkColumn.javaField}s)
+    {
         String deleteSql = "DELETE FROM ${tableName} WHERE $pkColumn.columnName=:in${pkColumn.capJavaField}";
 
         MapSqlParameterSource[] parametersList = new MapSqlParameterSource[${pkColumn.javaField}s.length];
-        for (int i = 0; i < parametersList.length; i++) {
+        for (int i = 0; i < parametersList.length; i++)
+        {
             ${pkColumn.javaType} ${pkColumn.javaField} = ${pkColumn.javaField}s[i];
             parametersList[i] = new MapSqlParameterSource("in${pkColumn.capJavaField}", ${pkColumn.javaField});
         }
@@ -290,7 +314,9 @@ public class ${ClassName}RepositoryImpl implements ${ClassName}Repository
      * @param ${pkColumn.javaField} ${functionName}ID
      * @return 结果
      */
-    public int delete${subClassName}By${subTableFkClassName}(${pkColumn.javaType} ${pkColumn.javaField}) {
+    @Override
+    public int delete${subClassName}By${subTableFkClassName}(${pkColumn.javaType} ${pkColumn.javaField})
+    {
         return delete${subClassName}By${subTableFkClassName}s(new ${pkColumn.javaType}[]{${pkColumn.javaField}});
     }
 
@@ -300,11 +326,14 @@ public class ${ClassName}RepositoryImpl implements ${ClassName}Repository
      * @param ${pkColumn.javaField}s 需要删除的数据主键集合
      * @return 结果
      */
-    public int delete${subClassName}By${subTableFkClassName}s(${pkColumn.javaType}[] ${pkColumn.javaField}s) {
+    @Override
+    public int delete${subClassName}By${subTableFkClassName}s(${pkColumn.javaType}[] ${pkColumn.javaField}s)
+    {
         String deleteSql = "DELETE FROM ${subTableName} WHERE ${subTableFkName}=:in${pkColumn.capJavaField}";
 
         MapSqlParameterSource[] parametersList = new MapSqlParameterSource[${pkColumn.javaField}s.length];
-        for (int i = 0; i < parametersList.length; i++) {
+        for (int i = 0; i < parametersList.length; i++)
+        {
             ${pkColumn.javaType} ${pkColumn.javaField} = ${pkColumn.javaField}s[i];
             parametersList[i] = new MapSqlParameterSource("in${pkColumn.capJavaField}", ${pkColumn.javaField});
         }
@@ -319,7 +348,9 @@ public class ${ClassName}RepositoryImpl implements ${ClassName}Repository
      * @param ${subclassName}List ${subTable.functionName}列表
      * @return 结果
      */
-    public int batch${subClassName}(List<${subClassName}> ${subclassName}List) {
+    @Override
+    public int batch${subClassName}(List<${subClassName}> ${subclassName}List)
+    {
 #set($insertColumns="")
 #set($insertComas="")
 #foreach($column in $subTable.columns)
@@ -334,7 +365,8 @@ public class ${ClassName}RepositoryImpl implements ${ClassName}Repository
         String insertSql = "INSERT INTO${subTableName}($insertColumns) VALUES($insertComas)";
 
         MapSqlParameterSource[] parametersList = new MapSqlParameterSource[${subclassName}List.size()];
-        for (int i = 0; i < parametersList.length; i++) {
+        for (int i = 0; i < parametersList.length; i++)
+        {
             ${subClassName} ${subclassName} = ${subclassName}List.get(i);
 
             MapSqlParameterSource parameters = new MapSqlParameterSource();
