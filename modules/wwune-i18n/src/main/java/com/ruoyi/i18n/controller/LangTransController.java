@@ -46,6 +46,16 @@ public class LangTransController extends BaseController
     }
 
     /**
+     * 查询指定语言和模块的翻译文本列表
+     */
+    @GetMapping("/module/{moduleTag}")
+    public List<LangTrans> getModuleList(@PathVariable String moduleTag)
+    {
+        List<LangTrans> moduleTextList = langTransService.tryGetModuleTransTextFromRedis(moduleTag);
+        return moduleTextList;
+    }
+
+    /**
      * 导出翻译文本列表
      */
     @PreAuthorize("@ss.hasPermi('i18n:translang:export')")
