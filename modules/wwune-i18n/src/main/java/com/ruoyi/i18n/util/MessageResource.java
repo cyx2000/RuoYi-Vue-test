@@ -24,7 +24,8 @@ public class MessageResource extends AbstractMessageSource {
 
     protected final String SPLIT_CODE = ":";
 
-    private String getText(String code, Locale locale) {
+    private String getText(String code, Locale locale)
+    {
         String lang = locale.getLanguage();
 
         int lastDot = StringUtils.lastIndexOf(code, '.');
@@ -55,14 +56,16 @@ public class MessageResource extends AbstractMessageSource {
             localeText = transtext.getTransText();
         }
 
-        if (StringUtils.isNotEmpty(localeText)) {
+        if (StringUtils.isNotEmpty(localeText))
+        {
             resourceText = localeText;
         }
         return resourceText;
     }
 
     @Override
-    protected @Nullable MessageFormat resolveCode(String code, Locale locale) {
+    protected @Nullable MessageFormat resolveCode(String code, Locale locale)
+    {
         Locale target = LocaleContextHolder.getLocale();
         String msg = getText(code, target);
         MessageFormat result = createMessageFormat(msg, target);
@@ -70,7 +73,8 @@ public class MessageResource extends AbstractMessageSource {
     }
 
     @Override
-    protected String resolveCodeWithoutArguments(String code, Locale locale) {
+    protected String resolveCodeWithoutArguments(String code, Locale locale)
+    {
         Locale target = LocaleContextHolder.getLocale();
         String result = getText(code, target);
         return result;
