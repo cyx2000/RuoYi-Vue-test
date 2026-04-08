@@ -41,6 +41,7 @@ public class LangLanguageRepositoryImpl implements LangLanguageRepository
      * @param langId 语言主键
      * @return 语言
      */
+    @Override
     public LangLanguage selectLangLanguageByLangId(Integer langId) {
         String sql = baseSelectSql + " AND a.lang_id=:inLangId";
 
@@ -72,6 +73,7 @@ public class LangLanguageRepositoryImpl implements LangLanguageRepository
      * @param langLanguage 语言
      * @return 语言集合
      */
+    @Override
     public List<LangLanguage> selectLangLanguageList(LangLanguage langLanguage) {
         String sql = baseSelectSql + " ORDER BY a.sort ASC";
 
@@ -84,6 +86,7 @@ public class LangLanguageRepositoryImpl implements LangLanguageRepository
      * @param langLanguage 语言
      * @return 分页完成的语言集合
      */
+    @Override
     public TableDataInfo getPagedListResp(LangLanguage langLanguage) {
         String selectCountSql = "SELECT COUNT(1) FROM lang_language a WHERE 1=1";
 
@@ -108,6 +111,7 @@ public class LangLanguageRepositoryImpl implements LangLanguageRepository
      * @param langLanguage 语言
      * @return 结果
      */
+    @Override
     public int insertLangLanguage(LangLanguage langLanguage) {
         String langTag = langLanguage.getLangTag(); // 语言标签
         Integer sort = langLanguage.getSort(); // 展示顺序
@@ -136,6 +140,7 @@ public class LangLanguageRepositoryImpl implements LangLanguageRepository
      * @param langLanguage 语言
      * @return 结果
      */
+    @Override
     public int updateLangLanguage(LangLanguage langLanguage) {
         Integer langId = langLanguage.getLangId();
         String langTag = langLanguage.getLangTag();
@@ -193,6 +198,7 @@ public class LangLanguageRepositoryImpl implements LangLanguageRepository
      * @param langId 语言主键
      * @return 结果
      */
+    @Override
     public int deleteLangLanguageByLangId(Integer langId) {
         return this.deleteLangLanguageByLangIds(new Integer[]{langId});
     }
@@ -203,6 +209,7 @@ public class LangLanguageRepositoryImpl implements LangLanguageRepository
      * @param langIds 需要删除的数据主键集合
      * @return 结果
      */
+    @Override
     public int deleteLangLanguageByLangIds(Integer[] langIds) {
         String deleteSql = "DELETE FROM lang_language WHERE lang_id=:inLangId";
 

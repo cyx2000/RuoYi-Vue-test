@@ -42,6 +42,7 @@ public class LangTransTagRepositoryImpl implements LangTransTagRepository
      * @param tagId 翻译标签主键
      * @return 翻译标签
      */
+    @Override
     public LangTransTag selectLangTransTagByTagId(Integer tagId) {
         String sql = baseSelectSql + " AND a.tag_id=:inTagId";
 
@@ -57,6 +58,7 @@ public class LangTransTagRepositoryImpl implements LangTransTagRepository
      * @param langTransTag 翻译标签
      * @return 翻译标签
      */
+    @Override
     public LangTransTag selectLangTransTag(LangTransTag langTransTag) {
         StringBuilder sqlBuilder = new StringBuilder(baseSelectSql);
         MapSqlParameterSource parameters = new MapSqlParameterSource();
@@ -73,6 +75,7 @@ public class LangTransTagRepositoryImpl implements LangTransTagRepository
      * @param langTransTag 翻译标签
      * @return 翻译标签集合
      */
+    @Override
     public List<LangTransTag> selectLangTransTagList(LangTransTag langTransTag) {
         StringBuilder sqlBuilder = new StringBuilder(baseSelectSql);
         MapSqlParameterSource parameters = new MapSqlParameterSource();
@@ -113,6 +116,7 @@ public class LangTransTagRepositoryImpl implements LangTransTagRepository
      * @param langTransTag 翻译标签
      * @return 分页完成的翻译标签集合
      */
+    @Override
     public TableDataInfo getPagedListResp(LangTransTag langTransTag) {
 
         StringBuilder sqlBuilder = new StringBuilder();
@@ -174,6 +178,7 @@ public class LangTransTagRepositoryImpl implements LangTransTagRepository
      * @param langTransTag 翻译标签
      * @return 结果
      */
+    @Override
     public int insertLangTransTag(LangTransTag langTransTag) {
         String tagType = langTransTag.getTagType(); // 类型（比如java，file）
         String module = langTransTag.getModule(); // 模块（比如exception，write）
@@ -200,6 +205,7 @@ public class LangTransTagRepositoryImpl implements LangTransTagRepository
      * @param langTransTag 翻译标签
      * @return 结果
      */
+    @Override
     public int updateLangTransTag(LangTransTag langTransTag) {
         Integer tagId = langTransTag.getTagId();
         String tagType = langTransTag.getTagType();
@@ -251,6 +257,7 @@ public class LangTransTagRepositoryImpl implements LangTransTagRepository
      * @param tagId 翻译标签主键
      * @return 结果
      */
+    @Override
     public int deleteLangTransTagByTagId(Integer tagId) {
         return this.deleteLangTransTagByTagIds(new Integer[]{tagId});
     }
@@ -261,6 +268,7 @@ public class LangTransTagRepositoryImpl implements LangTransTagRepository
      * @param tagIds 需要删除的数据主键集合
      * @return 结果
      */
+    @Override
     public int deleteLangTransTagByTagIds(Integer[] tagIds) {
         String deleteSql = "DELETE FROM lang_trans_tag WHERE tag_id=:inTagId";
 

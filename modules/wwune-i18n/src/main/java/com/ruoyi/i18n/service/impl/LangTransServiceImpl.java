@@ -157,6 +157,7 @@ public class LangTransServiceImpl implements ILangTransService
      *
      * @param transtext 翻译文本
      */
+    @Override
     public void checkTransTextAndSetId(LangTrans transtext) throws Exception
     {
         BeanValidators.validateWithException(validator, transtext);

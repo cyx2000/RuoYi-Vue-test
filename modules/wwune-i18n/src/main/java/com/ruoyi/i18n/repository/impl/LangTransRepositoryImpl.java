@@ -43,6 +43,7 @@ public class LangTransRepositoryImpl implements LangTransRepository
      * @param langTrans 翻译文本
      * @return 翻译文本
      */
+    @Override
     public LangTrans selectLangTransById(LangTrans langTrans) {
         Integer langId = langTrans.getLangId();
         Integer tagId = langTrans.getTagId();
@@ -98,6 +99,7 @@ public class LangTransRepositoryImpl implements LangTransRepository
      * @param langTrans 翻译文本
      * @return 翻译文本集合
      */
+    @Override
     public List<LangTrans> selectLangTransList(LangTrans langTrans) {
         StringBuilder sqlBuilder = new StringBuilder(baseSelectSql);
         MapSqlParameterSource parameters = new MapSqlParameterSource();
@@ -113,6 +115,7 @@ public class LangTransRepositoryImpl implements LangTransRepository
      * @param langTrans 翻译文本
      * @return 分页完成的翻译文本集合
      */
+    @Override
     public TableDataInfo getPagedListResp(LangTrans langTrans) {
 
         StringBuilder sqlBuilder = new StringBuilder();
@@ -164,6 +167,7 @@ public class LangTransRepositoryImpl implements LangTransRepository
      * @param langTrans 翻译文本
      * @return 结果
      */
+    @Override
     public int insertLangTrans(LangTrans langTrans) {
         Integer longId = langTrans.getLangId(); // 语言序号
         Integer tagId = langTrans.getTagId(); // 标签序号
@@ -188,6 +192,7 @@ public class LangTransRepositoryImpl implements LangTransRepository
      * @param langTrans 翻译文本
      * @return 结果
      */
+    @Override
     public int updateLangTrans(LangTrans langTrans) {
         Integer langId = langTrans.getLangId();
         Integer tagId = langTrans.getTagId();
@@ -216,6 +221,7 @@ public class LangTransRepositoryImpl implements LangTransRepository
      * @param langId 翻译文本主键
      * @return 结果
      */
+    @Override
     public int deleteLangTransByLangId(Integer langId) {
         return this.deleteLangTransByLangIds(new Integer[]{langId});
     }
@@ -226,6 +232,7 @@ public class LangTransRepositoryImpl implements LangTransRepository
      * @param langIds 需要删除的数据主键集合
      * @return 结果
      */
+    @Override
     public int deleteLangTransByLangIds(Integer[] langIds) {
         String deleteSql = "DELETE FROM lang_trans WHERE lang_id=:inLangId";
 
