@@ -8,10 +8,14 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
+
 import com.ruoyi.common.constant.Constants;
+import com.ruoyi.common.filter.LanguageFilter;
 import com.ruoyi.common.filter.RefererFilter;
 import com.ruoyi.common.filter.RepeatableFilter;
 import com.ruoyi.common.filter.XssFilter;
+import com.ruoyi.common.i18n.LanguageSource;
 import com.ruoyi.common.utils.StringUtils;
 
 /**
@@ -30,6 +34,18 @@ public class FilterConfig
 
     @Value("${referer.allowed-domains}")
     private String allowedDomains;
+
+    @Bean
+    @DependsOn("languageSourceImpl")
+    public FilterRegistrationBean<LanguageFilter> languageFileterRegistration(LanguageSource languageSource)
+    {
+        FilterRegistrationBean<LanguageFilter> registration = new FilterRegistrationBean<LanguageFilter>();
+        registration.setFilter(new LanguageFilter(languageSource));
+        registration.addUrlPatterns("/*");
+        registration.setName("languageFileter");
+        registration.setOrder(FilterRegistrationBean.HIGHEST_PRECEDENCE);
+        return registration;
+    }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Bean
