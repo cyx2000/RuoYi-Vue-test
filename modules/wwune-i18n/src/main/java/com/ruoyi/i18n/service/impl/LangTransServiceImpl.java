@@ -120,15 +120,22 @@ public class LangTransServiceImpl implements ILangTransService
      * @return 翻译文本列表
      */
     @Override
-    public List<LangTrans> tryLoadModuleTransTextToRedis(String moduleKey)
+    public synchronized List<LangTrans> tryLoadModuleTransTextToRedis(String moduleKey)
     {
-        List<LangTrans> moduleTransTexts = this.selectLangTransListByModuleKey(moduleKey);
-
         String lang = LocaleContextHolder.getLocale().getLanguage();
 
         String langMuduleKey = lang + ":" + moduleKey;
 
-        Map<String, LangTrans> moduleMap = new HashMap<String, LangTrans>();
+        Map<String, LangTrans> moduleMap = redisCache.getCacheMap(langMuduleKey);
+
+        if (StringUtils.isNotEmpty(moduleMap))
+        {
+            return (List<LangTrans>) moduleMap.values();
+        }
+
+        List<LangTrans> moduleTransTexts = this.selectLangTransListByModuleKey(moduleKey);
+
+        moduleMap = new HashMap<String, LangTrans>();
 
         for (LangTrans langTrans : moduleTransTexts) {
             String label = langTrans.getTranstag().getLabel();
