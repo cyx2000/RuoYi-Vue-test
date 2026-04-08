@@ -10,7 +10,7 @@ import com.ruoyi.i18n.util.MessageResource;
 public class LanguageConfig {
 
     @Bean
-    public MessageSource messageResource()
+    public MessageSource messageSource()
     {
         return new MessageResource();
     }
