@@ -27,8 +27,8 @@ public class ${ClassName}ServiceImpl implements I${ClassName}Service
 {
     @Resource
     private ${ClassName}Repository ${className}Repository;
-
 #if($table.sub)
+
     @Resource
     private ${subClassName}Repository ${subclassName}Repository;
 #end
