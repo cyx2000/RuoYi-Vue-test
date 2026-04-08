@@ -25,12 +25,19 @@ public class MessageResource extends AbstractMessageSource {
     protected final String SPLIT_CODE = ":";
 
     private String getText(String code, Locale locale) {
-        String localeCode = locale.getLanguage();
-        String key = localeCode + SPLIT_CODE + code; // eg: zh:user.login.notExist
+        String lang = locale.getLanguage();
+
+        int lastDot = StringUtils.lastIndexOf(code, '.');
+
+        String moduleKey = StringUtils.substring(code, 0, lastDot); // eg: user.login
+
+        String label = StringUtils.substring(code, lastDot + 1);; // eg: notExist
+
+        String key = lang + SPLIT_CODE + moduleKey; // eg: zh:user.login
 
         String resourceText = code;
 
-        LangTrans transtext = redisCache.getCacheObject(key);
+        LangTrans transtext = redisCache.getCacheMapValue(key, label);
 
         String localeText = null;
 
@@ -41,9 +48,9 @@ public class MessageResource extends AbstractMessageSource {
 
         if(StringUtils.isEmpty(localeText))
         {
-            langTransService.tryLoadModuleTransTextToRedis(getModuleKey(code));
+            langTransService.tryLoadModuleTransTextToRedis(moduleKey);
 
-            transtext = redisCache.getCacheObject(key);
+            transtext = redisCache.getCacheMapValue(key, label);
 
             localeText = transtext.getTransText();
         }
@@ -52,13 +59,6 @@ public class MessageResource extends AbstractMessageSource {
             resourceText = localeText;
         }
         return resourceText;
-    }
-
-    protected String getModuleKey(String input)
-    {
-        String moduleKey = String.copyValueOf(input.toCharArray());
-        int lastDot = StringUtils.lastIndexOf(input, '.');
-        return StringUtils.substring(moduleKey, 0, lastDot);
     }
 
     @Override

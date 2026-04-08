@@ -1,7 +1,8 @@
 package com.ruoyi.i18n.service.impl;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import jakarta.annotation.Resource;
@@ -98,36 +99,18 @@ public class LangTransServiceImpl implements ILangTransService
     @Override
     public List<LangTrans> tryGetModuleTransTextFromRedis(String moduleKey)
     {
-        List<String> labels = redisCache.getCacheList(moduleKey);
-
         String lang = LocaleContextHolder.getLocale().getLanguage();
 
-        List<LangTrans> transtexts = new ArrayList<>(labels.size());
+        String langMuduleKey = lang + ":" + moduleKey;
 
-        if (StringUtils.isNotEmpty(labels))
+        Map<String, LangTrans> moduleMap = redisCache.getCacheMap(langMuduleKey);
+
+        if (StringUtils.isNotEmpty(moduleMap))
         {
-            String langMuduleKey = lang + ":" + moduleKey;
-
-            if (redisCache.hasKey(langMuduleKey + "." + labels.getFirst()))
-            {
-                for (String label : labels)
-                {
-                    LangTrans transtext = redisCache.getCacheObject(langMuduleKey + "." + label);
-                    if (StringUtils.isNotNull(transtext))
-                    {
-                        transtexts.clear();
-                        break;
-                    }
-
-                    transtexts.add(transtext);
-                }
-            }
+            return (List<LangTrans>) moduleMap.values();
         }
-        if (StringUtils.isEmpty(transtexts))
-        {
-            return tryLoadModuleTransTextToRedis(moduleKey);
-        }
-        return transtexts;
+
+        return tryLoadModuleTransTextToRedis(moduleKey);
     }
 
     /**
@@ -145,21 +128,19 @@ public class LangTransServiceImpl implements ILangTransService
 
         String langMuduleKey = lang + ":" + moduleKey;
 
-        List<String> labels = new ArrayList<>();
+        Map<String, LangTrans> moduleMap = new HashMap<String, LangTrans>();
+
         for (LangTrans langTrans : moduleTransTexts) {
             String label = langTrans.getTranstag().getLabel();
-            String redisKey = langMuduleKey + "." + label;
 
-            labels.add(label);
-
-            // TODO 缓存时间配置化，当前为5分钟
-            redisCache.setCacheObject(redisKey, langTrans, 5, TimeUnit.MINUTES);
+            moduleMap.put(label, langTrans);
         }
 
-        redisCache.setCacheList(moduleKey, labels);
+        // eg: {"zh:user.login": "notMatch": transObj1, "locked": transObj2 }
+        redisCache.setCacheMap(langMuduleKey, moduleMap);
 
         // TODO 缓存时间配置化，当前为5分钟
-        redisCache.expire(moduleKey, 5L, TimeUnit.MINUTES);
+        redisCache.expire(langMuduleKey, 5L, TimeUnit.MINUTES);
 
         return moduleTransTexts;
     }
