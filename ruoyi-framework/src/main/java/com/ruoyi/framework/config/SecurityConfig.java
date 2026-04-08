@@ -15,9 +15,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.filter.CorsFilter;
 import com.ruoyi.framework.config.properties.PermitAllUrlProperties;
+import com.ruoyi.framework.i18n.LanguageFilter;
 import com.ruoyi.framework.security.filter.JwtAuthenticationTokenFilter;
 import com.ruoyi.framework.security.handle.AuthenticationEntryPointImpl;
 import com.ruoyi.framework.security.handle.LogoutSuccessHandlerImpl;
+
+import jakarta.annotation.Resource;
 
 /**
  * spring security配置
@@ -57,6 +60,9 @@ public class SecurityConfig
      */
     @Autowired
     private PermitAllUrlProperties permitAllUrl;
+
+    @Resource
+    LanguageFilter languagefilter;
 
 	/**
 	 * 身份验证实现
@@ -111,7 +117,9 @@ public class SecurityConfig
             .logout(logout -> logout.logoutUrl("/logout").logoutSuccessHandler(logoutSuccessHandler))
             // 添加JWT filter
             .addFilterBefore(authenticationTokenFilter, UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(languagefilter, JwtAuthenticationTokenFilter.class)
             // 添加CORS filter
+            .addFilterBefore(corsFilter, LanguageFilter.class)
             .addFilterBefore(corsFilter, JwtAuthenticationTokenFilter.class)
             .addFilterBefore(corsFilter, LogoutFilter.class)
             .build();
