@@ -84,7 +84,7 @@ public class LangLanguageController extends BaseController
             List<LangTrans> transtexts = util.importExcel(file.getInputStream());
 
             String operName = getUsername();
-            langTransService.importTransTexts(transtexts, operName, langId);
+            langTransService.importTransTexts(transtexts, operName, lang);
             return success("全部数据导入成功！");
         } else {
             throw new ServiceException("导入不存在的语言");

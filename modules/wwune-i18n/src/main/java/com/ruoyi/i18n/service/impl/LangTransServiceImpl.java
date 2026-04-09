@@ -17,6 +17,7 @@ import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.i18n.LocaleContextHolder;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.bean.BeanValidators;
+import com.ruoyi.common.utils.json.JsonUtils;
 import com.ruoyi.i18n.repository.LangLanguageRepository;
 import com.ruoyi.i18n.repository.LangTransRepository;
 import com.ruoyi.i18n.repository.LangTransTagRepository;
@@ -260,12 +261,12 @@ public class LangTransServiceImpl implements ILangTransService
      * 导入翻译文本数据
      *
      * @param transtextList 翻译文本列表
-     * @param isUpdateSupport 是否更新支持，如果已存在，则进行更新数据
      * @param operName 操作用户
+     * @param lang 当前语言
      * @return 信息
      */
     @Override
-    public void importTransTexts(List<LangTrans> transtextList, String operName, Integer langId)
+    public void importTransTexts(List<LangTrans> transtextList, String operName, LangLanguage lang)
     {
         if (StringUtils.isEmpty(transtextList))
         {
@@ -275,11 +276,13 @@ public class LangTransServiceImpl implements ILangTransService
         int failureNum = 0;
         StringBuilder failureMsg = new StringBuilder();
 
+        List<Integer> currentTagIds = JsonUtils.jsonArrayToList(lang.getTransTags(), Integer.class);
+
         for (int i = 0; i < transtextList.size(); i++)
         {
             LangTrans transtext = transtextList.get(i);
 
-            transtext.setLangId(langId);
+            transtext.setLangId(lang.getLangId());
 
             try
             {
@@ -289,6 +292,8 @@ public class LangTransServiceImpl implements ILangTransService
 
                 langTransRepository.insertLangTrans(transtext);
 
+                currentTagIds.remove(transtext.getTagId());
+
             } catch (Exception e) {
                 failureNum++;
                 String msg = "<br/>第 " + (i+1) + " 条数据：";
@@ -296,6 +301,9 @@ public class LangTransServiceImpl implements ILangTransService
                 LOGGER.error(msg, e);
             }
         }
+
+        lang.setTransTags(JsonUtils.toJsonStr(currentTagIds));
+        langLanguageRepository.updateLangLanguageTransTags(lang);
 
         if (failureNum > 0)
         {

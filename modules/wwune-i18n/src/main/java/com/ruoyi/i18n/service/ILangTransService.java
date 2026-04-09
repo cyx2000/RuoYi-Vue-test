@@ -3,6 +3,7 @@ package com.ruoyi.i18n.service;
 import java.util.List;
 
 import com.ruoyi.common.core.page.TableDataInfo;
+import com.ruoyi.i18n.domain.LangLanguage;
 import com.ruoyi.i18n.domain.LangTrans;
 
 /**
@@ -104,9 +105,9 @@ public interface ILangTransService
      * 导入翻译文本数据
      *
      * @param transtextList 翻译文本列表
-     * @param isUpdateSupport 是否更新支持，如果已存在，则进行更新数据
      * @param operName 操作用户
+     * @param lang 当前语言
      * @return 信息
      */
-    public void importTransTexts(List<LangTrans> transtextList, String operName, Integer langId);
+    public void importTransTexts(List<LangTrans> transtextList, String operName, LangLanguage lang);
 }
