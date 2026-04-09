@@ -66,6 +66,11 @@ public class MessageResource extends AbstractMessageSource {
     @Override
     protected @Nullable MessageFormat resolveCode(String code, Locale locale)
     {
+        // 判断spring的翻译标签，如果是则返回null，使用spring的默认英语信息
+        if (Character.isUpperCase(code.charAt(0)))
+        {
+            return null;
+        }
         Locale target = LocaleContextHolder.getLocale();
         String msg = getText(code, target);
         MessageFormat result = createMessageFormat(msg, target);
@@ -73,8 +78,13 @@ public class MessageResource extends AbstractMessageSource {
     }
 
     @Override
-    protected String resolveCodeWithoutArguments(String code, Locale locale)
+    protected @Nullable String resolveCodeWithoutArguments(String code, Locale locale)
     {
+        // 判断spring的翻译标签，如果是则返回null，使用spring的默认英语信息
+        if (Character.isUpperCase(code.charAt(0)))
+        {
+            return null;
+        }
         Locale target = LocaleContextHolder.getLocale();
         String result = getText(code, target);
         return result;
