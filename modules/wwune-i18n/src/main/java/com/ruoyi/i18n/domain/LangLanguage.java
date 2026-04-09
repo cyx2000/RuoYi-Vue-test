@@ -31,8 +31,11 @@ public class LangLanguage extends BaseEntity
     /** 默认语言（0不是默认，1是默认） */
     private String isDefault;
 
+    /** 未添加翻译文本的翻译标签id列表 */
+    private String transTags;
+
     /** 翻译标签列表 */
-    private List<LangTransTag> transtags;
+    private List<LangTransTag> transtagList;
 
     public void setLangId(Integer langId)
     {
@@ -84,12 +87,20 @@ public class LangLanguage extends BaseEntity
         return isDefault;
     }
 
+    public String getTransTags() {
+        return transTags;
+    }
+
+    public void setTransTags(String transTags) {
+        this.transTags = transTags;
+    }
+
     public List<LangTransTag> getTranstags() {
-        return transtags;
+        return transtagList;
     }
 
     public void setTranstags(List<LangTransTag> transtags) {
-        this.transtags = transtags;
+        this.transtagList = transtags;
     }
 
     @Override

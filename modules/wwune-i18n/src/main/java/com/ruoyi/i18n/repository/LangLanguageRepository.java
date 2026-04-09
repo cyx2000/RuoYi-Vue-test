@@ -62,6 +62,14 @@ public interface LangLanguageRepository
     public int updateLangLanguage(LangLanguage langLanguage);
 
     /**
+     * 修改语言未添加翻译的标签
+     *
+     * @param langLanguage 语言
+     * @return 结果
+     */
+    public int updateLangLanguageTransTags(LangLanguage langLanguage);
+
+    /**
      * 删除语言
      *
      * @param langId 语言主键

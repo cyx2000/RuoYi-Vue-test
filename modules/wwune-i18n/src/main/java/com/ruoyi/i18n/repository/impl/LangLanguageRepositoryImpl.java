@@ -24,7 +24,7 @@ public class LangLanguageRepositoryImpl implements LangLanguageRepository
 {
     private DBService dbService;
 
-    private String baseSelectSql = "SELECT a.lang_id, a.lang_tag, a.sort, a.status, a.is_default, a.remark, a.create_by, a.create_time, a.update_by, a.update_time FROM lang_language a WHERE 1=1";
+    private String baseSelectSql = "SELECT a.lang_id, a.lang_tag, a.trans_tags, a.sort, a.status, a.is_default, a.remark, a.create_by, a.create_time, a.update_by, a.update_time FROM lang_language a WHERE 1=1";
 
     public LangLanguageRepositoryImpl(DBService inDbService) {
         this.dbService = inDbService;
@@ -127,8 +127,9 @@ public class LangLanguageRepositoryImpl implements LangLanguageRepository
         parameters.addValue("inIsDefault", isDefault);
         parameters.addValue("inRemark", remark);
         parameters.addValue("inCreateBy", createBy);
+        parameters.addValue("inTransTags", "[]");
 
-        String insertSql = "INSERT INTO lang_language(lang_tag,sort,status,is_default,remark,create_by,create_time) VALUES(:inLangTag, :inSort, :inStatus, :inIsDefault, :inRemark, :inCreateBy, SYSDATE())";
+        String insertSql = "INSERT INTO lang_language(lang_tag,sort,trans_tags,status,is_default,remark,create_by,create_time) VALUES(:inLangTag, :inSort, :inTransTags, :inStatus, :inIsDefault, :inRemark, :inCreateBy, SYSDATE())";
 
         int[] insertResList = dbService.batchUpdate(insertSql, new MapSqlParameterSource[]{parameters});
         return insertResList[0];
@@ -190,6 +191,27 @@ public class LangLanguageRepositoryImpl implements LangLanguageRepository
             res = updatedResList[0];
         }
         return res;
+    }
+
+    /**
+     * 修改语言未添加翻译的标签
+     *
+     * @param langLanguage 语言
+     * @return 结果
+     */
+    public int updateLangLanguageTransTags(LangLanguage langLanguage)
+    {
+        Integer langId = langLanguage.getLangId();
+        String transTags = langLanguage.getTransTags();
+
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("inLangId", langId);
+        parameters.addValue("inTransTags", transTags);
+
+        String updateSql = "UPDATE lang_language SET trans_tags=:inTransTags WHERE lang_id=:inLangId";
+
+        int[] updatedResList = dbService.batchUpdate(updateSql, new MapSqlParameterSource[]{parameters});
+        return updatedResList[0];
     }
 
     /**
