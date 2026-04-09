@@ -82,6 +82,7 @@ public class LangTransServiceImpl implements ILangTransService
         List<Integer> moduleTransTagIds = langTransTagRepository.selectModuleLangTransTagIds(tanstag);
 
         if (StringUtils.isEmpty(moduleTransTagIds)) {
+            LOGGER.error("错误的模块标签：" + moduleKey);
             throw new ServiceException("错误的标签");
         }
 
