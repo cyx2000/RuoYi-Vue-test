@@ -77,6 +77,11 @@ public class LangLanguage extends BaseEntity
         return status;
     }
 
+    public boolean isNormal()
+    {
+        return  status == 0;
+    }
+
     public void setIsDefault(String isDefault)
     {
         this.isDefault = isDefault;

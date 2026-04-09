@@ -7,7 +7,9 @@ import org.springframework.stereotype.Service;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.common.utils.json.JsonUtils;
 import com.ruoyi.i18n.repository.LangLanguageRepository;
+import com.ruoyi.i18n.repository.LangTransRepository;
 import com.ruoyi.i18n.repository.LangTransTagRepository;
 import com.ruoyi.i18n.domain.LangLanguage;
 import com.ruoyi.i18n.domain.LangTransTag;
@@ -28,6 +30,9 @@ public class LangLanguageServiceImpl implements ILangLanguageService
     @Resource
     private LangTransTagRepository langTransTagRepository;
 
+    @Resource
+    private LangTransRepository langTransRepository;
+
     /**
      * 查询语言
      *
@@ -41,7 +46,7 @@ public class LangLanguageServiceImpl implements ILangLanguageService
     }
 
     /**
-     * 查询语言及翻译标签列表
+     * 查询语言及需要翻译的翻译标签列表
      *
      * @param langId 语言主键
      * @return 语言
@@ -51,11 +56,33 @@ public class LangLanguageServiceImpl implements ILangLanguageService
         LangLanguage lang = selectLangLanguageByLangId(langId);
         if (StringUtils.isNotNull(lang))
         {
-            List<LangTransTag> transtags = langTransTagRepository.selectLangTransTagList(new LangTransTag());
-
+            List<LangTransTag> transtags = null;
+            if (lang.isNormal()) {
+                transtags = queryNewTransTags(lang.getTransTags());
+            } else {
+                long languageTextCount = langTransRepository.selectCountLangTransByLangId(langId);
+                if (languageTextCount == 0l)
+                {
+                    transtags = langTransTagRepository.selectLangTransTagList(new LangTransTag());
+                } else {
+                    transtags = queryNewTransTags(lang.getTransTags());
+                }
+            }
             lang.setTranstags(transtags);
         }
         return lang;
+    }
+
+    protected List<LangTransTag> queryNewTransTags(String jsonStr)
+    {
+        List<Integer> needToAddTags = JsonUtils.jsonArrayToList(jsonStr, Integer.class);
+
+        if (StringUtils.isNotEmpty(needToAddTags))
+        {
+            return langTransTagRepository.selectLangTransTagListByIds(needToAddTags);
+        }
+
+        return null;
     }
 
     /**
