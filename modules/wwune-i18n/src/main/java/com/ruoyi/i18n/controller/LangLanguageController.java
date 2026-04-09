@@ -105,11 +105,15 @@ public class LangLanguageController extends BaseController
             List<LangTrans> transtexts = new ArrayList<>();
 
             List<LangTransTag> transtags = lang.getTranstags();
-            for (LangTransTag transtag: transtags) {
-                LangTrans transtext = new LangTrans();
-                transtext.setTranstag(transtag);
 
-                transtexts.add(transtext);
+            if (StringUtils.isNotNull(transtags))
+            {
+                for (LangTransTag transtag: transtags) {
+                    LangTrans transtext = new LangTrans();
+                    transtext.setTranstag(transtag);
+
+                    transtexts.add(transtext);
+                }
             }
 
             ExcelUtil<LangTrans> util = new ExcelUtil<LangTrans>(LangTrans.class);
