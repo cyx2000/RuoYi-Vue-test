@@ -46,6 +46,15 @@ public interface ILangTransTagService
     public int insertLangTransTag(LangTransTag langTransTag);
 
     /**
+     * 导入翻译标签
+     *
+     * @param langTransTags 翻译标签列表
+     * @param operName 用户名
+     * @return 结果
+     */
+    public void importTransTags(List<LangTransTag> langTransTags, String operName);
+
+    /**
      * 修改翻译标签
      *
      * @param langTransTag 翻译标签

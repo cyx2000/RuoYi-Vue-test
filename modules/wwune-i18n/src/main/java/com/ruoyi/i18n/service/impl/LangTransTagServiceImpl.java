@@ -1,13 +1,20 @@
 package com.ruoyi.i18n.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.annotation.Resource;
+import jakarta.validation.Validator;
+
 import org.springframework.stereotype.Service;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.common.utils.bean.BeanValidators;
+import com.ruoyi.common.utils.json.JsonUtils;
+import com.ruoyi.i18n.repository.LangLanguageRepository;
 import com.ruoyi.i18n.repository.LangTransTagRepository;
+import com.ruoyi.i18n.domain.LangLanguage;
 import com.ruoyi.i18n.domain.LangTransTag;
 import com.ruoyi.i18n.service.ILangTransTagService;
 
@@ -23,6 +30,11 @@ public class LangTransTagServiceImpl implements ILangTransTagService
     @Resource
     private LangTransTagRepository langTransTagRepository;
 
+    @Resource
+    private LangLanguageRepository langLanguageRepository;
+
+    @Resource
+    protected Validator validator;
 
     /**
      * 查询翻译标签
@@ -72,9 +84,76 @@ public class LangTransTagServiceImpl implements ILangTransTagService
         LangTransTag queryTransTag = langTransTagRepository.selectLangTransTag(langTransTag);
         if (StringUtils.isNotNull(queryTransTag))
         {
-            throw new ServiceException("已存在翻译标签");
+            throw new ServiceException("已经在数据库中");
         }
         return langTransTagRepository.insertLangTransTag(langTransTag);
+    }
+
+    /**
+     * 导入翻译标签
+     *
+     * @param langTransTags 翻译标签列表
+     * @param operName 用户名
+     * @return 结果
+     */
+    @Override
+    public void importTransTags(List<LangTransTag> langTransTags, String operName)
+    {
+        int failureNum = 0;
+        StringBuilder failureMsg = new StringBuilder();
+
+        if (StringUtils.isEmpty(langTransTags))
+        {
+            throw new ServiceException("没有数据，无法导入");
+        }
+
+        List<Long> transtagIds = new ArrayList<>();
+
+        for (int i = 0; i < langTransTags.size(); ++i)
+        {
+            LangTransTag langTransTag = langTransTags.get(i);
+
+            try
+            {
+                BeanValidators.validateWithException(validator, langTransTag);
+
+                LangTransTag queryTransTag = langTransTagRepository.selectLangTransTag(langTransTag);
+                if (StringUtils.isNotNull(queryTransTag))
+                {
+                    throw new ServiceException("已经在数据库中，无法导入");
+                }
+
+                langTransTag.setCreateBy(operName);
+
+                long pk = langTransTagRepository.insertLangTransTagAndReturnId(langTransTag);
+
+                transtagIds.add(pk);
+
+            } catch (Exception e) {
+                langTransTags.remove(i);
+                failureNum++;
+                String msg = "<br/>第 " + (i+1) + " 条数据：";
+                failureMsg.append(msg + e.getMessage());
+            }
+        }
+
+        List<LangLanguage> currentLanguages = langLanguageRepository.selectLangLanguageList(null);
+
+        for (LangLanguage langLanguage : currentLanguages) {
+            List<Long> current = JsonUtils.jsonArrayToList(langLanguage.getTransTags(), Long.class);
+
+            current.addAll(transtagIds);
+
+            langLanguage.setTransTags(JsonUtils.toJsonStr(current));
+
+            langLanguageRepository.updateLangLanguageTransTags(langLanguage);
+        }
+
+        if (failureNum > 0)
+        {
+            failureMsg.insert(0, "一共有 " + failureNum + " 条错误数据，如下：");
+            throw new ServiceException(failureMsg.toString());
+        }
     }
 
     /**
