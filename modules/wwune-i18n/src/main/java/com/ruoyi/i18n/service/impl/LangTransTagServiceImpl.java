@@ -5,6 +5,8 @@ import java.util.List;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import com.ruoyi.common.core.page.TableDataInfo;
+import com.ruoyi.common.exception.ServiceException;
+import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.i18n.repository.LangTransTagRepository;
 import com.ruoyi.i18n.domain.LangTransTag;
 import com.ruoyi.i18n.service.ILangTransTagService;
@@ -67,6 +69,11 @@ public class LangTransTagServiceImpl implements ILangTransTagService
     @Override
     public int insertLangTransTag(LangTransTag langTransTag)
     {
+        LangTransTag queryTransTag = langTransTagRepository.selectLangTransTag(langTransTag);
+        if (StringUtils.isNotNull(queryTransTag))
+        {
+            throw new ServiceException("已存在翻译标签");
+        }
         return langTransTagRepository.insertLangTransTag(langTransTag);
     }
 
