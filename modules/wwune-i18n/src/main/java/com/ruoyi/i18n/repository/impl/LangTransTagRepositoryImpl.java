@@ -1,6 +1,7 @@
 package com.ruoyi.i18n.repository.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.jdbc.core.SimplePropertyRowMapper;
@@ -180,6 +181,54 @@ public class LangTransTagRepositoryImpl implements LangTransTagRepository
      */
     @Override
     public int insertLangTransTag(LangTransTag langTransTag) {
+        int[] insertResList = this.batchInsertLangTransTag(Arrays.asList(langTransTag));
+        return insertResList[0];
+    }
+
+    /**
+     * 批量新增翻译标签
+     *
+     * @param langTransTags 翻译标签列表
+     * @return 结果
+     */
+    @Override
+    public int[] batchInsertLangTransTag(List<LangTransTag> langTransTags)
+    {
+        MapSqlParameterSource[] parametersList = new MapSqlParameterSource[langTransTags.size()];
+
+        for (int i = 0; i < parametersList.length; ++i) {
+            LangTransTag langTransTag = langTransTags.get(i);
+            String tagType = langTransTag.getTagType(); // 类型（比如java，file）
+            String module = langTransTag.getModule(); // 模块（比如exception，write）
+            String label = langTransTag.getLabel(); // 标签（比如serli，最后拼成java.excep.serli）
+            String toApp = langTransTag.getToApp(); // 发给客户端（0不是，1是）
+            String createBy = langTransTag.getCreateBy(); // 创建者
+
+            MapSqlParameterSource parameters = new MapSqlParameterSource();
+            parameters.addValue("inTagType", tagType);
+            parameters.addValue("inModule", module);
+            parameters.addValue("inLabel", label);
+            parameters.addValue("inToApp", toApp);
+            parameters.addValue("inCreateBy", createBy);
+
+            parametersList[i] = parameters;
+        }
+
+        String insertSql = "INSERT INTO lang_trans_tag(tag_type,module,label,to_app,create_by,create_time) VALUES(:inTagType, :inModule, :inLabel, :inToApp, :inCreateBy, SYSDATE())";
+
+        int[] insertResList = dbService.batchUpdate(insertSql, parametersList);
+        return insertResList;
+    }
+
+    /**
+     * 新增翻译标签并返回主键
+     *
+     * @param langTransTag 翻译标签
+     * @return Id
+     */
+    @Override
+    public long insertLangTransTagAndReturnId(LangTransTag langTransTag)
+    {
         String tagType = langTransTag.getTagType(); // 类型（比如java，file）
         String module = langTransTag.getModule(); // 模块（比如exception，write）
         String label = langTransTag.getLabel(); // 标签（比如serli，最后拼成java.excep.serli）
@@ -195,8 +244,8 @@ public class LangTransTagRepositoryImpl implements LangTransTagRepository
 
         String insertSql = "INSERT INTO lang_trans_tag(tag_type,module,label,to_app,create_by,create_time) VALUES(:inTagType, :inModule, :inLabel, :inToApp, :inCreateBy, SYSDATE())";
 
-        int[] insertResList = dbService.batchUpdate(insertSql, new MapSqlParameterSource[]{parameters});
-        return insertResList[0];
+        long pk = dbService.insertAndReturnPk(insertSql, parameters);
+        return pk;
     }
 
     /**

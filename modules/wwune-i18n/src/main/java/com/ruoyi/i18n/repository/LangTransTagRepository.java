@@ -62,6 +62,22 @@ public interface LangTransTagRepository
     public int insertLangTransTag(LangTransTag langTransTag);
 
     /**
+     * 批量新增翻译标签
+     *
+     * @param langTransTags 翻译标签列表
+     * @return 结果
+     */
+    public int[] batchInsertLangTransTag(List<LangTransTag> langTransTags);
+
+    /**
+     * 新增翻译标签并返回主键
+     *
+     * @param langTransTag 翻译标签
+     * @return Id
+     */
+    public long insertLangTransTagAndReturnId(LangTransTag langTransTag);
+
+    /**
      * 修改翻译标签
      *
      * @param langTransTag 翻译标签

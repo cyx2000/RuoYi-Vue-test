@@ -5,6 +5,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ruoyi.common.annotation.Excel;
+import com.ruoyi.common.annotation.Excel.Type;
 import com.ruoyi.common.core.domain.BaseEntity;
 import com.ruoyi.common.utils.StringUtils;
 
@@ -22,7 +23,7 @@ public class LangTransTag extends BaseEntity
     private static final long serialVersionUID = 1L;
 
     /** 标签序号 */
-    @Excel(name = "标签序号")
+    @Excel(name = "标签序号", type = Type.EXPORT )
     private Integer tagId;
 
     /** 类型（比如java，file） */
@@ -38,7 +39,7 @@ public class LangTransTag extends BaseEntity
     private String label;
 
     /** 发给客户端（0不是，1是） */
-    @Excel(name = "发给客户端", readConverterExp = "0=否,1=是")
+    @Excel(name = "发给客户端", readConverterExp = "N=否,Y=是")
     private String toApp;
 
     public void setTagId(Integer tagId)
