@@ -86,7 +86,21 @@ public class LangTransTagServiceImpl implements ILangTransTagService
         {
             throw new ServiceException("已经在数据库中");
         }
-        return langTransTagRepository.insertLangTransTag(langTransTag);
+        long pk = langTransTagRepository.insertLangTransTagAndReturnId(langTransTag);
+
+        List<LangLanguage> currentLanguages = langLanguageRepository.selectLangLanguageList(null);
+
+        for (LangLanguage langLanguage : currentLanguages) {
+            List<Long> current = JsonUtils.jsonArrayToList(langLanguage.getTransTags(), Long.class);
+
+            current.add(pk);
+
+            langLanguage.setTransTags(JsonUtils.toJsonStr(current));
+
+            langLanguageRepository.updateLangLanguageTransTags(langLanguage);
+        }
+
+        return 1;
     }
 
     /**
