@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -56,6 +58,34 @@ public class LangTransTagController extends BaseController
         List<LangTransTag> list = langTransTagService.selectLangTransTagList(langTransTag);
         ExcelUtil<LangTransTag> util = new ExcelUtil<LangTransTag>(LangTransTag.class);
         util.exportExcel(response, list, "翻译标签数据");
+    }
+
+    /**
+     * 导入指定语言的翻译文本数据
+     */
+    @PreAuthorize("@ss.hasPermi('i18n:translang:import')")
+    @Log(title = "翻译标签", businessType = BusinessType.IMPORT)
+    @PostMapping("/importData")
+    public AjaxResult importData(MultipartFile file) throws Exception
+    {
+        ExcelUtil<LangTransTag> util = new ExcelUtil<LangTransTag>(LangTransTag.class);
+        List<LangTransTag> transtexts = util.importExcel(file.getInputStream());
+
+        String operName = getUsername();
+        langTransTagService.importTransTags(transtexts, operName);
+        return success("全部数据导入成功！");
+    }
+
+    /**
+     * 导出翻译文本模板
+     */
+    @PreAuthorize("@ss.hasPermi('i18n:translang:import')")
+    @PostMapping("/importTemplate")
+    public void importTemplate(HttpServletResponse response)
+    {
+        ExcelUtil<LangTransTag> util = new ExcelUtil<LangTransTag>(LangTransTag.class);
+
+        util.importTemplateExcel(response, "翻译文本");
     }
 
     /**
