@@ -39,6 +39,13 @@ public interface LangTransRepository
     public List<LangTrans> selectLangTransListByIds(Integer langId, List<Integer> transtagIds);
 
     /**
+     * 查询指定语言的翻译文本总个数
+     *
+     * @return 总数
+     */
+    public long selectCountLangTransByLangId(Integer langId);
+
+    /**
      * 根据条件分页查询翻译文本列表
      *
      * @param langTrans 翻译文本

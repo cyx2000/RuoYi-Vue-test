@@ -94,6 +94,23 @@ public class LangTransRepositoryImpl implements LangTransRepository
     }
 
     /**
+     * 查询指定语言的翻译文本总个数
+     *
+     * @return 总数
+     */
+    @Override
+    public long selectCountLangTransByLangId(Integer langId)
+    {
+        String selectCountSql = "SELECT COUNT(1) FROM lang_trans a WHERE a.lang_id=:inLangId";
+
+        MapSqlParameterSource parameters = new MapSqlParameterSource("inLangId", langId);
+
+        long total = dbService.getTotalRows(selectCountSql, parameters);
+
+        return total;
+    }
+
+    /**
      * 根据条件查询翻译文本列表
      *
      * @param langTrans 翻译文本
