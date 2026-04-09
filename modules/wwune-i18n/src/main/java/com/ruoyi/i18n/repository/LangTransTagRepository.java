@@ -38,6 +38,21 @@ public interface LangTransTagRepository
     public List<LangTransTag> selectLangTransTagList(LangTransTag langTransTag);
 
     /**
+     * 查询翻译标签列表
+     *
+     * @param tagIds 翻译标签id列表
+     * @return 翻译标签集合
+     */
+    public List<LangTransTag> selectLangTransTagListByIds(List<Integer> tagIds);
+
+    /**
+     * 查询翻译标签总个数
+     *
+     * @return 总数
+     */
+    public long selectCountLangTransTag();
+
+    /**
      * 根据条件查询模块下的翻译标签id列表
      *
      * @param langTransTag 翻译标签
