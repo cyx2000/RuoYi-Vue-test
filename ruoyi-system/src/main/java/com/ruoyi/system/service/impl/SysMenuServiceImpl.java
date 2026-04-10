@@ -19,6 +19,7 @@ import com.ruoyi.common.core.domain.entity.SysMenu;
 import com.ruoyi.common.core.domain.entity.SysRole;
 import com.ruoyi.common.core.text.Convert;
 import com.ruoyi.common.exception.ServiceException;
+import com.ruoyi.common.utils.MessageUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.system.domain.vo.MetaVo;
@@ -182,7 +183,17 @@ public class SysMenuServiceImpl implements ISysMenuService
             router.setPath(getRouterPath(menu));
             router.setComponent(getComponent(menu));
             router.setQuery(menu.getQuery());
-            router.setMeta(new MetaVo(menu.getMenuName(), menu.getIcon(), StringUtils.equals("1", menu.getIsCache()), menu.getPath()));
+
+            String metaTitle = null;
+            if (StringUtils.isNotEmpty(menu.getRouteName()))
+            {
+                 metaTitle = MessageUtils.message("menu.name." + menu.getRouteName());
+            } else if (StringUtils.isEmpty(menu.getPath()) || StringUtils.ishttp(menu.getPath())) {
+                metaTitle = menu.getMenuName();
+            } else {
+                metaTitle = MessageUtils.message("menu.name." + menu.getPath());
+            }
+            router.setMeta(new MetaVo(metaTitle, menu.getIcon(), StringUtils.equals("1", menu.getIsCache()), menu.getPath()));
             List<SysMenu> cMenus = menu.getChildren();
             if (StringUtils.isNotEmpty(cMenus) && UserConstants.TYPE_DIR.equals(menu.getMenuType()))
             {
@@ -198,7 +209,7 @@ public class SysMenuServiceImpl implements ISysMenuService
                 children.setPath(menu.getPath());
                 children.setComponent(menu.getComponent());
                 children.setName(getRouteName(menu.getRouteName(), menu.getPath()));
-                children.setMeta(new MetaVo(menu.getMenuName(), menu.getIcon(), StringUtils.equals("1", menu.getIsCache()), menu.getPath()));
+                children.setMeta(new MetaVo(metaTitle, menu.getIcon(), StringUtils.equals("1", menu.getIsCache()), menu.getPath()));
                 children.setQuery(menu.getQuery());
                 childrenList.add(children);
                 router.setChildren(childrenList);
@@ -213,7 +224,7 @@ public class SysMenuServiceImpl implements ISysMenuService
                 children.setPath(routerPath);
                 children.setComponent(UserConstants.INNER_LINK);
                 children.setName(getRouteName(menu.getRouteName(), routerPath));
-                children.setMeta(new MetaVo(menu.getMenuName(), menu.getIcon(), menu.getPath()));
+                children.setMeta(new MetaVo(metaTitle, menu.getIcon(), menu.getPath()));
                 childrenList.add(children);
                 router.setChildren(childrenList);
             }
