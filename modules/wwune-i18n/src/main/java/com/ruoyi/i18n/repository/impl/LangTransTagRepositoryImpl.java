@@ -262,7 +262,7 @@ public class LangTransTagRepositoryImpl implements LangTransTagRepository
         String tagType = langTransTag.getTagType(); // 类型（比如java，file）
         String module = langTransTag.getModule(); // 模块（比如exception，write）
         String label = langTransTag.getLabel(); // 标签（比如serli，最后拼成java.excep.serli）
-        String toApp = langTransTag.getToApp(); // 发给客户端（0不是，1是）
+        String toApp = langTransTag.getToApp(); // 发给客户端（N不是，Y是）
         String createBy = langTransTag.getCreateBy(); // 创建者
 
         MapSqlParameterSource parameters = new MapSqlParameterSource();

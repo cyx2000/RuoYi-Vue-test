@@ -38,7 +38,7 @@ public class LangTransTag extends BaseEntity
     @Excel(name = "标签")
     private String label;
 
-    /** 发给客户端（0不是，1是） */
+    /** 发给客户端（N不是，Y是） */
     @Excel(name = "发给客户端", readConverterExp = "N=否,Y=是")
     private String toApp;
 
