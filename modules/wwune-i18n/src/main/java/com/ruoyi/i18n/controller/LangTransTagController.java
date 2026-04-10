@@ -69,10 +69,10 @@ public class LangTransTagController extends BaseController
     public AjaxResult importData(MultipartFile file) throws Exception
     {
         ExcelUtil<LangTransTag> util = new ExcelUtil<LangTransTag>(LangTransTag.class);
-        List<LangTransTag> transtexts = util.importExcel(file.getInputStream());
+        List<LangTransTag> transtags = util.importExcel(file.getInputStream());
 
         String operName = getUsername();
-        langTransTagService.importTransTags(transtexts, operName);
+        langTransTagService.importTransTags(transtags, operName);
         return success("全部数据导入成功！");
     }
 
