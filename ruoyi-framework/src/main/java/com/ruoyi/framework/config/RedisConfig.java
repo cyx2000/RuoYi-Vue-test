@@ -9,6 +9,8 @@ import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.data.redis.serializer.GenericJacksonJsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 /**
  * redis配置
  *
@@ -24,7 +26,11 @@ public class RedisConfig
         RedisTemplate<Object, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
 
-        GenericJacksonJsonRedisSerializer serializer = GenericJacksonJsonRedisSerializer.builder().enableUnsafeDefaultTyping().build();
+        GenericJacksonJsonRedisSerializer serializer = GenericJacksonJsonRedisSerializer.builder()
+            .customize(cus -> {
+                cus.changeDefaultPropertyInclusion(incl -> incl.withValueInclusion(JsonInclude.Include.NON_NULL))
+                .changeDefaultPropertyInclusion(incl -> incl.withContentInclusion(JsonInclude.Include.NON_NULL));
+            }).enableUnsafeDefaultTyping().build();
 
         template.setKeySerializer(new StringRedisSerializer()); // 使用StringRedisSerializer序列化和反序列化key值
         template.setValueSerializer(serializer); // 使用GenericJacksonJsonRedisSerializer序列化和反序列化value值

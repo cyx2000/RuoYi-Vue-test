@@ -7,10 +7,12 @@ import org.apache.poi.ss.formula.functions.T;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.ruoyi.common.exception.UtilException;
 
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import tools.jackson.databind.ser.FilterProvider;
 import tools.jackson.databind.ser.std.SimpleBeanPropertyFilter;
 import tools.jackson.databind.ser.std.SimpleFilterProvider;
@@ -28,7 +30,10 @@ public class JsonUtils {
     public final static ObjectMapper objectMapper;
 
     static {
-        objectMapper = new ObjectMapper();
+        objectMapper = JsonMapper.builder()
+        .changeDefaultPropertyInclusion(incl -> incl.withValueInclusion(JsonInclude.Include.NON_NULL))
+        .changeDefaultPropertyInclusion(incl -> incl.withContentInclusion(JsonInclude.Include.NON_NULL))
+        .build();
         // 遇到没有定义的字段，反序列化不要报错。
         objectMapper.deserializationConfig().with(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
     }
