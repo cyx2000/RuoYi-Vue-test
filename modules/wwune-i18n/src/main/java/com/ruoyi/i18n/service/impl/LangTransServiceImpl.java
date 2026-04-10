@@ -1,5 +1,6 @@
 package com.ruoyi.i18n.service.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -109,7 +110,7 @@ public class LangTransServiceImpl implements ILangTransService
 
         if (StringUtils.isNotEmpty(moduleMap))
         {
-            return (List<LangTrans>) moduleMap.values();
+            return new ArrayList<LangTrans>(moduleMap.values());
         }
 
         return tryLoadModuleTransTextToRedis(moduleKey);
@@ -132,7 +133,7 @@ public class LangTransServiceImpl implements ILangTransService
 
         if (StringUtils.isNotEmpty(moduleMap))
         {
-            return (List<LangTrans>) moduleMap.values();
+            return new ArrayList<LangTrans>(moduleMap.values());
         }
 
         List<LangTrans> moduleTransTexts = this.selectLangTransListByModuleKey(moduleKey);
