@@ -38,6 +38,13 @@ public interface LangLanguageRepository
     public List<LangLanguage> selectLangLanguageList(LangLanguage langLanguage);
 
     /**
+     * 查询可用的语言列表
+     *
+     * @return 语言集合
+     */
+    public List<LangLanguage> selectNormalLanguageList();
+
+    /**
      * 分页查询语言列表
      *
      * @param langLanguage 语言

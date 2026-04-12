@@ -81,6 +81,19 @@ public class LangLanguageRepositoryImpl implements LangLanguageRepository
     }
 
     /**
+     * 查询可用的语言列表
+     *
+     * @return 语言集合
+     */
+    @Override
+    public List<LangLanguage> selectNormalLanguageList()
+    {
+        String sql = "SELECT a.lang_tag, a.lang_name, a.version from lang_language a WHERE a.status=0 ORDER BY a.sort ASC";
+
+        return queryList(null, sql);
+    }
+
+    /**
      * 分页查询语言列表
      *
      * @param langLanguage 语言
