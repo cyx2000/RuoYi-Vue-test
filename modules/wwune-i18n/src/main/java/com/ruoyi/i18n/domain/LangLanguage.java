@@ -22,17 +22,23 @@ public class LangLanguage extends BaseEntity
     /** 语言标签 */
     private String langTag;
 
+    /** 语言名称 */
+    private String langName;
+
     /** 展示顺序 */
     private Integer sort;
 
     /** 语言状态（0正常 1停用 2删除 3是删除和停用） */
     private Integer status;
 
-    /** 默认语言（0不是默认，1是默认） */
+    /** 默认语言（N不是默认，Y是默认） */
     private String isDefault;
 
     /** 未添加翻译文本的翻译标签id列表 */
     private String transTags;
+
+    /** 版本号 */
+    private Integer version;
 
     /** 翻译标签列表 */
     private List<LangTransTag> transtagList;
@@ -55,6 +61,14 @@ public class LangLanguage extends BaseEntity
     public String getLangTag()
     {
         return langTag;
+    }
+
+    public String getLangName() {
+        return langName;
+    }
+
+    public void setLangName(String langName) {
+        this.langName = langName;
     }
 
     public void setSort(Integer sort)
@@ -90,6 +104,14 @@ public class LangLanguage extends BaseEntity
     public String getIsDefault()
     {
         return isDefault;
+    }
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
     }
 
     public String getTransTags() {

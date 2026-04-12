@@ -24,7 +24,7 @@ public class LangLanguageRepositoryImpl implements LangLanguageRepository
 {
     private DBService dbService;
 
-    private String baseSelectSql = "SELECT a.lang_id, a.lang_tag, a.trans_tags, a.sort, a.status, a.is_default, a.remark, a.create_by, a.create_time, a.update_by, a.update_time FROM lang_language a WHERE 1=1";
+    private String baseSelectSql = "SELECT a.lang_id, a.lang_tag, a.lang_name, a.trans_tags, a.sort, a.status, a.is_default, a.remark, a.version, a.create_by, a.create_time, a.update_by, a.update_time FROM lang_language a WHERE 1=1";
 
     public LangLanguageRepositoryImpl(DBService inDbService) {
         this.dbService = inDbService;
@@ -114,6 +114,7 @@ public class LangLanguageRepositoryImpl implements LangLanguageRepository
     @Override
     public int insertLangLanguage(LangLanguage langLanguage) {
         String langTag = langLanguage.getLangTag(); // 语言标签
+        String langName = langLanguage.getLangName(); // 语言名称
         Integer sort = langLanguage.getSort(); // 展示顺序
         Integer status = langLanguage.getStatus(); // 语言状态（0正常 1停用 2删除 3是删除和停用）
         String isDefault = langLanguage.getIsDefault(); // 默认语言（0不是默认，1是默认）
@@ -122,6 +123,7 @@ public class LangLanguageRepositoryImpl implements LangLanguageRepository
 
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("inLangTag", langTag);
+        parameters.addValue("inLangName", langName);
         parameters.addValue("inSort", sort);
         parameters.addValue("inStatus", status);
         parameters.addValue("inIsDefault", isDefault);
@@ -129,7 +131,7 @@ public class LangLanguageRepositoryImpl implements LangLanguageRepository
         parameters.addValue("inCreateBy", createBy);
         parameters.addValue("inTransTags", "[]");
 
-        String insertSql = "INSERT INTO lang_language(lang_tag,sort,trans_tags,status,is_default,remark,create_by,create_time) VALUES(:inLangTag, :inSort, :inTransTags, :inStatus, :inIsDefault, :inRemark, :inCreateBy, SYSDATE())";
+        String insertSql = "INSERT INTO lang_language(lang_tag,lang_name,sort,trans_tags,status,is_default,remark,create_by,create_time) VALUES(:inLangTag, :inLangName, :inSort, :inTransTags, :inStatus, :inIsDefault, :inRemark, :inCreateBy, SYSDATE())";
 
         int[] insertResList = dbService.batchUpdate(insertSql, new MapSqlParameterSource[]{parameters});
         return insertResList[0];
@@ -145,6 +147,7 @@ public class LangLanguageRepositoryImpl implements LangLanguageRepository
     public int updateLangLanguage(LangLanguage langLanguage) {
         Integer langId = langLanguage.getLangId();
         String langTag = langLanguage.getLangTag();
+        String langName = langLanguage.getLangName();
         Integer sort = langLanguage.getSort();
         Integer status = langLanguage.getStatus();
         String isDefault = langLanguage.getIsDefault();
@@ -158,6 +161,11 @@ public class LangLanguageRepositoryImpl implements LangLanguageRepository
         {
             updateBuffer.append(" lang_tag=:inLangTag,");
             parameters.addValue("inLangTag", langTag);
+        }
+        if(StringUtils.isNotEmpty(langName))
+        {
+            updateBuffer.append(" lang_name=:inLangName,");
+            parameters.addValue("inLangName", langName);
         }
         if(StringUtils.isNotNull(sort))
         {
