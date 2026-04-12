@@ -110,6 +110,17 @@ public class LangLanguageServiceImpl implements ILangLanguageService
     }
 
     /**
+     * 查询所有可用的语言列表
+     *
+     * @return 语言集合
+     */
+    @Override
+    public List<LangLanguage> getAllNormalLanguages()
+    {
+        return langLanguageRepository.selectNormalLanguageList();
+    }
+
+    /**
      * 新增语言
      *
      * @param langLanguage 语言

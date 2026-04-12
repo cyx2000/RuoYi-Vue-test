@@ -59,6 +59,16 @@ public class LangLanguageController extends BaseController
     }
 
     /**
+     * 查询可用的语言列表
+     */
+    @GetMapping("/languages")
+    public AjaxResult getNormalLanguages()
+    {
+        List<LangLanguage> normalList = langLanguageService.getAllNormalLanguages();
+        return success(normalList);
+    }
+
+    /**
      * 获取语言详细信息
      */
     @PreAuthorize("@ss.hasPermi('i18n:translang:query')")

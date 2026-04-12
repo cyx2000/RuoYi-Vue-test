@@ -46,6 +46,13 @@ public interface ILangLanguageService
     public List<LangLanguage> selectLangLanguageList(LangLanguage langLanguage);
 
     /**
+     * 查询所有可用的语言列表
+     *
+     * @return 语言集合
+     */
+    public List<LangLanguage> getAllNormalLanguages();
+
+    /**
      * 新增语言
      *
      * @param langLanguage 语言
