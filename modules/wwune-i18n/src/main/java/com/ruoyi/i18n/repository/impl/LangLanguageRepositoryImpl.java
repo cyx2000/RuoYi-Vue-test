@@ -88,7 +88,7 @@ public class LangLanguageRepositoryImpl implements LangLanguageRepository
     @Override
     public List<LangLanguage> selectNormalLanguageList()
     {
-        String sql = "SELECT a.lang_tag, a.lang_name, a.version from lang_language a WHERE a.status=0 ORDER BY a.sort ASC";
+        String sql = "SELECT a.lang_tag, a.lang_name, a.version, a.is_default, a.status from lang_language a WHERE a.status=0 ORDER BY a.sort ASC";
 
         return queryList(null, sql);
     }
