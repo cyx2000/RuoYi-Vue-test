@@ -84,8 +84,7 @@ public class LangTransServiceImpl implements ILangTransService
         List<Integer> moduleTransTagIds = langTransTagRepository.selectModuleLangTransTagIds(tanstag);
 
         if (StringUtils.isEmpty(moduleTransTagIds)) {
-            LOGGER.error("错误的模块标签：" + moduleKey);
-            throw new ServiceException("错误的标签");
+            return new ArrayList<>(0);
         }
 
         List<LangTrans> moduleTransTexts = langTransRepository.selectLangTransListByIds(targetLanguage.getLangId(), moduleTransTagIds);
@@ -138,6 +137,18 @@ public class LangTransServiceImpl implements ILangTransService
 
         List<LangTrans> moduleTransTexts = this.selectLangTransListByModuleKey(moduleKey);
 
+        if (StringUtils.isEmpty(moduleTransTexts))
+        {
+            LOGGER.error("错误的模块标签：" + moduleKey);
+
+            redisCache.setCacheMap(langMuduleKey, new HashMap<String, LangTrans>());
+
+            // TODO 错误标签缓存时间配置化，当前为10秒
+            redisCache.expire(langMuduleKey, 10L, TimeUnit.SECONDS);
+
+            return moduleTransTexts;
+        }
+
         moduleMap = new HashMap<String, LangTrans>();
 
         for (LangTrans langTrans : moduleTransTexts) {
@@ -146,7 +157,7 @@ public class LangTransServiceImpl implements ILangTransService
             moduleMap.put(label, langTrans);
         }
 
-        // eg: {"zh:user.login": "notMatch": transObj1, "locked": transObj2 }
+        // eg: "zh:user.login": {"notMatch": transObj1, "locked": transObj2}
         redisCache.setCacheMap(langMuduleKey, moduleMap);
 
         // TODO 缓存时间配置化，当前为5分钟
